@@ -7,8 +7,15 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "QQImageView.h"
 
-@interface QQAppDelegate : NSObject <NSApplicationDelegate>
+@interface QQAppDelegate : NSObject <NSApplicationDelegate> {
+    IBOutlet QQImageView * image;
+
+}
+
+- (IBAction) test:sender;
+
 
 @property (assign) IBOutlet NSWindow *window;
 
