@@ -13,6 +13,7 @@
 		5E10D7F216F4987300C98C58 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7F016F4987300C98C58 /* Credits.rtf */; };
 		5E10D7F516F4987300C98C58 /* QQAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7F416F4987300C98C58 /* QQAppDelegate.m */; };
 		5E10D7F816F4987300C98C58 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7F616F4987300C98C58 /* MainMenu.xib */; };
+		5E4DB69116F8DAED003EA782 /* QQImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4DB69016F8DAED003EA782 /* QQImageLoader.m */; };
 		5E7BB62516F63C37002BA33E /* QQImageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7BB62416F63C37002BA33E /* QQImageView.mm */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,8 @@
 		5E10D7F316F4987300C98C58 /* QQAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QQAppDelegate.h; sourceTree = "<group>"; };
 		5E10D7F416F4987300C98C58 /* QQAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QQAppDelegate.m; sourceTree = "<group>"; };
 		5E10D7F716F4987300C98C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageLoader.h; sourceTree = "<group>"; };
+		5E4DB69016F8DAED003EA782 /* QQImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QQImageLoader.m; sourceTree = "<group>"; };
 		5E7BB62316F63C37002BA33E /* QQImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageView.h; sourceTree = "<group>"; };
 		5E7BB62416F63C37002BA33E /* QQImageView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,6 +88,8 @@
 		5E10D7E716F4987300C98C58 /* xqiv */ = {
 			isa = PBXGroup;
 			children = (
+				5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */,
+				5E4DB69016F8DAED003EA782 /* QQImageLoader.m */,
 				5E7BB62316F63C37002BA33E /* QQImageView.h */,
 				5E7BB62416F63C37002BA33E /* QQImageView.mm */,
 				5E10D7F316F4987300C98C58 /* QQAppDelegate.h */,
@@ -175,6 +180,7 @@
 				5E10D7EE16F4987300C98C58 /* main.m in Sources */,
 				5E10D7F516F4987300C98C58 /* QQAppDelegate.m in Sources */,
 				5E7BB62516F63C37002BA33E /* QQImageView.mm in Sources */,
+				5E4DB69116F8DAED003EA782 /* QQImageLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +269,7 @@
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;

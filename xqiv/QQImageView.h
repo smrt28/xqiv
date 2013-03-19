@@ -8,8 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+
 @interface QQImageView : NSView {
     NSImage *_image;
+
     NSSize _imageSize;
     NSPoint initialLocation;
 }

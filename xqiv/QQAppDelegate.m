@@ -12,12 +12,16 @@
 
 - (void)dealloc
 {
+    [_imageLoader dealloc];
     [super dealloc];
 }
 
 -(id)init {
     [super init];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
+    _imageLoader = [QQImageLoader loader:@selector(imageLoaded:) target:self];
+    
+    [_imageLoader start];
     return self;
 }
 
@@ -40,7 +44,6 @@
         }
         
         if (!img_file) return;
-      //  [image sizeToFit];
 
         NSRect frame = [image frame];
         NSImage *img = [[NSImage alloc] initWithContentsOfFile:img_file];
@@ -52,21 +55,21 @@
 
 }
 
-- (IBAction) test:sender {
-  
-    NSImage *img = [[NSImage alloc] initWithContentsOfFile:@"/tmp/i.jpg"];
-    [img autorelease];
-    [image setImage: img];
-    
-
-    
-    /*
-    NSSize size;
-    size.height = img.size.height / 5;
-    size.width = img.size.width / 5;
-    [img setSize:size];
+- (void)imageLoaded:(NSMutableDictionary *)obj {
+    NSImage *img = [obj objectForKey:@"image"];
+    NSString *filename = [obj objectForKey:@"filename"];
     [image setImage:img];
-     */
+}
+
+- (IBAction) test:sender {
+    NSString *filename = [[[NSString alloc] initWithFormat:@"/tmp/i.jpg"] autorelease];
+    [_imageLoader insertImageTask:filename];
+}
+
+
+-(void)awakeFromNib {
+    [_window setLevel:NSScreenSaverWindowLevel + 1];
+    [_window orderFront:nil];
 }
 
 @end

@@ -96,13 +96,13 @@
         return;
     }
     
-    /*
+  //  [[NSColor clearColor] set];
     [[NSColor redColor] set];
     NSRectFill([self bounds]);
-     */
+     
    
-    [[NSColor clearColor] set];
-    NSRectFill([self frame]);
+
+//    NSRectFill([self frame]);
     return;
 }
 

@@ -8,12 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "QQImageView.h"
+#import "QQImageLoader.h"
 
 @interface QQAppDelegate : NSObject <NSApplicationDelegate> {
     IBOutlet QQImageView * image;
-
+    QQImageLoader *_imageLoader;
 }
 
+- (void)imageLoaded:(NSMutableDictionary *)obj;
 - (IBAction) test:sender;
 
 
