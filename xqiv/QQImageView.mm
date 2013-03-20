@@ -7,7 +7,7 @@
 //
 
 #import "QQImageView.h"
-
+#import <Quartz/Quartz.h>
 @implementation QQImageView
 
 - (id)initWithFrame:(NSRect)frame
@@ -20,6 +20,13 @@
     return self;
 }
 
+/*
+- (BOOL) isOpaque
+{
+    return YES;
+}
+*/
+
 - (void)setImage:(NSImage *)image
 {
     if (_image) {
@@ -28,10 +35,8 @@
     [image retain];
     _image = image;
     _imageSize = [_image size];
-  //  [_image setCacheMode:NSImageCacheAlways];
-  //  [_image recache];
-    [self setNeedsDisplay:YES];
     
+    [self setNeedsDisplay:YES];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
@@ -66,10 +71,11 @@
 - (void)drawRect:(NSRect)dirtyRect
 {
     if (_image) {
+        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+
         NSSize isize;
         NSSize vsize;
         CGFloat x, y;
-        
         
         vsize = [self bounds].size;
         isize = vsize;
@@ -101,11 +107,6 @@
   //  [[NSColor clearColor] set];
     [[NSColor redColor] set];
     NSRectFill([self bounds]);
-     
-   
-
-//    NSRectFill([self frame]);
-    return;
 }
 
 @end
