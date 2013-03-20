@@ -9,11 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface QQImageLoader : NSThread {
-    NSCondition *_condition;
-    NSCondition *_endCondition;
-    
-    NSLock *_lock;
-    NSMutableArray *_jobs;
     BOOL _end;
     SEL _callback;
     id _target;
@@ -21,7 +16,8 @@
 }
 
 + (QQImageLoader *)loader:(SEL)callback target:(id)obj;
-- (void)insertImageTask:(NSString *)filename;
+- (void)loadImage:(NSString *)filename;
+- (void)join;
 
 //- (void)insert:(NSString *)file;
 

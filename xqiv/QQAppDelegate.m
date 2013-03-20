@@ -45,10 +45,8 @@
         
         if (!img_file) return;
 
-        NSRect frame = [image frame];
-        NSImage *img = [[NSImage alloc] initWithContentsOfFile:img_file];
-        [img autorelease];
-        [image setImage:img];
+        [_imageLoader loadImage:img_file];
+        
     
         
     } @catch (...) {}
@@ -63,7 +61,7 @@
 
 - (IBAction) test:sender {
     NSString *filename = [[[NSString alloc] initWithFormat:@"/tmp/i.jpg"] autorelease];
-    [_imageLoader insertImageTask:filename];
+    [_imageLoader loadImage:filename];
 }
 
 

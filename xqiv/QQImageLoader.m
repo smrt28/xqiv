@@ -7,19 +7,17 @@
 //
 
 #import "QQImageLoader.h"
+#include <openssl/sha.h>
+#include <CommonCrypto/CommonDigest.h>
 
 @implementation QQImageLoader
 
 
 -(id)initWithCallback:(SEL)callback target:(id)obj {
     self = [super init];
-    _jobs = [[NSMutableArray alloc] init];
-    _condition = [[NSCondition alloc] init];
-    _lock = [[NSLock alloc] init];
     _end = NO;
     _callback = callback;
     _target = obj;
-    _endCondition = nil;
     _thread = [NSThread currentThread];
     return self;
 }
@@ -27,9 +25,6 @@
 - (void)dealloc {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc removeObserver:self];
-    [_condition release];
-    [_jobs release];
-    [_lock release];
     [super dealloc];
 }
 
@@ -46,18 +41,44 @@
 
 }
 
-- (void)task {
-    [_lock lock];
-    NSMutableDictionary *obj = [[[_jobs objectAtIndex:0] retain] autorelease];
-    [_jobs removeObjectAtIndex:0];
-    [_lock unlock];
-    
-    NSMutableDictionary *ret = nil;
-    NSString * filename = [obj objectForKey:@"filename"];
-    NSImage *img;
 
+
+
+- (void)loadImageAsync:(NSString *)filename {
+    @autoreleasepool {
+        
+    NSMutableDictionary *ret = nil;
+    NSImage *img;
+    NSString *sha1 = nil;
+        
     @try {
-        img = [[[NSImage alloc] initWithContentsOfFile: filename] autorelease];
+        NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath: filename];
+        if (fh) {
+            NSData *data = [fh readDataOfLength:1024 * 1024 * 32];
+            NSMutableData *hashData = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
+            
+            const char *b = [data bytes];
+            CC_LONG len = (CC_LONG)[data length];
+            unsigned char digest[CC_SHA1_DIGEST_LENGTH];
+            CC_SHA1_CTX ctx;
+            CC_SHA1_Init(&ctx);
+            CC_SHA1_Update(&ctx, b, len);
+            CC_SHA1_Final(digest, &ctx);
+            
+            char digestStr[CC_SHA1_DIGEST_LENGTH * 2 + 1];
+            digestStr[CC_SHA1_DIGEST_LENGTH * 2] = 0;
+            static const char *hex = "0123456789abcdef";
+        
+            char *c = digestStr;
+            for (int i = 0; i<CC_SHA1_DIGEST_LENGTH; i++) {
+                *c = hex[digest[i] >> 4]; c++;
+                *c = hex[digest[i] & 0xf]; c++;
+            }
+            
+            sha1 = [NSString stringWithUTF8String:digestStr];
+            
+            img = [[[NSImage alloc] initWithData:data] autorelease];
+        }
     }
     @catch (NSException *exception) {
         img = nil;
@@ -70,44 +91,39 @@
         [ret setObject:@"error: file does not exist" forKey:@"error-message"];
     }
     [ret setObject:filename forKey:@"filename"];
+    if (sha1) [ret setObject:sha1 forKey:@"sha1"];
     
     [_target performSelector:_callback onThread:_thread withObject:ret waitUntilDone:NO];
+    }
 }
 
--(void)insert:(NSDictionary *)obj {
-    [_lock lock];
-    [_jobs addObject:obj];
-    [_lock unlock];
-    [_condition signal];
+- (void)loadImage:(NSString *)filename {
+    [self performSelector:@selector(loadImageAsync:) onThread:self withObject:filename waitUntilDone:NO];
 }
 
--(void)insertImageTask:(NSString *)filename {
-    NSMutableDictionary *ret = [NSMutableDictionary dictionary];
-    [ret setObject:filename forKey:@"filename"];
-    [self insert:ret];
+
+- (void)joinAsync {
+    _end = YES;
+}
+
+- (void)join {
+    [self performSelector:@selector(joinAsync) onThread:self withObject:nil waitUntilDone:YES];
+
 }
 
 - (void)main
 {
-    [_condition lock];
+    @autoreleasepool {
+    NSRunLoop * runLoop = [NSRunLoop currentRunLoop];
+    NSPort *port = [NSPort port];
+    [runLoop addPort:port forMode:NSDefaultRunLoopMode];
+    
     while(!_end) {
-        [_condition wait];
-        @autoreleasepool {
-            [self task];
-        }
+        BOOL r = [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
     }
-    [_condition unlock];
-    [_endCondition signal];
+    }
 }
 
-- (void)join {
-    _endCondition = [[[NSCondition alloc] init] autorelease];
-    [_endCondition lock];
-        _end = YES;
-        [_condition signal];
-        [_endCondition wait];
-    [_endCondition unlock];
-}
 
 
 @end

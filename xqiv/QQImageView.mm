@@ -28,6 +28,8 @@
     [image retain];
     _image = image;
     _imageSize = [_image size];
+  //  [_image setCacheMode:NSImageCacheAlways];
+  //  [_image recache];
     [self setNeedsDisplay:YES];
     
 }
