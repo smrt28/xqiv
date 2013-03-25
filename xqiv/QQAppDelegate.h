@@ -9,15 +9,20 @@
 #import <Cocoa/Cocoa.h>
 #import "QQImageView.h"
 #import "QQImageLoader.h"
+#import "SDictionary.h"
+#import "QQCache.h"
 
 @interface QQAppDelegate : NSObject <NSApplicationDelegate> {
     IBOutlet QQImageView * image;
+    IBOutlet NSPanel *_tags;
     QQImageLoader *_imageLoader;
+    
+    s::Cache_t _cache;
 }
 
 - (void)imageLoaded:(NSMutableDictionary *)obj;
 - (IBAction) test:sender;
-
+- (IBAction) next:sender;
 
 @property (assign) IBOutlet NSWindow *window;
 

@@ -7,6 +7,7 @@
 //
 
 #import "QQAppDelegate.h"
+#import "SDictionary.h"
 
 @implementation QQAppDelegate
 
@@ -17,53 +18,70 @@
 }
 
 -(id)init {
-    [super init];
-    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
-    _imageLoader = [QQImageLoader loader:@selector(imageLoaded:) target:self];
+    self = [super init];
     
+    _imageLoader = [QQImageLoader loader:@selector(imageLoaded:) target:self];
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
     [_imageLoader start];
     return self;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+
 }
 
 
 - (void)cmdLine:(NSNotification *)note {
 
     @try {
+        _cache.clear();
         NSString *img_file = 0;
         NSDictionary *userInfo = [note userInfo];
         int argc = [[userInfo objectForKey:@"argc"] intValue];
         NSDictionary *argInfo = [userInfo objectForKey:@"args"];
-        for (int i=0; i<argc; i++) {
+        for (int i=1; i<argc; i++) {
             NSString *arg = [argInfo objectForKey:[NSString stringWithFormat:@"%d", i]];
+            s::Dictionary_t item;
+            item.insert("filename", arg);
+            _cache.insert(item);
             if (i==1) img_file = arg;
         }
-        
-        if (!img_file) return;
 
-        [_imageLoader loadImage:img_file];
-        
-    
+        [_imageLoader loadImage:_cache.get()];
         
     } @catch (...) {}
 
 }
 
 - (void)imageLoaded:(NSMutableDictionary *)obj {
-    NSImage *img = [obj objectForKey:@"image"];
-    NSString *filename = [obj objectForKey:@"filename"];
-    [image setImage:img];
+    s::Dictionary_t item(obj);
+    _cache.update(obj);
+
+    
+    NSImage * toShow = _cache[@"image"];
+    if (!toShow) return;
+    
+    //_cache.insert(item["filename"], item);
+    [image setImage:toShow];
 }
+
 
 - (IBAction) test:sender {
-    NSString *filename = [[[NSString alloc] initWithFormat:@"/tmp/i.jpg"] autorelease];
-    [_imageLoader loadImage:filename];
 }
 
+- (IBAction) next:sender {
+    if (_cache.size() == 0) return;
+    _cache.next();
+    
+    NSImage * img = _cache[@"image"];
+    if (!img) {
+        [_imageLoader loadImage:_cache.get()];
+        return;
+    }
+    [image setImage:img];
+        
+}
 
 -(void)awakeFromNib {
     [_window setLevel:NSScreenSaverWindowLevel + 1];

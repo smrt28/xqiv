@@ -7,6 +7,8 @@
 //
 
 #import "QQImageLoader.h"
+#import "SDictionary.h"
+#import "CImageUtils.h"
 #include <openssl/sha.h>
 #include <CommonCrypto/CommonDigest.h>
 
@@ -19,6 +21,7 @@
     _callback = callback;
     _target = obj;
     _thread = [NSThread currentThread];
+    _cache = [[NSMutableDictionary alloc] init];
     return self;
 }
 
@@ -42,22 +45,26 @@
 }
 
 
-
-
-- (void)loadImageAsync:(NSString *)filename {
+- (void)loadImageAsync:(NSMutableDictionary *)anItem {
+    s::Dictionary_t item(anItem);
+    
     @autoreleasepool {
+    
+    NSString *filename = item["filename"];
         
-    NSMutableDictionary *ret = nil;
+    NSMutableDictionary *ret = [NSMutableDictionary dictionary];
     NSImage *img;
     NSString *sha1 = nil;
+    NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
         
     @try {
         NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath: filename];
         if (fh) {
             NSData *data = [fh readDataOfLength:1024 * 1024 * 32];
+
             NSMutableData *hashData = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-            
-            const char *b = [data bytes];
+
+            const char *b = (const char *)[data bytes];
             CC_LONG len = (CC_LONG)[data length];
             unsigned char digest[CC_SHA1_DIGEST_LENGTH];
             CC_SHA1_CTX ctx;
@@ -76,20 +83,26 @@
             }
             
             sha1 = [NSString stringWithUTF8String:digestStr];
-            
+
+            @autoreleasepool {
             img = [[[NSImage alloc] initWithData:data] autorelease];
+            img = [s::img::fitScreen(img) retain];
+            }
         }
     }
     @catch (NSException *exception) {
         img = nil;
     }
     
-    ret = [NSMutableDictionary dictionary];
+    NSNumber *index = item["index"];
+    [ret setObject:[NSNumber numberWithLong:[index longValue]] forKey:@"index"];
+
     if (img) {
         [ret setObject:img forKey:@"image"];
     } else {
         [ret setObject:@"error: file does not exist" forKey:@"error-message"];
     }
+        
     [ret setObject:filename forKey:@"filename"];
     if (sha1) [ret setObject:sha1 forKey:@"sha1"];
     
@@ -97,8 +110,8 @@
     }
 }
 
-- (void)loadImage:(NSString *)filename {
-    [self performSelector:@selector(loadImageAsync:) onThread:self withObject:filename waitUntilDone:NO];
+- (void)loadImage:(NSMutableDictionary *)item {
+    [self performSelector:@selector(loadImageAsync:) onThread:self withObject:item waitUntilDone:NO];
 }
 
 

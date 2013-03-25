@@ -8,17 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface QQImageLoader : NSThread {
     BOOL _end;
     SEL _callback;
     id _target;
     NSThread *_thread;
+    NSMutableDictionary *_cache;
 }
 
 + (QQImageLoader *)loader:(SEL)callback target:(id)obj;
-- (void)loadImage:(NSString *)filename;
+- (void)loadImage:(NSMutableDictionary *)filename;
 - (void)join;
 
-//- (void)insert:(NSString *)file;
 
 @end
