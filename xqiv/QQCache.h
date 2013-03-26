@@ -9,14 +9,42 @@
 #import <Foundation/Foundation.h>
 #import "SDictionary.h"
 #import "SArray.h"
+#import "QQImageLoader.h"
+
+@protocol QQCacheProtocol<NSObject>
+- (void)showCachedImage:(NSDictionary *)item;
+@end
+
+namespace s { class Cache_t; }
+
+@interface QQCache : NSObject<QQImageLoaderProtocol> {
+    s::Cache_t * _cache;
+    QQImageLoader *_imageLoader;
+}
+
+- (void)imageLoaded:(NSMutableDictionary *)obj;
+- (id)initWithCache:(s::Cache_t *)cache;
+
+@end
+
 
 namespace s {
+    size_t get_item_index(NSMutableDictionary * anItem);
+    
     class Cache_t {
     public:
         Cache_t() :
             array(),
-            position(0)
+            position(0),
+            qqCache([[QQCache alloc] initWithCache:this]),
+            delegate(nil)
         {}
+        
+        ~Cache_t() {
+            [delegate release];
+            [qqCache release];
+        }
+        
         void insert(Dictionary_t &dict);
 
         void next() {
@@ -40,13 +68,27 @@ namespace s {
         
         NSMutableDictionary * get();
         
+        NSMutableDictionary * get(size_t);
+        
+        NSMutableDictionary * get_todo();
+        
         size_t size() { return array.size(); }
         
         void clear() { array.clear(); }
         
         size_t pos() { return position; }
+        
+        void handleLoaded(NSMutableDictionary *item);
+        
+        void setDelegate(id<QQCacheProtocol> dlg) {
+            [delegate release];
+            delegate = dlg;
+            [delegate retain];
+        }
     private:
         Array_t array;
         size_t position;
+        QQCache * qqCache;
+        id<QQCacheProtocol> delegate;
     };
 }

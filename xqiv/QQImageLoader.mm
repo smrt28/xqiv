@@ -15,38 +15,56 @@
 @implementation QQImageLoader
 
 
--(id)initWithCallback:(SEL)callback target:(id)obj {
+-(id)init {
     self = [super init];
     _end = NO;
-    _callback = callback;
-    _target = obj;
+    _lock = [[NSObject alloc] init];
     _thread = [NSThread currentThread];
-    _cache = [[NSMutableDictionary alloc] init];
+    _delegate = nil;
     return self;
 }
 
 - (void)dealloc {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [_delegate release];
+    [_lock release];
     [nc removeObserver:self];
+    [self join];
     [super dealloc];
 }
 
-+ (QQImageLoader *)loader:(SEL)callback target:(id)obj {
-    return [[[QQImageLoader alloc] initWithCallback:callback target:obj] autorelease];
+- (void)setDelegate:(id)aDelegate {
+    [_delegate release];
+    _delegate = aDelegate;
+    [_delegate retain];
 }
 
-- (void)asyncNotify:(NSNotification *)notification {
-    id a = notification.object;
-    NSMutableDictionary *obj = notification.object;
-    NSString * filename = [obj objectForKey:@"filename"];
-    NSImage * image = [[[obj objectForKey:@"image"] retain] autorelease];
-    [_target performSelector:_callback withObject:filename withObject:image];
+- (id)delegate {
+    return _delegate;
+}
 
+- (void)incTime {
+    @synchronized(_lock) {
+        _time++;
+    }
+}
+
+
++ (QQImageLoader *)loader {
+    return [[[QQImageLoader alloc] init] autorelease];
 }
 
 
 - (void)loadImageAsync:(NSMutableDictionary *)anItem {
+    
+    
     s::Dictionary_t item(anItem);
+    NSNumber *index = item["index"];
+    
+    @synchronized(_lock) {
+        NSNumber *t = [anItem objectForKey:@"time"];
+        if ([t intValue] != _time) return;
+    }
     
     @autoreleasepool {
     
@@ -94,7 +112,7 @@
         img = nil;
     }
     
-    NSNumber *index = item["index"];
+    
     [ret setObject:[NSNumber numberWithLong:[index longValue]] forKey:@"index"];
 
     if (img) {
@@ -105,12 +123,19 @@
         
     [ret setObject:filename forKey:@"filename"];
     if (sha1) [ret setObject:sha1 forKey:@"sha1"];
-    
-    [_target performSelector:_callback onThread:_thread withObject:ret waitUntilDone:NO];
+        
+    [self performSelector:@selector(handleImageLoaded:) onThread:_thread withObject:ret waitUntilDone:NO];
     }
 }
 
+- (void)handleImageLoaded:(NSMutableDictionary *)result {
+    [_delegate imageLoaded: result];
+}
+
 - (void)loadImage:(NSMutableDictionary *)item {
+    @synchronized(_lock) {
+    [item setObject:[NSNumber numberWithInt:_time] forKey:@"time"];
+    }
     [self performSelector:@selector(loadImageAsync:) onThread:self withObject:item waitUntilDone:NO];
 }
 

@@ -12,12 +12,12 @@
 #import "SDictionary.h"
 #import "QQCache.h"
 
-@interface QQAppDelegate : NSObject <NSApplicationDelegate> {
+@interface QQAppDelegate : NSObject <NSApplicationDelegate, QQImageLoaderProtocol> {
     IBOutlet QQImageView * image;
     IBOutlet NSPanel *_tags;
     QQImageLoader *_imageLoader;
-    
     s::Cache_t _cache;
+    int _prefered;
 }
 
 - (void)imageLoaded:(NSMutableDictionary *)obj;

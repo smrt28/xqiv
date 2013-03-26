@@ -8,18 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol QQImageLoaderProtocol<NSObject>
+    - (void)imageLoaded:(NSMutableDictionary *)obj;
+@end
 
 @interface QQImageLoader : NSThread {
     BOOL _end;
-    SEL _callback;
     id _target;
     NSThread *_thread;
-    NSMutableDictionary *_cache;
+    id<QQImageLoaderProtocol> _delegate;
+    int _time;
+    NSObject *_lock;
 }
 
-+ (QQImageLoader *)loader:(SEL)callback target:(id)obj;
+
+
++ (QQImageLoader *)loader;
 - (void)loadImage:(NSMutableDictionary *)filename;
 - (void)join;
-
+- (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
+- (id)delegate;
+- (void)incTime;
 
 @end
