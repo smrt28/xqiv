@@ -95,10 +95,6 @@
 
     NSLog(@"showing image %zd", _cache.pos());
     [image setImage:img];
-    
-    NSMutableDictionary *todo = _cache.get_todo();
-    if (!todo) return;
-    [_imageLoader loadImage:todo];
 }
 
 -(void)awakeFromNib {

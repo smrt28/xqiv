@@ -25,6 +25,16 @@ namespace noncopyable_  // protection from unintended ADL
 
 typedef noncopyable_::noncopyable noncopyable;
 
+    class AutoRelease_t {
+    public:
+        AutoRelease_t(id obj) : obj(obj) {}
+        ~AutoRelease_t() { [obj release]; }
+        id get() { return obj; }
+        void forget() { obj = nil; }
+    private:
+        id obj;
+    };
+    
 }
 
 #endif

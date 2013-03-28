@@ -57,15 +57,16 @@
 
 - (void)loadImageAsync:(NSMutableDictionary *)anItem {
     
-    
     s::Dictionary_t item(anItem);
     NSNumber *index = item["index"];
     
     @synchronized(_lock) {
         NSNumber *t = [anItem objectForKey:@"time"];
-        if ([t intValue] != _time) return;
+        int objTime = [t intValue];
+        NSLog(@"time=%d objtime=%d", _time, objTime);
+        if (objTime != _time) return;
     }
-    
+  
     @autoreleasepool {
     
     NSString *filename = item["filename"];
@@ -80,7 +81,8 @@
         if (fh) {
             NSData *data = [fh readDataOfLength:1024 * 1024 * 32];
 
-            NSMutableData *hashData = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
+            NSMutableData *hashData =
+                [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
 
             const char *b = (const char *)[data bytes];
             CC_LONG len = (CC_LONG)[data length];
@@ -101,11 +103,8 @@
             }
             
             sha1 = [NSString stringWithUTF8String:digestStr];
-
-            @autoreleasepool {
             img = [[[NSImage alloc] initWithData:data] autorelease];
-            img = [s::img::fitScreen(img) retain];
-            }
+            img = s::img::fitScreen(img);
         }
     }
     @catch (NSException *exception) {
@@ -122,10 +121,15 @@
     }
         
     [ret setObject:filename forKey:@"filename"];
-    if (sha1) [ret setObject:sha1 forKey:@"sha1"];
+    if (sha1)
+        [ret setObject:sha1 forKey:@"sha1"];
+
+    NSLog(@"LOADED: %@", filename);
         
-    [self performSelector:@selector(handleImageLoaded:) onThread:_thread withObject:ret waitUntilDone:NO];
-    }
+    [self performSelector:@selector(handleImageLoaded:)
+                 onThread:_thread withObject:ret waitUntilDone:NO];
+        
+    } // @autoreleasepool
 }
 
 - (void)handleImageLoaded:(NSMutableDictionary *)result {

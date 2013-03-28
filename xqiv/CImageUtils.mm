@@ -53,7 +53,13 @@ namespace img {
     }
     
     NSImage *fitSize(NSImage *img, NSSize size) {
-        NSSize originalSize = [img size];
+        NSArray * repArray = [img representations];
+        NSImageRep * rep = [repArray objectAtIndex:0];
+        
+        NSSize originalSize;
+        originalSize.height = [rep pixelsHigh ];
+        originalSize.width = [rep pixelsWide];
+        
         NSSize rv = originalSize;
         NSSize screenFrame = size;
         
@@ -70,6 +76,7 @@ namespace img {
             rv.width = (screenFrame.height * rv.width) / rv.height;
             rv.height = screenFrame.height;
         }
+
         
         if (!needResize) return img;
         
