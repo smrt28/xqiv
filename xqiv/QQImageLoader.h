@@ -28,6 +28,6 @@
 - (void)join;
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
-- (void)incTime;
+- (int)incTime;
 
 @end

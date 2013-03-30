@@ -13,17 +13,13 @@
 
 - (void)dealloc
 {
-    [_imageLoader dealloc];
     [super dealloc];
 }
 
 -(id)init {
     self = [super init];
-    _prefered = -1;
-    _imageLoader = [[QQImageLoader alloc] init];
-    [_imageLoader setDelegate:self];
+    _cache.setDelegate(self);
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
-    [_imageLoader start];
     return self;
 }
 
@@ -36,7 +32,6 @@
 - (void)cmdLine:(NSNotification *)note {
 
     @try {
-
         _cache.clear();
         NSString *img_file = 0;
         NSDictionary *userInfo = [note userInfo];
@@ -50,51 +45,23 @@
             if (i==1) img_file = arg;
         }
 
-        [_imageLoader loadImage:_cache.get()];
+        _cache.go();
         
     } @catch (...) {}
 
-}
-
-- (void)imageLoaded:(NSMutableDictionary *)obj {
-    s::Dictionary_t item(obj);
-    NSLog(@"updating image %zd", s::get_item_index(obj));
-    _cache.update(obj);
-    
-    NSImage * toShow = _cache[@"image"];
-    if (!toShow) return;
-
-    if (s::get_item_index(obj) == _cache.pos()) {
-        [image setImage:toShow];
-    }
-    
-    NSMutableDictionary *todo = _cache.get_todo();
-    if (!todo) return;
-    [_imageLoader loadImage:todo];
 }
 
 
 - (IBAction) test:sender {
 }
 
-- (IBAction) next:sender {
-    if (_cache.size() == 0) {
-        NSLog(@"empty cache");
-        return;
-    }
-    _cache.next();
-    NSLog(@"will show img n=%zd", _cache.pos());
-    
-    NSImage * img = _cache[@"image"];
-    if (!img) {
-        NSLog(@"loading image %zd", _cache.pos());
-        [_imageLoader incTime];
-        [_imageLoader loadImage:_cache.get()];
-        return;
-    }
-
-    NSLog(@"showing image %zd", _cache.pos());
+- (void)showCachedImage:(NSDictionary *)item {
+    NSImage *img = [item objectForKey:@"image"];
     [image setImage:img];
+}
+
+- (IBAction) next:sender {
+    _cache.next();
 }
 
 -(void)awakeFromNib {

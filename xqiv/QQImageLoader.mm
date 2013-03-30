@@ -43,9 +43,10 @@
     return _delegate;
 }
 
-- (void)incTime {
+- (int)incTime {
     @synchronized(_lock) {
         _time++;
+        return _time;
     }
 }
 
@@ -59,8 +60,9 @@
     
     s::Dictionary_t item(anItem);
     NSNumber *index = item["index"];
-    
+    int aTime;
     @synchronized(_lock) {
+        aTime = _time;
         NSNumber *t = [anItem objectForKey:@"time"];
         int objTime = [t intValue];
         NSLog(@"time=%d objtime=%d", _time, objTime);
@@ -72,6 +74,7 @@
     NSString *filename = item["filename"];
         
     NSMutableDictionary *ret = [NSMutableDictionary dictionary];
+    [ret setObject:[NSNumber numberWithInt:aTime] forKey:@"time"];
     NSImage *img;
     NSString *sha1 = nil;
     NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
@@ -133,6 +136,14 @@
 }
 
 - (void)handleImageLoaded:(NSMutableDictionary *)result {
+    @synchronized(_lock) {
+        NSNumber *n = [result objectForKey:@"time"];
+        if ([n intValue] != _time) {
+            NSLog(@"Old async image skipped");
+            return;
+        }
+    }
+    
     [_delegate imageLoaded: result];
 }
 

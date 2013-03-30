@@ -22,6 +22,7 @@ namespace s { class Cache_t; }
     QQImageLoader *_imageLoader;
 }
 
+- (void)clearQueue;
 - (void)imageLoaded:(NSMutableDictionary *)obj;
 - (id)initWithCache:(s::Cache_t *)cache;
 
@@ -29,9 +30,11 @@ namespace s { class Cache_t; }
 
 
 namespace s {
+
     size_t get_item_index(NSMutableDictionary * anItem);
     
     class Cache_t {
+
     public:
         Cache_t() :
             array(),
@@ -45,46 +48,42 @@ namespace s {
             [qqCache release];
         }
         
+        
         void insert(Dictionary_t &dict);
+        void go();
 
-        void next() {
-            position = position + 1;
-            if (position >= array.size()) position = 0;
-        }
+        void next();
         
-        void prev() {
-            if (position == 0) {
-                position = array.size() - 1;
-            } else {
-                position--;
-            }
-        }
+        void prev();
         
+        void positionChanged();
         
-        
-        id operator[](NSString *);
         
         void update(NSMutableDictionary *);
         
-        NSMutableDictionary * get();
-        
-        NSMutableDictionary * get(size_t);
-        
-        NSMutableDictionary * get_todo();
-        
         size_t size() { return array.size(); }
         
-        void clear() { array.clear(); }
+        void clear() {
+            [qqCache clearQueue];
+            array.clear();
+        }
         
-        size_t pos() { return position; }
-        
-        void handleLoaded(NSMutableDictionary *item);
         
         void setDelegate(id<QQCacheProtocol> dlg) {
             [delegate release];
             delegate = dlg;
             [delegate retain];
         }
+        
+        void handleLoaded(NSMutableDictionary *item);
+    private:
+        size_t pos() { return position; }
+
+        NSMutableDictionary * get();
+        
+        NSMutableDictionary * get(size_t);
+        
+        NSMutableDictionary * get_todo();
     private:
         Array_t array;
         size_t position;

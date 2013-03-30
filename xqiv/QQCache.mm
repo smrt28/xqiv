@@ -28,6 +28,14 @@
     _cache->handleLoaded(obj);
 }
 
+- (void)clearQueue {
+    [_imageLoader incTime];
+}
+
+- (QQImageLoader *)loader {
+    return _imageLoader;
+}
+
 @end
 
 namespace s {
@@ -37,13 +45,52 @@ namespace s {
     }
 
     void Cache_t::insert(Dictionary_t &dict) {
+        [qqCache clearQueue];
         Dictionary_t item;
         item.insert("item", dict);
         item.insert("visits", [NSNumber numberWithInt:0]);
         dict.insert("index", [NSNumber numberWithLong:array.size()]);
         array.push_back(item);
     }
+    
+    void Cache_t::go() {
+        NSMutableDictionary * item = get(position);
+        if (item && [item objectForKey:@"image"] == nil) {
+            [qqCache clearQueue];
+            [[qqCache loader] loadImage:item];
+            return;
+        }
+        item = get_todo();
+        if (item) {
+            [[qqCache loader] loadImage:item];
+        }
+    }
 
+    void Cache_t::positionChanged() {
+        NSMutableDictionary * item = get(position);
+        if (item) {
+            [delegate showCachedImage:item];
+            return;
+        }
+        go();
+    }
+    
+    void Cache_t::next() {
+        if (array.size() == 0) return;
+        position = position + 1;
+        if (position >= array.size()) position = 0;
+        positionChanged();
+    }
+    
+    void Cache_t::prev() {
+        if (array.size() == 0) return;
+        if (position == 0) {
+            position = array.size() - 1;
+        } else {
+            position--;
+        }
+        positionChanged();
+    }
     
     NSMutableDictionary * Cache_t::get() {
         return get(position);
@@ -63,13 +110,14 @@ namespace s {
         dict.insert("item", anItem);
     }
     
-    id Cache_t::operator[](NSString *s) {
-        if (array.size() == 0) return nil;
-        return [get() objectForKey:s];
-    }
     
-    void Cache_t::handleLoaded(NSMutableDictionary *item) {
-        
+    void Cache_t::handleLoaded(NSMutableDictionary *anItem) {
+        update(anItem);
+        NSNumber *n = [anItem objectForKey:@"index"];
+        if ([n intValue] == position) {
+            [delegate showCachedImage:anItem];
+        }
+        go();
     }
     
     NSMutableDictionary * Cache_t::get_todo() {
