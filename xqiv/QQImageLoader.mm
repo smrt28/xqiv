@@ -119,6 +119,8 @@
 
     if (img) {
         [ret setObject:img forKey:@"image"];
+        [ret setObject:[NSNumber numberWithLong:s::img::msize(img)] forKey:@"msize"];
+        
     } else {
         [ret setObject:@"error: file does not exist" forKey:@"error-message"];
     }

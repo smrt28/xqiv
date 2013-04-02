@@ -13,6 +13,7 @@
 
 - (void)dealloc
 {
+    //[_timer release];
     [super dealloc];
 }
 
@@ -20,6 +21,7 @@
     self = [super init];
     _cache.setDelegate(self);
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
+
     return self;
 }
 
@@ -27,7 +29,6 @@
 {
 
 }
-
 
 - (void)cmdLine:(NSNotification *)note {
 
@@ -48,11 +49,6 @@
         _cache.go();
         
     } @catch (...) {}
-
-}
-
-
-- (IBAction) test:sender {
 }
 
 - (void)showCachedImage:(NSDictionary *)item {
@@ -60,13 +56,14 @@
     [image setImage:img];
 }
 
-- (IBAction) next:sender {
+-(void)nextImage {
     _cache.next();
 }
 
 -(void)awakeFromNib {
     [_window setLevel:NSScreenSaverWindowLevel + 1];
     [_window orderFront:nil];
+    [image setDelegate:self];
 }
 
 @end

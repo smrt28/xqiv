@@ -12,14 +12,14 @@
 #import "SDictionary.h"
 #import "QQCache.h"
 
-@interface QQAppDelegate : NSObject <NSApplicationDelegate, QQCacheProtocol> {
+@interface QQAppDelegate : NSObject <NSApplicationDelegate, QQCacheProtocol, QQImageViewProtocol>
+{
     IBOutlet QQImageView * image;
     IBOutlet NSPanel *_tags;
     s::Cache_t _cache;
 }
 
-- (IBAction) test:sender;
-- (IBAction) next:sender;
+-(void)nextImage;
 
 @property (assign) IBOutlet NSWindow *window;
 

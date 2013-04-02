@@ -10,7 +10,7 @@
 
 namespace s {
 namespace img {
-    
+    size_t msize(NSImage *img);
     NSImage * resize(NSImage * img, NSSize size);
     NSImage * fitScreen(NSImage *img);
 }
