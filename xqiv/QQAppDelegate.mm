@@ -53,6 +53,11 @@
 
 - (void)showCachedImage:(NSDictionary *)item {
     NSImage *img = [item objectForKey:@"image"];
+    NSApplication *myApp = [NSApplication sharedApplication];
+    [myApp activateIgnoringOtherApps:YES];
+    [_window orderFrontRegardless];
+    [_window makeKeyAndOrderFront:_window];
+    [_window makeKeyWindow];
     [image setImage:img];
 }
 

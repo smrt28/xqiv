@@ -15,6 +15,7 @@
 
 - (void)dealloc {
     [_timer release];
+    [_tracking release];
     [super dealloc];
 }
 
@@ -26,6 +27,9 @@
         _timer = nil;
         _best = NO;
         _delegate = nil;
+        _tracking = nil;
+        _mouseInside = NO;
+        _forceBest = NO;
     }
     
     
@@ -55,6 +59,14 @@
                                             selector: @selector(renderBest)
                                             userInfo: nil
                                              repeats: NO];
+}
+
+- (NSSize)imegeSize {
+    NSSize rv = _imageSize;
+    if (!_image) {
+        rv.height = rv.width = 0;
+    }
+    return rv;
 }
 
 - (BOOL)acceptsFirstResponder {
@@ -131,10 +143,53 @@
     NSLog(@"renderBest!");
 }
 
+- (void)mouseEntered:(NSEvent *)theEvent {
+    if (_mouseInside) return;
+    [[self window] setStyleMask: NSBorderlessWindowMask | NSResizableWindowMask];
+    [[self window] setHasShadow:YES];
+    _forceBest = YES;
+    _mouseInside = YES;
+    [self setNeedsDisplay:YES];
+    NSLog(@"mouseEntered");
+}
+- (void)mouseExited:(NSEvent *)theEvent {
+    if (!_mouseInside) return;
+    [[self window] setStyleMask: NSBorderlessWindowMask];
+    [[self window] setHasShadow:NO];
+    _forceBest = YES;
+    _mouseInside = NO;
+    [self setNeedsDisplay:YES];
+    NSLog(@"mouseExited");
+}
+
+- (void)updateTrackingAreas {
+    NSRect eyeBox = [self frame];
+    if (_tracking) {
+        [self removeTrackingArea:_tracking];
+        [_tracking release];
+        _tracking = nil;
+    }
+    _tracking = [[NSTrackingArea alloc] initWithRect:eyeBox
+                  options: (NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow )
+                  owner:self userInfo:nil];
+    
+    [self addTrackingArea:_tracking];
+}
+
 - (void)drawRect:(NSRect)dirtyRect interpolation:(int)itp
 {
+    
+    if (_mouseInside || !_image) {
+        [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:0.5] set];
+    } else {
+        [[NSColor clearColor] set];
+    }
+    
+    NSRectFill(dirtyRect);
+   // NSRectFill([self bounds]);
     if (_image) {
-        [self scheduleDrawBest];
+        
+        
         [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
         NSImage *toDraw = _image;
 
@@ -162,26 +217,27 @@
         NSRect r =
         NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
          
-        if (itp) {
+        if (itp || _forceBest) {
+            _forceBest = NO;
+            NSLog(@"Draw best!");
             NSSize size = isize;
             toDraw = s::img::resize(_image, size);
             [toDraw size];
+        } else {
+            [self scheduleDrawBest];
         }
         
         [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
         return;
     }
     
-  //  [[NSColor clearColor] set];
-    [[NSColor redColor] set];
-    NSRectFill([self bounds]);
+
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
     if ([theEvent keyCode] == kVK_Space) {
         [_delegate nextImage];        
     }
-    [super keyDown:theEvent];
 }
 
 @end

@@ -21,6 +21,7 @@
     _lock = [[NSObject alloc] init];
     _thread = [NSThread currentThread];
     _delegate = nil;
+
     return self;
 }
 
@@ -65,7 +66,7 @@
         aTime = _time;
         NSNumber *t = [anItem objectForKey:@"time"];
         int objTime = [t intValue];
-        NSLog(@"time=%d objtime=%d", _time, objTime);
+       // NSLog(@"time=%d objtime=%d", _time, objTime);
         if (objTime != _time) return;
     }
   
@@ -129,7 +130,7 @@
     if (sha1)
         [ret setObject:sha1 forKey:@"sha1"];
 
-    NSLog(@"LOADED: %@", filename);
+   // NSLog(@"LOADED: %@", filename);
         
     [self performSelector:@selector(handleImageLoaded:)
                  onThread:_thread withObject:ret waitUntilDone:NO];
