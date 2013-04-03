@@ -1,6 +1,20 @@
 
-fast commandline image viewer
+Fast commandline image viewer
+-----------------------------
 
-* preread images on separated thread
+GOALS:
+------
 
+ * display image as fast as possible
+
+ * eliminate need of moving hands from keyboard to mouse and back
+
+ * fast image tagging - recoginize same images by SHA1 checksum
+
+ * organize images
+
+
+IMPLEMENTED:
+------------
+   - preread images on separated thread
 
