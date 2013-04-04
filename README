@@ -2,10 +2,14 @@
 Fast commandline image viewer
 -----------------------------
 
-GOALS:
+GOALS: - sorted by priority
 ------
 
  * display image as fast as possible
+   - decode images on separated thread(s)
+   - cache decoded images in mem/disk
+
+ * controll from command-line
 
  * eliminate need of moving hands from keyboard to mouse and back
 
@@ -13,6 +17,9 @@ GOALS:
 
  * organize images
 
+ * view/download images on www page
+
+ * open images from menu
 
 IMPLEMENTED:
 ------------
