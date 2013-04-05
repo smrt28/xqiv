@@ -22,9 +22,10 @@ namespace s { class Cache_t; }
     QQImageLoader *_imageLoader;
 }
 
-- (void)clearQueue;
+- (BOOL)buzy;
 - (void)imageLoaded:(NSMutableDictionary *)obj;
 - (id)initWithCache:(s::Cache_t *)cache;
+- (void)invalidate;
 
 @end
 
@@ -37,7 +38,6 @@ namespace s {
 
     public:
         Cache_t() :
-            forced(false),
             array(),
             position(0),
             qqCache([[QQCache alloc] initWithCache:this]),
@@ -66,8 +66,8 @@ namespace s {
         
         void clear() {
             position = 0;
-            [qqCache clearQueue];
             array.clear();
+            [qqCache invalidate];
         }
         
         
@@ -88,8 +88,10 @@ namespace s {
         NSMutableDictionary * get_todo();
         
         bool is_to_clear(size_t ofs);
+        
+        void logCache();
     private:
-        bool forced;
+        //int _l, _r;
         Array_t array;
         size_t position;
         QQCache * qqCache;

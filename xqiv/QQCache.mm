@@ -28,12 +28,16 @@
     _cache->handleLoaded(obj);
 }
 
-- (void)clearQueue {
-    [_imageLoader incTime];
-}
-
 - (QQImageLoader *)loader {
     return _imageLoader;
+}
+
+- (BOOL)buzy {
+    return [_imageLoader inProgress];
+}
+
+- (void)invalidate {
+    [_imageLoader invalidate];
 }
 
 @end
@@ -52,7 +56,6 @@ namespace s {
     }
 
     void Cache_t::insert(Dictionary_t &dict) {
-        [qqCache clearQueue];
         Dictionary_t item;
         item.insert("item", dict);
         item.insert("visits", [NSNumber numberWithInt:0]);
@@ -61,16 +64,14 @@ namespace s {
     }
     
     void Cache_t::go() {
+        if ([qqCache buzy]) return;
         NSMutableDictionary * item = get(position);
         if (item && [item objectForKey:@"image"] == nil) {
-            forced = true;
-            [qqCache clearQueue];
             [[qqCache loader] loadImage:item];
             return;
         }
         item = get_todo();
         if (item) {
-            [qqCache clearQueue];
             [[qqCache loader] loadImage:item];
         }
     }
@@ -85,7 +86,6 @@ namespace s {
     }
     
     void Cache_t::next() {
-        if (forced) return;
         if (array.size() == 0) return;
         position = position + 1;
         if (position >= array.size()) position = 0;
@@ -94,7 +94,6 @@ namespace s {
     }
     
     void Cache_t::prev() {
-        if (forced) return;
         if (array.size() == 0) return;
         if (position == 0) {
             position = array.size() - 1;
@@ -124,29 +123,62 @@ namespace s {
     
     
     void Cache_t::handleLoaded(NSMutableDictionary *anItem) {
-        forced = false;
         update(anItem);
         NSNumber *n = [anItem objectForKey:@"index"];
         if ([n intValue] == position) {
             [delegate showCachedImage:anItem];
         }
+        logCache();
         go();
     }
     
     
     bool Cache_t::is_to_clear(size_t ofs) {
-
+        int B = 3 ;
+        int N = 15;
+        
+        if (B + N >= array.size() - 1) return false;
+        
         int p = (int)position;
         
-        int l = p ;
-        int r = p + 15;
+        int l = (p - B) % array.size();
+        int r = (p + N) % array.size();
         int o = (int)ofs;
         
-        if (o >= l && o <= r) return false;
+        bool rv;
+        if (l < r) {
+            if (o >= l && o <= r)
+                    rv = false;
+                else
+                    rv = true;
+        } else {
+            if (o > r && o < l)
+                rv = true;
+            else
+                rv = false;
+        }
 
-        return true;
+        return rv;
     }
     
+    void Cache_t::logCache() {
+        char buf[array.size() + 1];
+        buf[array.size()] = 0;
+        for (int i=0;i<array.size();i++) {
+            if (isLoaded(get(i))) {
+                buf[i] = '*';
+                if (i == position) {
+                    buf[i] = '#';
+                }
+            } else {
+                buf[i] = '-';
+                if (i == position) {
+                    buf[i] = '?';
+                }
+            }
+        }
+        NSLog(@"%s", buf);
+    }
 
     
     NSMutableDictionary * Cache_t::get_todo() {

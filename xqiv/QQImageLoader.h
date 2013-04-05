@@ -17,17 +17,18 @@
     id _target;
     NSThread *_thread;
     id<QQImageLoaderProtocol> _delegate;
-    int _time;
-    NSObject *_lock;
+    BOOL _inProgress;
+    BOOL _invalied;
 }
 
 
 
 + (QQImageLoader *)loader;
-- (void)loadImage:(NSDictionary *)filename;
+- (BOOL)loadImage:(NSDictionary *)filename;
 - (void)join;
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
-- (int)incTime;
+- (BOOL)inProgress;
+- (void)invalidate;
 
 @end

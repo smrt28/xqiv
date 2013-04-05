@@ -66,6 +66,9 @@
 -(void)nextImage {
     _cache.next();
 }
+-(void)prevImage {
+    _cache.prev();
+}
 
 -(void)awakeFromNib {
     [_window setLevel:NSScreenSaverWindowLevel + 1];

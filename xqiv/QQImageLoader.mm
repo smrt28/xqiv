@@ -18,7 +18,8 @@
 -(id)init {
     self = [super init];
     _end = NO;
-    _lock = [[NSObject alloc] init];
+    _inProgress = NO;
+    _invalied = NO;
     _thread = [NSThread currentThread];
     _delegate = nil;
 
@@ -28,7 +29,6 @@
 - (void)dealloc {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [_delegate release];
-    [_lock release];
     [nc removeObserver:self];
     [self join];
     [super dealloc];
@@ -44,12 +44,6 @@
     return _delegate;
 }
 
-- (int)incTime {
-    @synchronized(_lock) {
-        _time++;
-        return _time;
-    }
-}
 
 
 + (QQImageLoader *)loader {
@@ -61,15 +55,7 @@
     
     s::Dictionary_t item(anItem);
     NSNumber *index = item["index"];
-    int aTime;
-    @synchronized(_lock) {
-        aTime = _time;
-        NSNumber *t = [anItem objectForKey:@"time"];
-        int objTime = [t intValue];
-       // NSLog(@"time=%d objtime=%d", _time, objTime);
-        if (objTime != _time) return;
-    }
-  
+
     
     NSLog(@"loading: %ld", (long)[index integerValue]);
     
@@ -78,7 +64,7 @@
     NSString *filename = item["filename"];
         
     NSMutableDictionary *ret = [NSMutableDictionary dictionary];
-    [ret setObject:[NSNumber numberWithInt:aTime] forKey:@"time"];
+
     NSImage *img;
     NSString *sha1 = nil;
     NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
@@ -141,22 +127,20 @@
 }
 
 - (void)handleImageLoaded:(NSMutableDictionary *)result {
-    @synchronized(_lock) {
-        NSNumber *n = [result objectForKey:@"time"];
-        if ([n intValue] != _time) {
-            NSLog(@"Old async image skipped");
-            return;
-        }
+    _inProgress = NO;
+    if (_invalied) {
+        _invalied = NO;
+        return;
     }
-    
     [_delegate imageLoaded: result];
 }
 
-- (void)loadImage:(NSMutableDictionary *)item {
-    @synchronized(_lock) {
-    [item setObject:[NSNumber numberWithInt:_time] forKey:@"time"];
-    }
+- (BOOL)loadImage:(NSMutableDictionary *)item {
+    if (_inProgress)
+        return NO;
+    _inProgress = YES;
     [self performSelector:@selector(loadImageAsync:) onThread:self withObject:item waitUntilDone:NO];
+    return YES;
 }
 
 
@@ -167,6 +151,15 @@
 - (void)join {
     [self performSelector:@selector(joinAsync) onThread:self withObject:nil waitUntilDone:YES];
 
+}
+
+- (BOOL)inProgress {
+    return _inProgress;
+}
+
+- (void)invalidate {
+    if (_inProgress)
+        _invalied = YES;
 }
 
 - (void)main
