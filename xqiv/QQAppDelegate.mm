@@ -53,6 +53,8 @@
 
 - (void)showCachedImage:(NSDictionary *)item {
     NSImage *img = [item objectForKey:@"image"];
+    NSNumber *index = [item objectForKey:@"index"];
+    NSLog(@"showing: %ld", (long)[index integerValue]);
     NSApplication *myApp = [NSApplication sharedApplication];
     [myApp activateIgnoringOtherApps:YES];
     [_window orderFrontRegardless];

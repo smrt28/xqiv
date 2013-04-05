@@ -37,6 +37,7 @@ namespace s {
 
     public:
         Cache_t() :
+            forced(false),
             array(),
             position(0),
             qqCache([[QQCache alloc] initWithCache:this]),
@@ -64,6 +65,7 @@ namespace s {
         size_t size() { return array.size(); }
         
         void clear() {
+            position = 0;
             [qqCache clearQueue];
             array.clear();
         }
@@ -84,7 +86,10 @@ namespace s {
         NSMutableDictionary * get(size_t);
         
         NSMutableDictionary * get_todo();
+        
+        bool is_to_clear(size_t ofs);
     private:
+        bool forced;
         Array_t array;
         size_t position;
         QQCache * qqCache;

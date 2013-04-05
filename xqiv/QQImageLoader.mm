@@ -70,6 +70,9 @@
         if (objTime != _time) return;
     }
   
+    
+    NSLog(@"loading: %ld", (long)[index integerValue]);
+    
     @autoreleasepool {
     
     NSString *filename = item["filename"];
@@ -130,7 +133,6 @@
     if (sha1)
         [ret setObject:sha1 forKey:@"sha1"];
 
-   // NSLog(@"LOADED: %@", filename);
         
     [self performSelector:@selector(handleImageLoaded:)
                  onThread:_thread withObject:ret waitUntilDone:NO];

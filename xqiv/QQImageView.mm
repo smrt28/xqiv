@@ -70,17 +70,14 @@
 }
 
 - (BOOL)acceptsFirstResponder {
-    NSLog(@"acceptsFirstResponder");
     return YES;
 }
 
 - (BOOL)becomeFirstResponder {
-    NSLog(@"becomeFirstResponder");
     return YES;
 }
 
 - (BOOL)resignFirstResponder {
-    NSLog(@"resignFirstResponder");
     return YES;
 }
 
@@ -140,7 +137,7 @@
     _best = YES;
     _timer = nil;
     [self setNeedsDisplay:YES];
-    NSLog(@"renderBest!");
+//    NSLog(@"renderBest!");
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent {
@@ -150,7 +147,7 @@
     _forceBest = YES;
     _mouseInside = YES;
     [self setNeedsDisplay:YES];
-    NSLog(@"mouseEntered");
+//    NSLog(@"mouseEntered");
 }
 - (void)mouseExited:(NSEvent *)theEvent {
     if (!_mouseInside) return;
@@ -159,7 +156,7 @@
     _forceBest = YES;
     _mouseInside = NO;
     [self setNeedsDisplay:YES];
-    NSLog(@"mouseExited");
+//    NSLog(@"mouseExited");
 }
 
 - (void)updateTrackingAreas {
@@ -219,7 +216,7 @@
          
         if (itp || _forceBest) {
             _forceBest = NO;
-            NSLog(@"Draw best!");
+            //NSLog(@"Draw best!");
             NSSize size = isize;
             toDraw = s::img::resize(_image, size);
             [toDraw size];

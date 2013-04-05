@@ -38,6 +38,13 @@
 
 @end
 
+namespace {
+    bool isLoaded(NSMutableDictionary *item) {
+        NSImage *img = [item objectForKey:@"image"];
+        if (img) return true;
+        return false;
+    }
+}
 namespace s {
     size_t get_item_index(NSMutableDictionary * anItem) {
         NSNumber *n = [anItem objectForKey:@"index"];
@@ -56,33 +63,38 @@ namespace s {
     void Cache_t::go() {
         NSMutableDictionary * item = get(position);
         if (item && [item objectForKey:@"image"] == nil) {
+            forced = true;
             [qqCache clearQueue];
             [[qqCache loader] loadImage:item];
             return;
         }
         item = get_todo();
         if (item) {
+            [qqCache clearQueue];
             [[qqCache loader] loadImage:item];
         }
     }
 
     void Cache_t::positionChanged() {
         NSMutableDictionary * item = get(position);
-        if (item) {
+        NSImage * img = [item objectForKey:@"image"];
+        if (img) {
             [delegate showCachedImage:item];
-            return;
         }
         go();
     }
     
     void Cache_t::next() {
+        if (forced) return;
         if (array.size() == 0) return;
         position = position + 1;
         if (position >= array.size()) position = 0;
+        
         positionChanged();
     }
     
     void Cache_t::prev() {
+        if (forced) return;
         if (array.size() == 0) return;
         if (position == 0) {
             position = array.size() - 1;
@@ -112,6 +124,7 @@ namespace s {
     
     
     void Cache_t::handleLoaded(NSMutableDictionary *anItem) {
+        forced = false;
         update(anItem);
         NSNumber *n = [anItem objectForKey:@"index"];
         if ([n intValue] == position) {
@@ -120,12 +133,43 @@ namespace s {
         go();
     }
     
+    
+    bool Cache_t::is_to_clear(size_t ofs) {
+
+        int p = (int)position;
+        
+        int l = p ;
+        int r = p + 15;
+        int o = (int)ofs;
+        
+        if (o >= l && o <= r) return false;
+
+        return true;
+    }
+    
+
+    
     NSMutableDictionary * Cache_t::get_todo() {
         for(size_t i = 0;i<array.size();i++) {
-            NSMutableDictionary *rv = get(i + position);
-            if ([rv objectForKey:@"image"]) {
+            size_t ofs = (i + position) % array.size();
+            NSMutableDictionary *rv = get(ofs);
+            if (is_to_clear(ofs)) {
+                bool b = isLoaded(rv);
+                if (isLoaded(rv)) {
+                    NSLog(@"clear: %zd", ofs);
+                    [rv removeObjectForKey:@"image"];
+                }
+            }
+        }
+        
+        
+        for(size_t i = 0;i<array.size();i++) {
+            size_t ofs = (i + position) % array.size();
+            NSMutableDictionary *rv = get(ofs);
+            if (is_to_clear(ofs) || isLoaded(rv)) {
                 continue;
             }
+            
             return rv;
         }
         return nil;
