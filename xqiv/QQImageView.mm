@@ -233,11 +233,19 @@
 
 - (void)keyDown:(NSEvent *)theEvent {
     NSLog(@"key:0x%x", [theEvent keyCode]);
-    if ([theEvent keyCode] == kVK_Space) {
-        [_delegate nextImage];
-    }
-    if ([theEvent keyCode] == kVK_Delete) {
-        [_delegate prevImage];
+    
+    switch([theEvent keyCode]) {
+        case kVK_Space:
+            [_delegate nextImage];
+            break;
+        case kVK_Delete:
+            [_delegate prevImage];
+            break;
+        case kVK_Escape:
+            [_delegate escape];
+            break;
+            
+            
     }
 }
 

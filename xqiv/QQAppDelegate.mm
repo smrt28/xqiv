@@ -33,6 +33,7 @@
 - (void)cmdLine:(NSNotification *)note {
 
     @try {
+        [[NSApplication sharedApplication] unhide:self];
         _cache.clear();
         NSString *img_file = 0;
         NSDictionary *userInfo = [note userInfo];
@@ -74,6 +75,13 @@
     [_window setLevel:NSScreenSaverWindowLevel + 1];
     [_window orderFront:nil];
     [image setDelegate:self];
+}
+
+-(void)escape {
+    _cache.clear();
+    [[NSApplication sharedApplication] hide:self];
+//    [_window ]
+    
 }
 
 @end

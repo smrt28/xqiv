@@ -11,6 +11,7 @@
 @protocol QQImageViewProtocol<NSObject>
     -(void)nextImage;
     -(void)prevImage;
+    -(void)escape;
 @end
 
 

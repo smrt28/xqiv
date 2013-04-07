@@ -20,6 +20,8 @@
 }
 
 -(void)nextImage;
+-(void)prevImage;
+-(void)escape;
 
 @property (assign) IBOutlet NSWindow *window;
 
