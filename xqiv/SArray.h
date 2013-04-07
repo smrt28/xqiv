@@ -36,11 +36,32 @@ namespace s {
             return [array count];
         }
         
+        void remove(int idx) {
+            [array removeObjectAtIndex:idx];
+        }
+        
         void clear() {
             [array removeAllObjects];
+        }
+        
+        void replace(size_t idx, id val) {
+            [array replaceObjectAtIndex:idx withObject:val];
+        }
+        
+        virtual id fixRetVal(size_t idx, id rv) {
+            return rv;
         }
         
     private:
         NSMutableArray *array;
     };
+    
+    
+    class ArrayWithNumbers_t : public Array_t {
+    public:
+        virtual id fixRetVal(size_t idx, id rv);
+
+        
+    };
+    
 }

@@ -46,7 +46,11 @@
             _cache.insert(item);
             if (i==1) img_file = arg;
         }
-
+        
+        [_window orderFrontRegardless];
+        [_window makeKeyAndOrderFront:_window];
+        [_window makeKeyWindow];
+        
         _cache.go();
         
     } @catch (...) {}
@@ -58,9 +62,10 @@
     NSLog(@"showing: %ld", (long)[index integerValue]);
     NSApplication *myApp = [NSApplication sharedApplication];
     [myApp activateIgnoringOtherApps:YES];
-    [_window orderFrontRegardless];
-    [_window makeKeyAndOrderFront:_window];
-    [_window makeKeyWindow];
+    
+
+    
+    [image setForceBest];
     [image setImage:img];
 }
 
@@ -80,8 +85,6 @@
 -(void)escape {
     _cache.clear();
     [[NSApplication sharedApplication] hide:self];
-//    [_window ]
-    
 }
 
 @end

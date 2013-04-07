@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 smrt. All rights reserved.
 //
 
+
+#include <openssl/sha.h>
+#include <CommonCrypto/CommonDigest.h>
 #import "QQImageLoader.h"
 #import "SDictionary.h"
 #import "CImageUtils.h"
-#include <openssl/sha.h>
-#include <CommonCrypto/CommonDigest.h>
+#import "CHash.h"
 
 @implementation QQImageLoader
 
@@ -51,51 +53,34 @@
 }
 
 
+- (NSMutableDictionary *)createResponse:(NSMutableDictionary *)anItem  {
+    s::Dictionary_t item(anItem);
+    s::Dictionary_t ret;
+    ret.insert(@"index", item[@"index"]);
+    ret.insert(@"filename", item[@"filename"]);
+    ret.insert(@"errorcode", 0);
+    return ret.release();
+}
+
 - (void)loadImageAsync:(NSMutableDictionary *)anItem {
     
     s::Dictionary_t item(anItem);
-    NSNumber *index = item["index"];
-
-    
-    NSLog(@"loading: %ld", (long)[index integerValue]);
     
     @autoreleasepool {
     
     NSString *filename = item["filename"];
         
-    NSMutableDictionary *ret = [NSMutableDictionary dictionary];
+    s::Dictionary_t ret([self createResponse:anItem]);
 
-    NSImage *img;
+    NSImage *img = nil;
     NSString *sha1 = nil;
     NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
         
     @try {
         NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath: filename];
         if (fh) {
-            NSData *data = [fh readDataOfLength:1024 * 1024 * 32];
-
-            NSMutableData *hashData =
-                [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-
-            const char *b = (const char *)[data bytes];
-            CC_LONG len = (CC_LONG)[data length];
-            unsigned char digest[CC_SHA1_DIGEST_LENGTH];
-            CC_SHA1_CTX ctx;
-            CC_SHA1_Init(&ctx);
-            CC_SHA1_Update(&ctx, b, len);
-            CC_SHA1_Final(digest, &ctx);
-            
-            char digestStr[CC_SHA1_DIGEST_LENGTH * 2 + 1];
-            digestStr[CC_SHA1_DIGEST_LENGTH * 2] = 0;
-            static const char *hex = "0123456789abcdef";
-        
-            char *c = digestStr;
-            for (int i = 0; i<CC_SHA1_DIGEST_LENGTH; i++) {
-                *c = hex[digest[i] >> 4]; c++;
-                *c = hex[digest[i] & 0xf]; c++;
-            }
-            
-            sha1 = [NSString stringWithUTF8String:digestStr];
+            NSData *data = [fh readDataOfLength:1024 * 1024 * 32];            
+            sha1 = s::hash::hex(s::hash::sha1(data));
             img = [[[NSImage alloc] initWithData:data] autorelease];
             img = s::img::fitScreen(img);
         }
@@ -104,24 +89,17 @@
         img = nil;
     }
     
-    
-    [ret setObject:[NSNumber numberWithLong:[index longValue]] forKey:@"index"];
-
     if (img) {
-        [ret setObject:img forKey:@"image"];
-        [ret setObject:[NSNumber numberWithLong:s::img::msize(img)] forKey:@"msize"];
-        
+        ret.insert(@"image", img);
     } else {
-        [ret setObject:@"error: file does not exist" forKey:@"error-message"];
+        ret.insert(@"errorcode", 1);
     }
         
-    [ret setObject:filename forKey:@"filename"];
     if (sha1)
-        [ret setObject:sha1 forKey:@"sha1"];
-
+        ret.insert(@"sha1", sha1);
         
     [self performSelector:@selector(handleImageLoaded:)
-                 onThread:_thread withObject:ret waitUntilDone:NO];
+                 onThread:_thread withObject:ret.release() waitUntilDone:NO];
         
     } // @autoreleasepool
 }

@@ -41,7 +41,8 @@ namespace s {
             array(),
             position(0),
             qqCache([[QQCache alloc] initWithCache:this]),
-            delegate(nil)
+            delegate(nil),
+            nextPosition(-1)
         {}
         
         ~Cache_t() {
@@ -65,6 +66,7 @@ namespace s {
         size_t size() { return array.size(); }
         
         void clear() {
+            nextPosition = 0;
             position = 0;
             array.clear();
             [qqCache invalidate];
@@ -91,10 +93,10 @@ namespace s {
         
         void logCache();
     private:
-        //int _l, _r;
-        Array_t array;
-        size_t position;
+        ArrayWithNumbers_t array;
+        long position;
         QQCache * qqCache;
         id<QQCacheProtocol> delegate;
+        long nextPosition;
     };
 }

@@ -31,6 +31,7 @@
     BOOL _forceBest;
 }
 
+- (void)setForceBest;
 - (NSSize)imegeSize;
 - (void)setImage:(NSImage *)image;
 - (void)setDelegate:(id<QQImageViewProtocol>)dlg;

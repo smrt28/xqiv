@@ -129,6 +129,9 @@ namespace img {
 #endif
     
     NSImage *fitSize(NSImage *img, NSSize size) {
+        if (!img) {
+            return nil;
+        }
         NSArray * repArray = [img representations];
         NSImageRep * rep = [repArray objectAtIndex:0];
         

@@ -11,7 +11,10 @@
 namespace s {
     Dictionary_t::Dictionary_t() :
         db([[NSMutableDictionary alloc] init])
-    {}
+    {
+        [db autorelease];
+        [db retain];
+    }
     
     
     Dictionary_t::Dictionary_t(NSMutableDictionary *db) :

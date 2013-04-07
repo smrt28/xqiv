@@ -15,6 +15,7 @@
 		5E10D7F816F4987300C98C58 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7F616F4987300C98C58 /* MainMenu.xib */; };
 		5E422ACE170CBFC5009A62A7 /* QQQivWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */; };
 		5E4DB69116F8DAED003EA782 /* QQImageLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */; };
+		5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E593F2D1711FC3A00FE2481 /* CHash.mm */; };
 		5E7A1A0C16FE22F9006BD61B /* QQCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A1A0B16FE22F9006BD61B /* QQCache.mm */; };
 		5E7A1A1516FE24C1006BD61B /* SDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A1A1416FE24C1006BD61B /* SDictionary.mm */; };
 		5E7A1A1C16FE5149006BD61B /* SArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7A1A1B16FE5149006BD61B /* SArray.mm */; };
@@ -40,6 +41,8 @@
 		5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QQQivWindow.m; sourceTree = "<group>"; };
 		5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageLoader.h; sourceTree = "<group>"; };
 		5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageLoader.mm; sourceTree = "<group>"; };
+		5E593F2D1711FC3A00FE2481 /* CHash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CHash.mm; sourceTree = "<group>"; };
+		5E593F2E1711FC3A00FE2481 /* CHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHash.h; sourceTree = "<group>"; };
 		5E7A1A0A16FE22F9006BD61B /* QQCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQCache.h; sourceTree = "<group>"; };
 		5E7A1A0B16FE22F9006BD61B /* QQCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQCache.mm; sourceTree = "<group>"; };
 		5E7A1A1316FE24C1006BD61B /* SDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDictionary.h; sourceTree = "<group>"; };
@@ -141,6 +144,8 @@
 				5E7A1A1616FE4F8B006BD61B /* SUtils.h */,
 				5E7A1A1A16FE5149006BD61B /* SArray.h */,
 				5E7A1A1B16FE5149006BD61B /* SArray.mm */,
+				5E593F2E1711FC3A00FE2481 /* CHash.h */,
+				5E593F2D1711FC3A00FE2481 /* CHash.mm */,
 				5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */,
 				5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */,
 			);
@@ -221,6 +226,7 @@
 				5E7A1A1C16FE5149006BD61B /* SArray.mm in Sources */,
 				5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */,
 				5E422ACE170CBFC5009A62A7 /* QQQivWindow.m in Sources */,
+				5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

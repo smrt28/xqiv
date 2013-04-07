@@ -15,16 +15,23 @@ namespace s {
     }
 
     id Array_t::operator[](size_t idx) {
-        return [array objectAtIndex:idx];
+        id rv = [array objectAtIndex:idx];
+        return fixRetVal(idx, rv);
     }
     
     id Array_t::at(size_t idx) {
         if (idx >= size()) return nil;
-        return [array objectAtIndex:idx];
+        id rv = [array objectAtIndex:idx];
+        return fixRetVal(idx, rv);
     }
     
     void Array_t::push_back(Dictionary_t &dict) {
         push_back(dict.objc());
     }
-
+    
+    id ArrayWithNumbers_t::fixRetVal(size_t idx, id rv) {
+        Dictionary_t dict(rv);
+        dict.insert(@"index", int(idx));
+        return dict.release();
+    }
 }

@@ -137,7 +137,6 @@
     _best = YES;
     _timer = nil;
     [self setNeedsDisplay:YES];
-//    NSLog(@"renderBest!");
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent {
@@ -147,7 +146,6 @@
     _forceBest = YES;
     _mouseInside = YES;
     [self setNeedsDisplay:YES];
-//    NSLog(@"mouseEntered");
 }
 - (void)mouseExited:(NSEvent *)theEvent {
     if (!_mouseInside) return;
@@ -156,7 +154,6 @@
     _forceBest = YES;
     _mouseInside = NO;
     [self setNeedsDisplay:YES];
-//    NSLog(@"mouseExited");
 }
 
 - (void)updateTrackingAreas {
@@ -216,7 +213,6 @@
          
         if (itp || _forceBest) {
             _forceBest = NO;
-            //NSLog(@"Draw best!");
             NSSize size = isize;
             toDraw = s::img::resize(_image, size);
             [toDraw size];
@@ -229,6 +225,10 @@
     }
     
 
+}
+
+- (void)setForceBest {
+    _forceBest = YES;
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
@@ -244,8 +244,6 @@
         case kVK_Escape:
             [_delegate escape];
             break;
-            
-            
     }
 }
 

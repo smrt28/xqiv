@@ -48,7 +48,14 @@ namespace {
         if (img) return true;
         return false;
     }
+
+    int errorCode(NSMutableDictionary *item) {
+        NSNumber *n = [item objectForKey:@"errorcode"];
+        return [n intValue];
+    }
 }
+
+
 namespace s {
     size_t get_item_index(NSMutableDictionary * anItem) {
         NSNumber *n = [anItem objectForKey:@"index"];
@@ -56,11 +63,7 @@ namespace s {
     }
 
     void Cache_t::insert(Dictionary_t &dict) {
-        Dictionary_t item;
-        item.insert("item", dict);
-        item.insert("visits", [NSNumber numberWithInt:0]);
-        dict.insert("index", [NSNumber numberWithLong:array.size()]);
-        array.push_back(item);
+        array.push_back(dict);
     }
     
     void Cache_t::go() {
@@ -77,6 +80,14 @@ namespace s {
     }
 
     void Cache_t::positionChanged() {
+        if (array.size() == 0) return;
+        if ([qqCache buzy]) {
+            nextPosition = position;
+            return;
+        }
+        if (position >= array.size() || position < 0) {
+            position = 0;
+        }
         NSMutableDictionary * item = get(position);
         NSImage * img = [item objectForKey:@"image"];
         if (img) {
@@ -95,7 +106,7 @@ namespace s {
     
     void Cache_t::prev() {
         if (array.size() == 0) return;
-        if (position == 0) {
+        if (position <= 0) {
             position = array.size() - 1;
         } else {
             position--;
@@ -109,25 +120,37 @@ namespace s {
     
     NSMutableDictionary * Cache_t::get(size_t idx) {
         if (array.size() == 0) return nil;
-        Dictionary_t dict(array[idx % array.size()]);
-        return dict["item"];
+        return array[idx];
     }
     
     void Cache_t::update(NSMutableDictionary *anItem) {
-        if (array.size() == 0) return;
+         if (array.size() == 0) return;
         size_t idx = get_item_index(anItem);
-        Dictionary_t dict(array[idx]);
-        dict.remove("item");
-        dict.insert("item", anItem);
+        array.replace(idx, anItem);
     }
     
     
     void Cache_t::handleLoaded(NSMutableDictionary *anItem) {
+        Dictionary_t item(anItem);
+        int idx = item.value<int>(@"index");
+        if (item.value<int>(@"errorcode")) {
+            array.remove(idx);
+            positionChanged();
+            return;
+        }
         update(anItem);
-        NSNumber *n = [anItem objectForKey:@"index"];
-        if ([n intValue] == position) {
+        
+
+        if (idx == position) {
             [delegate showCachedImage:anItem];
         }
+        if (nextPosition != -1) {
+            position = nextPosition;
+            nextPosition = -1;
+            positionChanged();
+            return;
+        }
+
         logCache();
         go();
     }
