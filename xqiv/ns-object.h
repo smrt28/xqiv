@@ -5,8 +5,10 @@
 //  Created by smrt on 4/8/13.
 //  Copyright (c) 2013 smrt. All rights reserved.
 //
+#ifndef xqiv_ns_object_h
+#define xqiv_ns_object_h
 
-#import <Foundation/Foundation.h>
+#include "ns-objc.h"
 
 namespace ns {
     template<typename>
@@ -26,23 +28,6 @@ namespace ns {
             typedef xxx_t type_t;
         };
         
-        template<typename Object_t>
-        class objc_creator_t {
-        public:
-            typedef Object_t * type_t;
-            Object_t * operator()() {
-                return [[Object_t alloc] init];
-            }
-        };
-        template<>
-        class objc_creator_t<id> {
-        public:
-            typedef id type_t;
-            id operator()() {
-                return nil;
-            }
-        };
-        
         template<typename  T_t>
         id objc(const T_t &t) {
             return t.objc();
@@ -57,6 +42,21 @@ namespace ns {
         T_t * objc(T_t *t) {
             return t;
         }
+        
+
+        template<typename Obj_t>
+        struct is_objc_t {
+            static inline Obj_t * get(id obj) { return obj; }
+            typedef Obj_t * type_t;
+        };
+
+        template<> struct is_objc_t<int> {
+            static inline int get(id obj) {
+                return [obj intValue];
+            }
+            typedef int type_t;
+        };
+         
 
     }
     
@@ -90,8 +90,9 @@ namespace ns {
         id objc() { return o; }
         
         template<typename Obj_t>
-        Obj_t * as() { return o; }
-        
+        typename aux::is_objc_t<Obj_t>::type_t as() {
+            return aux::is_objc_t<Obj_t>::get(o);
+        }
         
     private:
         id o;
@@ -113,7 +114,12 @@ namespace ns {
         
         template<typename var_t>
         void insert(key_t key, var_t var) {
-            [o setObject:aux::objc(var) forKey:key];
+            [o setObject: nss::objc(var) forKey:key];
+        }
+        
+        template<typename>
+        void insert(key_t key, int var) {
+            [o setObject: [NSNumber numberWithInt:var] forKey:key];
         }
         
         void remove(key_t key) {
@@ -138,7 +144,6 @@ namespace ns {
             const handle_t<Object_t> * operator->() const {
                 return &o;
             }
-            
         
         private:
             handle_t<Object_t> o;
@@ -148,18 +153,19 @@ namespace ns {
     template<typename Obj_t>
     class object_t {
     public:
-        typedef typename aux::objc_creator_t<Obj_t>::type_t type_t;
+        typedef Obj_t * type_t;
         
         // explicit
         object_t() : o([[Obj_t alloc] init])
         {}
         
         object_t(type_t anObject) {
-            if (anObject == nil) {
-                o = nil;
-                return;
-            }
             o = [anObject retain];
+        }
+        
+        template<typename T_t>
+        object_t(handle_t<T_t> obj) {
+            o = [obj.objc() retain];
         }
         
         ~object_t() {
@@ -299,4 +305,4 @@ namespace ns {
 }
 
 
-
+#endif
