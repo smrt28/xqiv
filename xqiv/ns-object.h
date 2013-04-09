@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 namespace ns {
+    template<typename>
+    class object_t;
+    
     namespace aux {
         template<typename T_t>
         struct not_id_t {
@@ -39,56 +42,107 @@ namespace ns {
                 return nil;
             }
         };
-    }
-    
-    template<typename>
-    class raw_object_t;
-
-    
-    template<typename Object_t>
-    class handle_t {
-    public:
-        explicit handle_t(Object_t *o) : o(o) {}
-        Object_t * objc() { return o; }
-        void reset(Object_t *anObject = nil) {
-            o = anObject;
-        }
-        void reset(raw_object_t<Object_t> ro) {
-            o = ro.objc();
-        }
-    private:
-        Object_t * o;
-    };
-    
-    template<>
-    class handle_t<id> {
-    public:
-        explicit handle_t(id o) : o(o) {}
         
-        template<typename Type_t>
-        Type_t * as() { return o; }
-        
-        template<typename Object_t>
-        void reset(Object_t *anObjcet = nil) {
-            o = anObjcet;
-        }
-
-        template<typename Object_t>
-        void reset(raw_object_t<Object_t> ro) {
-            o = ro.objc();
-        }
-        
-        id objc() const { return o; }
-    private:
-        id o;
-    };
-
-
-    namespace aux {
         template<typename  T_t>
         id objc(const T_t &t) {
             return t.objc();
         }
+        
+        template<typename>
+        id objc(id t) {
+            return t;
+        }
+        
+        template<typename T_t>
+        T_t * objc(T_t *t) {
+            return t;
+        }
+
+    }
+    
+
+
+    
+    class handle_base_t {
+    public:
+        typedef int key_t;
+        typedef int item_t;
+        
+        item_t operator[](key_t) {
+            NSLog(@"operator [] doesn't exist for the object!");
+            return 0;
+        }
+    };
+    
+    template<typename Object_t>
+    class handle_t : public handle_base_t {
+    public:
+        explicit handle_t(Object_t *o) : o(o) {}
+        Object_t * objc() { return o; }
+    private:
+        Object_t * o;
+    };
+
+    template<>
+    class handle_t<id> : public handle_base_t {
+    public:
+        explicit handle_t(id o) : o(o) {}
+        id objc() { return o; }
+        
+        template<typename Obj_t>
+        Obj_t * as() { return o; }
+        
+        
+    private:
+        id o;
+    };
+
+    
+    template<>
+    class handle_t<NSMutableDictionary> : public handle_base_t {
+    public:
+        typedef NSString * key_t;
+        typedef id item_t;
+        
+        handle_t(NSMutableDictionary *o) : o(o) {}
+        NSMutableDictionary * objc() { return o; }
+        
+        handle_t<item_t> operator[](key_t key) {
+            return handle_t<item_t>([o objectForKey:key]);
+        }
+        
+        template<typename var_t>
+        void insert(key_t key, var_t var) {
+            [o setObject:aux::objc(var) forKey:key];
+        }
+        
+        void remove(key_t key) {
+            [o removeObjectForKey:key];
+        }
+        
+                
+    private:
+        NSMutableDictionary *o;
+    };
+    
+
+    namespace aux {
+       
+        template<typename Object_t>
+        class handle_wrap_t {
+        public:
+            handle_wrap_t(Object_t *o) : o(o) {}
+            handle_t<Object_t> * operator->() {
+                return &o;
+            }
+            const handle_t<Object_t> * operator->() const {
+                return &o;
+            }
+            
+        
+        private:
+            handle_t<Object_t> o;
+        };
     }
     
     template<typename Obj_t>
@@ -154,6 +208,14 @@ namespace ns {
 
         type_t objc() const { return o; }
         
+        aux::handle_wrap_t<Obj_t> operator->() {
+            return aux::handle_wrap_t<Obj_t>(o);
+        }
+        
+
+        handle_t<typename handle_t<Obj_t>::item_t> operator[](typename handle_t<Obj_t>::key_t key) {
+            return handle_t<Obj_t>(o)[key];
+        }
 
     private:
         type_t o;
