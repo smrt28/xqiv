@@ -52,10 +52,10 @@
 		5E7A1A1B16FE5149006BD61B /* SArray.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SArray.mm; sourceTree = "<group>"; };
 		5E7BB62316F63C37002BA33E /* QQImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageView.h; sourceTree = "<group>"; };
 		5E7BB62416F63C37002BA33E /* QQImageView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageView.mm; sourceTree = "<group>"; };
-		5E9CEEF617133FBC00EAD71E /* ns-object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-object.h"; sourceTree = "<group>"; };
 		5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImageUtils.h; sourceTree = "<group>"; };
 		5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CImageUtils.mm; sourceTree = "<group>"; };
-		5EDA4B4517149DB600B55DBC /* ns-objc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-objc.h"; sourceTree = "<group>"; };
+		5EEC25071719F0F900445B21 /* ns-array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array.h"; sourceTree = "<group>"; };
+		5EEC25081719F1C600445B21 /* as.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = as.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,8 +158,8 @@
 		5E9CEEF517133F2E00EAD71E /* ns */ = {
 			isa = PBXGroup;
 			children = (
-				5E9CEEF617133FBC00EAD71E /* ns-object.h */,
-				5EDA4B4517149DB600B55DBC /* ns-objc.h */,
+				5EEC25081719F1C600445B21 /* as.h */,
+				5EEC25071719F0F900445B21 /* ns-array.h */,
 			);
 			name = ns;
 			sourceTree = "<group>";

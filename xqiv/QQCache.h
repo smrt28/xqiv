@@ -11,6 +11,8 @@
 #import "SArray.h"
 #import "QQImageLoader.h"
 
+#import "ns-array.h"
+
 @protocol QQCacheProtocol<NSObject>
 - (void)showCachedImage:(NSDictionary *)item;
 @end
