@@ -56,9 +56,13 @@ namespace nss {
  
     
     
-    template<typename T_t> T_t * objc(T_t *t) { return t; }    
+    template<typename T_t> T_t * objc(T_t *t) { return t; }
+    
     inline NSNumber * objc(int n) { return [NSNumber numberWithInt:n];  }
     inline NSNumber * objc(long n) { return [NSNumber numberWithLong:n];  }
+    
+//    template<typename T_t>
+//    inline x_make_objc_type_t<T_t>::type_t::objc_type_t;
 
 
     
@@ -125,13 +129,18 @@ namespace nss {
             return *this;
         }
         
+        T_t * release() {
+            T_t * tmp = o;
+            o = nil;
+            return [tmp autorelease];
+        }
+        
         operator T_t *() {
             return o;
         }
         
     private:
         T_t * o;
-        
     };
    
 }
@@ -144,10 +153,20 @@ namespace ns {
         base_t(T_t *t) : o(t) {}
         T_t * objc() { return o; }
         
+        T_t * release() {
+            return o.release();
+        }
+        
     protected:
         nss::object_t<T_t> o;
     };
 }
 
+namespace nss {
+    template<typename T_t>
+    T_t * objc(ns::base_t<T_t> &o) {
+        return o.objc();
+    }
+}
 
 #endif

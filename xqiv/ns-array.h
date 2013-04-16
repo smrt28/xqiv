@@ -11,10 +11,6 @@
 
 #include "as.h"
 
-namespace ns { class array_t; }
-namespace nss {
-    NSMutableArray * objc(ns::array_t &a);
-}
 
 namespace ns {
     
@@ -54,10 +50,5 @@ namespace ns {
     };
 }
 
-namespace nss {
-    inline NSMutableArray * objc(ns::array_t &a) {
-        return a.objc();
-    }
-}
 
 #endif
