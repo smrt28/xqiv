@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SDictionary.h"
-#import "SArray.h"
 #import "QQImageLoader.h"
 
 #import "ns-array.h"
+#import "ns-dict.h"
 
 @protocol QQCacheProtocol<NSObject>
 - (void)showCachedImage:(NSDictionary *)item;
@@ -53,7 +52,7 @@ namespace s {
         }
         
         
-        void insert(Dictionary_t &dict);
+        void insert(ns::dict_t &dict);
         void go();
 
         void next();
@@ -89,13 +88,13 @@ namespace s {
         
         NSMutableDictionary * get(size_t);
         
-        NSMutableDictionary * get_todo();
+        size_t get_todo();
         
         bool is_to_clear(size_t ofs);
         
         void logCache();
     private:
-        ArrayWithNumbers_t array;
+        ns::array_t array;
         long position;
         QQCache * qqCache;
         id<QQCacheProtocol> delegate;

@@ -9,7 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #import "QQImageView.h"
 #import "QQImageLoader.h"
-#import "SDictionary.h"
 #import "QQCache.h"
 
 @interface QQAppDelegate : NSObject <NSApplicationDelegate, QQCacheProtocol, QQImageViewProtocol>

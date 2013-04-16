@@ -32,6 +32,11 @@ namespace ns {
             [o addObject:nss::objc(t)];
         }
         
+        template<typename Index_t, typename T_t>
+        void replace(Index_t idx, T_t t) {
+            [o replaceObjectAtIndex:idx withObject:nss::objc(t)];
+        }
+        
         void clear() {
             [o removeAllObjects];
         }

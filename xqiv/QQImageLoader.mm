@@ -10,9 +10,10 @@
 #include <openssl/sha.h>
 #include <CommonCrypto/CommonDigest.h>
 #import "QQImageLoader.h"
-#import "SDictionary.h"
 #import "CImageUtils.h"
 #import "CHash.h"
+
+#import "ns-dict.h"
 
 @implementation QQImageLoader
 
@@ -54,8 +55,8 @@
 
 
 - (NSMutableDictionary *)createResponse:(NSMutableDictionary *)anItem  {
-    s::Dictionary_t item(anItem);
-    s::Dictionary_t ret;
+    ns::dict_t item(anItem);
+    ns::dict_t ret;
     ret.insert(@"index", item[@"index"]);
     ret.insert(@"filename", item[@"filename"]);
     ret.insert(@"errorcode", 0);
@@ -64,15 +65,15 @@
 
 - (void)loadImageAsync:(NSMutableDictionary *)anItem {
     
-    s::Dictionary_t item(anItem);
+    ns::dict_t item(anItem);
     
     @autoreleasepool {
     
-    NSString *filename = item["filename"];
+    NSString *filename = item[@"filename"];
         
-    s::Dictionary_t ret([self createResponse:anItem]);
+    ns::dict_t ret([self createResponse:anItem]);
 
-    NSImage *img = nil;
+    NSImage *img = nil, *original = nil;
     NSString *sha1 = nil;
     NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
         
@@ -81,8 +82,8 @@
         if (fh) {
             NSData *data = [fh readDataOfLength:1024 * 1024 * 32];            
             sha1 = s::hash::hex(s::hash::sha1(data));
-            img = [[[NSImage alloc] initWithData:data] autorelease];
-            img = s::img::fitScreen(img);
+            original = [[[NSImage alloc] initWithData:data] autorelease];
+            img = s::img::fitScreen(original);
         }
     }
     @catch (NSException *exception) {
@@ -113,10 +114,11 @@
     [_delegate imageLoaded: result];
 }
 
-- (BOOL)loadImage:(NSMutableDictionary *)item {
+- (BOOL)loadImage:(NSMutableDictionary *)item index:(size_t)idx {
     if (_inProgress)
         return NO;
     _inProgress = YES;
+    [item setObject:[NSNumber numberWithLong:idx] forKey:@"index"];
     [self performSelector:@selector(loadImageAsync:) onThread:self withObject:item waitUntilDone:NO];
     return YES;
 }

@@ -62,7 +62,7 @@ namespace s {
         return [n longValue];
     }
 
-    void Cache_t::insert(Dictionary_t &dict) {
+    void Cache_t::insert(ns::dict_t &dict) {
         array.push_back(dict);
     }
     
@@ -70,12 +70,12 @@ namespace s {
         if ([qqCache buzy]) return;
         NSMutableDictionary * item = get(position);
         if (item && [item objectForKey:@"image"] == nil) {
-            [[qqCache loader] loadImage:item];
+            [[qqCache loader] loadImage:item index:position];
             return;
         }
-        item = get_todo();
-        if (item) {
-            [[qqCache loader] loadImage:item];
+        size_t idx = get_todo();
+        if (idx != -1) {
+            [[qqCache loader] loadImage:get(idx) index:idx];
         }
     }
 
@@ -131,9 +131,9 @@ namespace s {
     
     
     void Cache_t::handleLoaded(NSMutableDictionary *anItem) {
-        Dictionary_t item(anItem);
-        int idx = item.value<int>(@"index");
-        if (item.value<int>(@"errorcode")) {
+        ns::dict_t item(anItem);
+        int idx = item[@"index"].as<int>();
+        if (item[@"errorcode"].as<int>()) {
             array.remove(idx);
             positionChanged();
             return;
@@ -204,7 +204,7 @@ namespace s {
     }
 
     
-    NSMutableDictionary * Cache_t::get_todo() {
+    size_t Cache_t::get_todo() {
         for(size_t i = 0;i<array.size();i++) {
             size_t ofs = (i + position) % array.size();
             NSMutableDictionary *rv = get(ofs);
@@ -225,8 +225,8 @@ namespace s {
                 continue;
             }
             
-            return rv;
+            return ofs;
         }
-        return nil;
+        return -1;
     }
 }

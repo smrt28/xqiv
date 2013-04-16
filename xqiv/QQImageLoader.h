@@ -24,7 +24,7 @@
 
 
 + (QQImageLoader *)loader;
-- (BOOL)loadImage:(NSDictionary *)filename;
+- (BOOL)loadImage:(NSDictionary *)filename index:(size_t)idx;
 - (void)join;
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;

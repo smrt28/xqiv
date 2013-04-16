@@ -164,8 +164,9 @@ namespace ns {
 
 namespace nss {
     template<typename T_t>
-    T_t * objc(ns::base_t<T_t> &o) {
-        return o.objc();
+    T_t * objc(ns::base_t<T_t> &o) { return o.objc(); }
+    inline id objc(nss::id_t &o) {
+        return o;
     }
 }
 

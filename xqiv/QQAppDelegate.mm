@@ -7,7 +7,6 @@
 //
 
 #import "QQAppDelegate.h"
-#import "SDictionary.h"
 
 @implementation QQAppDelegate
 
@@ -41,8 +40,8 @@
         NSDictionary *argInfo = [userInfo objectForKey:@"args"];
         for (int i=1; i<argc; i++) {
             NSString *arg = [argInfo objectForKey:[NSString stringWithFormat:@"%d", i]];
-            s::Dictionary_t item;
-            item.insert("filename", arg);
+            ns::dict_t item;
+            item.insert(@"filename", arg);
             _cache.insert(item);
             if (i==1) img_file = arg;
         }
