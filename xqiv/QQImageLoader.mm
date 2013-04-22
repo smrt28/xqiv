@@ -15,6 +15,26 @@
 
 #import "ns-dict.h"
 
+@implementation QQImageLoaderCBridge
+-(id)init {
+    self = [super init];
+    _c = 0;
+    return self;
+}
+
+- (void)setC:(s::image_loader_t *)c {
+    _c = c;
+}
+
+- (void)imageLoaded:(NSMutableDictionary *)obj {
+    if (!_c) return;
+    _c->loaded(obj);
+}
+
+@end
+
+
+
 @implementation QQImageLoader
 
 
@@ -145,13 +165,13 @@
 - (void)main
 {
     @autoreleasepool {
-    NSRunLoop * runLoop = [NSRunLoop currentRunLoop];
-    NSPort *port = [NSPort port];
-    [runLoop addPort:port forMode:NSDefaultRunLoopMode];
-    
-    while(!_end) {
-        BOOL r = [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-    }
+        NSRunLoop * runLoop = [NSRunLoop currentRunLoop];
+        NSPort *port = [NSPort port];
+        [runLoop addPort:port forMode:NSDefaultRunLoopMode];
+        
+        while(!_end) {
+            BOOL r = [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
     }
 }
 

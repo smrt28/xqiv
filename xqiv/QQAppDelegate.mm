@@ -56,6 +56,7 @@
 }
 
 - (void)showCachedImage:(NSDictionary *)item {
+    
     NSImage *img = [item objectForKey:@"image"];
     NSNumber *index = [item objectForKey:@"index"];
     NSLog(@"showing: %ld", (long)[index integerValue]);

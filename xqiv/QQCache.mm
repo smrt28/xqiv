@@ -7,10 +7,12 @@
 //
 
 #import "QQCache.h"
+#import "imagecache.h"
 
 @implementation QQCache
 
 - (id)initWithCache:(s::Cache_t *)cache {
+    s::ImageCache_t cc;
     self = [super init];
     _cache = cache;
     _imageLoader = [QQImageLoader new];

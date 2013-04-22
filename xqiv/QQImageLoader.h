@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "as.h"
+
 @protocol QQImageLoaderProtocol<NSObject>
     - (void)imageLoaded:(NSMutableDictionary *)obj;
 @end
@@ -24,7 +26,7 @@
 
 
 + (QQImageLoader *)loader;
-- (BOOL)loadImage:(NSDictionary *)filename index:(size_t)idx;
+- (BOOL)loadImage:(NSMutableDictionary *)item index:(size_t)idx;
 - (void)join;
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
@@ -32,3 +34,34 @@
 - (void)invalidate;
 
 @end
+
+
+namespace s { class image_loader_t; }
+
+@interface QQImageLoaderCBridge : NSObject<QQImageLoaderProtocol> {
+    s::image_loader_t *_c;
+}
+
+- (void)setC:(s::image_loader_t *)c;
+- (void)imageLoaded:(NSMutableDictionary *)obj;
+
+@end
+
+
+namespace s {
+    class image_loader_t : public ns::base_t<QQImageLoader> {
+    public:
+        image_loader_t() : ns::base_t<QQImageLoader>() {
+            QQImageLoaderCBridge * bridge =
+                [[QQImageLoaderCBridge alloc] init];
+            [bridge setC:this];
+            [o setDelegate: bridge];
+            [bridge release];
+            [o start];
+        }
+        void loaded(NSMutableDictionary *) {
+            
+        }
+    private:
+    };
+}
