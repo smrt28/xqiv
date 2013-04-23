@@ -18,7 +18,8 @@
 
 -(id)init {
     self = [super init];
-    _cache.setDelegate(self);
+    _cache.setCtl(self);
+   // _cache.setDelegate(self);
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
 
     return self;
@@ -40,9 +41,10 @@
         NSDictionary *argInfo = [userInfo objectForKey:@"args"];
         for (int i=1; i<argc; i++) {
             NSString *arg = [argInfo objectForKey:[NSString stringWithFormat:@"%d", i]];
-            ns::dict_t item;
-            item.insert(@"filename", arg);
-            _cache.insert(item);
+            _cache.push_back(arg);
+      //      ns::dict_t item;
+      //        item.insert(@"filename", arg);
+            //_cache.insert(item);
             if (i==1) img_file = arg;
         }
         
@@ -50,13 +52,13 @@
         [_window makeKeyAndOrderFront:_window];
         [_window makeKeyWindow];
         
-        _cache.go();
+//        _cache.go();
         
     } @catch (...) {}
 }
 
 - (void)showCachedImage:(NSDictionary *)item {
-    
+  /*
     NSImage *img = [item objectForKey:@"image"];
     NSNumber *index = [item objectForKey:@"index"];
     NSLog(@"showing: %ld", (long)[index integerValue]);
@@ -67,13 +69,15 @@
     
     [image setForceBest];
     [image setImage:img];
+   */
 }
 
 -(void)nextImage {
-    _cache.next();
+    _cache.load(@"/tmp/a.jpg", nil);
+    //_cache.next();
 }
 -(void)prevImage {
-    _cache.prev();
+    //_cache.prev();
 }
 
 -(void)awakeFromNib {
@@ -83,8 +87,11 @@
 }
 
 -(void)escape {
-    _cache.clear();
+//    _cache.clear();
     [[NSApplication sharedApplication] hide:self];
+}
+- (void)showImage:(NSImage *)img {
+    [image setImage:img];
 }
 
 @end

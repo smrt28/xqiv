@@ -22,7 +22,7 @@
     return self;
 }
 
-- (void)setC:(s::image_loader_t *)c {
+- (void)setC:(s::ImgLoaderListener_t *)c {
     _c = c;
 }
 
@@ -50,9 +50,8 @@
 }
 
 - (void)dealloc {
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [_delegate release];
-    [nc removeObserver:self];
+    _delegate = nil;
     [self join];
     [super dealloc];
 }
@@ -77,9 +76,9 @@
 - (NSMutableDictionary *)createResponse:(NSMutableDictionary *)anItem  {
     ns::dict_t item(anItem);
     ns::dict_t ret;
-    ret.insert(@"index", item[@"index"]);
     ret.insert(@"filename", item[@"filename"]);
     ret.insert(@"errorcode", 0);
+    ret.insert(@"userdata", item[@"userdata"]);
     return ret.release();
 }
 
@@ -134,12 +133,20 @@
     [_delegate imageLoaded: result];
 }
 
-- (BOOL)loadImage:(NSMutableDictionary *)item index:(size_t)idx {
+- (BOOL)loadImage:(NSString *)filename userData:(id)data {
+    
     if (_inProgress)
         return NO;
     _inProgress = YES;
-    [item setObject:[NSNumber numberWithLong:idx] forKey:@"index"];
-    [self performSelector:@selector(loadImageAsync:) onThread:self withObject:item waitUntilDone:NO];
+    
+    ns::dict_t dd;
+    dd.insert(@"userdata", data);
+    dd.insert(@"filename", filename);
+    
+
+    [self performSelector:@selector(loadImageAsync:)
+                 onThread:self withObject:dd.objc() waitUntilDone:NO];
+    
     return YES;
 }
 

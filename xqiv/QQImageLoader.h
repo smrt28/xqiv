@@ -14,6 +14,10 @@
     - (void)imageLoaded:(NSMutableDictionary *)obj;
 @end
 
+@protocol QQImageCtl<NSObject>
+    - (void)showImage:(NSImage *)img;
+@end
+
 @interface QQImageLoader : NSThread {
     BOOL _end;
     id _target;
@@ -26,7 +30,7 @@
 
 
 + (QQImageLoader *)loader;
-- (BOOL)loadImage:(NSMutableDictionary *)item index:(size_t)idx;
+- (BOOL)loadImage:(NSString *)filename userData:(id)data;
 - (void)join;
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
@@ -36,32 +40,45 @@
 @end
 
 
-namespace s { class image_loader_t; }
-
-@interface QQImageLoaderCBridge : NSObject<QQImageLoaderProtocol> {
-    s::image_loader_t *_c;
+namespace s {
+    class ImgLoaderListener_t {
+    public:
+        virtual void loaded(NSMutableDictionary *) = 0;
+    };
 }
 
-- (void)setC:(s::image_loader_t *)c;
+@interface QQImageLoaderCBridge : NSObject<QQImageLoaderProtocol> {
+    s::ImgLoaderListener_t * _c;
+
+}
+
+- (void)setC:(s::ImgLoaderListener_t *)c;
 - (void)imageLoaded:(NSMutableDictionary *)obj;
 
 @end
 
 
 namespace s {
-    class image_loader_t : public ns::base_t<QQImageLoader> {
+    class ImageLoader_t : public ns::base_t<QQImageLoader> {
     public:
-        image_loader_t() : ns::base_t<QQImageLoader>() {
+        ImageLoader_t(ImgLoaderListener_t *listener) : ns::base_t<QQImageLoader>() {
+            NSLog(@"ImageLoader_t created");
             QQImageLoaderCBridge * bridge =
                 [[QQImageLoaderCBridge alloc] init];
-            [bridge setC:this];
+            [bridge setC:listener];
             [o setDelegate: bridge];
             [bridge release];
             [o start];
         }
-        void loaded(NSMutableDictionary *) {
-            
+        
+        bool load(NSString *filename, id ud) {
+            if ([o loadImage: filename userData:ud]) return true;
+            return false;
         }
-    private:
+        
+        bool inProgress() {
+            if ([o inProgress]) return true;
+            return false;
+        }
     };
 }

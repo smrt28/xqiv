@@ -23,6 +23,7 @@ namespace ns {
         
         template<typename T_t>
         void insert(NSString *key, T_t value) {
+            if (nss::objc(value) == nil) return;
             [o setObject: nss::objc(value) forKey:key];
         }
         
