@@ -52,6 +52,9 @@
         [_window makeKeyAndOrderFront:_window];
         [_window makeKeyWindow];
         
+        _cache.ready();
+        
+        
 //        _cache.go();
         
     } @catch (...) {}
@@ -73,7 +76,8 @@
 }
 
 -(void)nextImage {
-    _cache.load(@"/tmp/a.jpg", nil);
+    _cache.show_next();
+    //_cache.load(@"/tmp/a.jpg", nil);
     //_cache.next();
 }
 -(void)prevImage {
@@ -87,7 +91,7 @@
 }
 
 -(void)escape {
-//    _cache.clear();
+    _cache.clear();
     [[NSApplication sharedApplication] hide:self];
 }
 - (void)showImage:(NSImage *)img {

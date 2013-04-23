@@ -24,7 +24,6 @@
     NSThread *_thread;
     id<QQImageLoaderProtocol> _delegate;
     BOOL _inProgress;
-    BOOL _invalied;
 }
 
 
@@ -35,7 +34,6 @@
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
 - (BOOL)inProgress;
-- (void)invalidate;
 
 @end
 

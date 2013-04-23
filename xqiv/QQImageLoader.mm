@@ -42,7 +42,6 @@
     self = [super init];
     _end = NO;
     _inProgress = NO;
-    _invalied = NO;
     _thread = [NSThread currentThread];
     _delegate = nil;
 
@@ -126,10 +125,6 @@
 
 - (void)handleImageLoaded:(NSMutableDictionary *)result {
     _inProgress = NO;
-    if (_invalied) {
-        _invalied = NO;
-        return;
-    }
     [_delegate imageLoaded: result];
 }
 
@@ -162,11 +157,6 @@
 
 - (BOOL)inProgress {
     return _inProgress;
-}
-
-- (void)invalidate {
-    if (_inProgress)
-        _invalied = YES;
 }
 
 - (void)main
