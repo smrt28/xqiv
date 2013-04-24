@@ -28,7 +28,6 @@ namespace s {
 @property (readwrite,retain) NSString *filename;
 @property (readwrite,retain) NSString *sha1;
 @property (readwrite) int errorcode;
-@property (readwrite) int itemId;
 @property (readwrite) int state;
 @property (readwrite) bool keep;
 @end
@@ -44,10 +43,12 @@ namespace  s  {
         virtual ~ImageCache_t() {}
         ImageCache_t() :
             viewCtl(nil),
-            nextItemId(0),
             pivot(0),
-            resources(13), BW(3), FW(8)
+            resources(13), BW(3), FW(8),
+            version(1),
+            lastAction(&ImageCache_t::show_next)
         {
+            loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -60,8 +61,6 @@ namespace  s  {
             [viewCtl release];
             viewCtl = vctl;
         }
-        
-        //void load(NSString *filename, id userData);
         
         bool moveTo(size_t idx);
         
@@ -102,10 +101,6 @@ namespace  s  {
             return idx - 1;
         }
         
-        size_t fwNext();
-        size_t fwPrev();
-        bool isLoadable(size_t idx);
-        
         void reset_keep();
         
         size_t todo();
@@ -114,10 +109,11 @@ namespace  s  {
         Loaders_t loaders;
         id<QQImageCtl> viewCtl;
         ns::array_t images;
-        int nextItemId;
         size_t pivot;
         size_t resources;
         int BW, FW;
+        int version;
+        void (ImageCache_t::*lastAction)();
     };
 }
 

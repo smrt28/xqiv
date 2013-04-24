@@ -35,13 +35,30 @@ namespace s {
         ns::dict_t d(aDict);
         
         NSImage *img = d[@"image"].as<NSImage>();
-        size_t idx = [d[@"userdata"].as<NSNumber>() longValue];
+        ns::dict_t udata(d[@"userdata"]);
+        if (udata[@"version"].as<int>() != version) {
+            run();
+            return;
+        }
+        size_t idx = udata[@"index"].as<int>();
         
         NSLog(@"loaded: %zd", idx);
         
         QQCacheItem * cache = item_at(idx);
+        
+        if (d[@"errorcode"].as<int>() != 0) {
+            cache.image = nil;
+            cache.state = ics::INVALID;
+            if (lastAction) {
+                (this->*lastAction)();
+            }
+            return;
+        }
+
+        
         cache.image = img;
         cache.state = ics::LOADED;
+        
         cache.sha1 = d[@"sha1"].as<NSString>();
         if (idx == pivot) {
             [viewCtl showImage:img];
@@ -49,61 +66,23 @@ namespace s {
         run();
     }
     
-    /*
-    void ImageCache_t::load(NSString *filename, id userData) {
-        for(Loaders_t::iterator it = loaders.begin(), eit = loaders.end();
-            it != eit; ++it)
-        {
-            if (loaders[0].load(filename, userData))
-                return;
-        }
-    }*/
-    
-    bool ImageCache_t::isLoadable(size_t idx) {
-        QQCacheItem * item = item_at(idx);
-        switch (item.state) {
-            case ics::LOADED:
-            case ics::INVALID:
-            case ics::LOADING:
-                return false;
-        }
-        return true;
-    }
-    
-    size_t ImageCache_t::fwNext() {
-        if (isLoadable(pivot)) return pivot;
-        for(size_t idx = next(pivot);idx != pivot;idx = next(idx)) {
-            if (isLoadable(idx)) return idx;
-        }
-        return NOINDEX;
-    }
-    
-    size_t ImageCache_t::fwPrev() {
-        if (isLoadable(pivot)) return pivot;
-        for(size_t idx = prev(pivot);idx != pivot;idx = prev(idx)) {
-            if (isLoadable(idx)) return idx;
-        }
-        return NOINDEX;
-    }
-    
-    
-    void ImageCache_t::load(size_t idx) {
-        
-    }
     
     void ImageCache_t::run() {
-        for(Loaders_t::iterator it = loaders.begin(), eit = loaders.end();
+        for(Loaders_t::iterator it = loaders.begin(),
+            eit = loaders.end();
             it != eit; ++it)
         {
             if (it->inProgress()) continue;
 
             size_t td = todo();
             if (td == NOINDEX) return;
-
-            NSNumber *n = [NSNumber numberWithLong:td];
+            
+            ns::dict_t udata;
+            udata.insert(@"index", [NSNumber numberWithLong:td]);
+            udata.insert(@"version", [NSNumber numberWithLong:version]);
             NSString *filename = item_at(td).filename;
             item_at(td).state = ics::LOADING;
-            it->load(filename, n);
+            it->load(filename, udata.objc());
         }
     }
     
@@ -113,11 +92,28 @@ namespace s {
     }
     
     void ImageCache_t::show_next() {
-        pivot = next(pivot);
+        if (item_at(pivot).state == ics::NOTLOADED) {
+            NSLog(@"skip next, image is loading!");
+            return;
+        }
+        
+        size_t idx;
+        for (idx = next(pivot); idx!=pivot; idx = next(idx)) {
+            if (item_at(idx).state != ics::INVALID) break;
+        }
+        
+        pivot = idx;
+        
+        if (item_at(idx).state == ics::INVALID) {
+            NSLog(@"no valid image");
+            return;
+        }
+        
         if (item_at(pivot).state == ics::LOADED) {
             [viewCtl showImage:item_at(pivot).image];
         }
         
+        lastAction = &ImageCache_t::show_next;
         reset_keep();
         run();
     }
@@ -216,10 +212,8 @@ namespace s {
     }
     
     QQCacheItem * ImageCache_t::push_back(NSString *filename) {
-        nextItemId++;
         QQCacheItem * item = [[[QQCacheItem alloc] init] autorelease];
         item.filename = filename;
-        item.itemId = nextItemId;
         images.push_back(item);
         return item;
     }

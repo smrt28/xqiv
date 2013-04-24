@@ -110,8 +110,7 @@ namespace img {
         
         [NSGraphicsContext saveGraphicsState];
         [NSGraphicsContext setCurrentContext: theContext];
-        
-        NSGraphicsContext *cc = [NSGraphicsContext currentContext];
+
         [theContext setImageInterpolation:NSImageInterpolationHigh];
         
         [img drawInRect:NSMakeRect(0, 0, size.width, size.height)
@@ -145,19 +144,14 @@ namespace img {
         bool needResize = false;
         
         if (rv.width > screenFrame.width) {
-            needResize = true;
             rv.height = (screenFrame.width * rv.height) / rv.width;
             rv.width = screenFrame.width;
         }
         
         if (rv.height > screenFrame.height) {
-            needResize = true;
             rv.width = (screenFrame.height * rv.width) / rv.height;
             rv.height = screenFrame.height;
         }
-
-        
-        //if (!needResize) return img;
         
         return resize(img, rv);
     }

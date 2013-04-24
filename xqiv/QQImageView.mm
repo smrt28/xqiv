@@ -194,12 +194,9 @@
         vsize = [self bounds].size;
         isize = vsize;
         CGFloat hw = _imageSize.height / _imageSize.width;
-        isize.height = isize.width * hw;
-        
-        x = y = 0;
+        isize.height = isize.width * hw;       
         
         if (isize.width > vsize.width || isize.height > vsize.height) {
-            x = y = 0;
             isize = vsize;
             CGFloat hw = _imageSize.width / _imageSize.height;
             isize.width = isize.height * hw;

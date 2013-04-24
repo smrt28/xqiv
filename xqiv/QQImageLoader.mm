@@ -167,7 +167,7 @@
         [runLoop addPort:port forMode:NSDefaultRunLoopMode];
         
         while(!_end) {
-            BOOL r = [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+            [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
         }
     }
 }
