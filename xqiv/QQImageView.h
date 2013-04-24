@@ -29,6 +29,7 @@
     NSTrackingArea * _tracking;
     BOOL _mouseInside;
     BOOL _forceBest;
+    NSAffineTransform *_rotate;
 }
 
 - (void)setForceBest;

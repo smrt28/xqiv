@@ -77,11 +77,9 @@
 
 -(void)nextImage {
     _cache.show_next();
-    //_cache.load(@"/tmp/a.jpg", nil);
-    //_cache.next();
 }
 -(void)prevImage {
-    //_cache.prev();
+    _cache.show_prev();
 }
 
 -(void)awakeFromNib {

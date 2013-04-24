@@ -14,6 +14,7 @@
 #import "CHash.h"
 
 #import "ns-dict.h"
+#import "ns-grcontext.h"
 
 @implementation QQImageLoaderCBridge
 -(id)init {

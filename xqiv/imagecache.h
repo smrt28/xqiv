@@ -78,10 +78,60 @@ namespace  s  {
             if (idx >= size()) return nil;
             return images[idx].as<QQCacheItem>();
         }
+        
+        size_t goNext(size_t pvt) {
+            size_t idx;
+            for (idx = next(pvt); idx!=pvt; idx = next(idx)) {
+                if (item_at(idx).state != ics::INVALID) break;
+            }
+            return idx;
+        }
 
-        void show_next();
+        size_t goPrev(size_t pvt) {
+            size_t idx;
+            for (idx = prev(pvt); idx!=pvt; idx = prev(idx)) {
+                if (item_at(idx).state != ics::INVALID) break;
+            }
+            return idx;
+        }
+
+        template<size_t (ImageCache_t::*xnext)(size_t)>
+        void show() {
+            if (item_at(pivot).state == ics::NOTLOADED) {
+                NSLog(@"skip next, image is loading!");
+                return;
+            }
+            
+            pivot = (this->*xnext)(pivot);
+            
+            if (item_at(pivot).state == ics::INVALID) {
+                NSLog(@"no valid image");
+                return;
+            }
+            
+            if (item_at(pivot).state == ics::LOADED) {
+                [viewCtl showImage:item_at(pivot).image];
+            }
+            
+            lastAction = &ImageCache_t::show<xnext>;
+            reset_keep();
+            run();
+            
+        }
+        
+        void show_next() {
+            show<&ImageCache_t::goNext>();
+        }
+        
+        void show_prev() {
+            show<&ImageCache_t::goPrev>();
+        }
 
         void ready();
+        
+        size_t get_position() {
+            return pivot;
+        }
         
     private:
         void unload(size_t idx);

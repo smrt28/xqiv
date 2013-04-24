@@ -11,11 +11,14 @@
 #import <Quartz/Quartz.h>
 #import <Carbon/Carbon.h>
 
+#import "ns-grcontext.h"
+
 @implementation QQImageView
 
 - (void)dealloc {
     [_timer release];
     [_tracking release];
+    [_rotate release];
     [super dealloc];
 }
 
@@ -30,6 +33,10 @@
         _tracking = nil;
         _mouseInside = NO;
         _forceBest = NO;
+        
+        _rotate = [[NSAffineTransform alloc] init];
+       // [_rotate translateXBy:50 yBy:0];
+       // [_rotate rotateByDegrees:-20];
     }
     
     
@@ -172,6 +179,17 @@
 
 - (void)drawRect:(NSRect)dirtyRect interpolation:(int)itp
 {
+    ns::grcontext_autosave_t grContextSaved;
+    
+    NSGraphicsContext *context = [NSGraphicsContext currentContext];
+    
+    NSSize imageSize = _imageSize;
+    /*
+    CGFloat tmp;
+    tmp = imageSize.width;
+    imageSize.width = imageSize.height;
+    imageSize.height = tmp;
+    */
     
     if (_mouseInside || !_image) {
         [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:0.5] set];
@@ -180,7 +198,10 @@
     }
     
     NSRectFill(dirtyRect);
-   // NSRectFill([self bounds]);
+    
+    [_rotate concat];
+
+    // NSRectFill([self bounds]);
     if (_image) {
         
         
@@ -193,20 +214,41 @@
         
         vsize = [self bounds].size;
         isize = vsize;
-        CGFloat hw = _imageSize.height / _imageSize.width;
+        
+        
+        if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
+            NSLog(@"need resize");
+        } else {
+            [_image setSize:imageSize];
+            isize = imageSize;
+            x = vsize.height - (isize.height + vsize.height) / 2;
+            y = vsize.width - (isize.width + vsize.width) / 2;
+            NSRect r =
+            NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
+
+            [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
+            NSLog(@"doesn't need resize");
+            return;
+        }
+        
+        CGFloat hw = imageSize.height / imageSize.width;
+        
         isize.height = isize.width * hw;       
         
         if (isize.width > vsize.width || isize.height > vsize.height) {
             isize = vsize;
-            CGFloat hw = _imageSize.width / _imageSize.height;
+            CGFloat hw = imageSize.width / imageSize.height;
             isize.width = isize.height * hw;
         }
+        
         x = vsize.height - (isize.height + vsize.height) / 2;
         y = vsize.width - (isize.width + vsize.width) / 2;
         
         [_image setSize:isize];
         NSRect r =
         NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
+        
+
          
         if (itp || _forceBest) {
             _forceBest = NO;

@@ -91,32 +91,7 @@ namespace s {
         run();
     }
     
-    void ImageCache_t::show_next() {
-        if (item_at(pivot).state == ics::NOTLOADED) {
-            NSLog(@"skip next, image is loading!");
-            return;
-        }
-        
-        size_t idx;
-        for (idx = next(pivot); idx!=pivot; idx = next(idx)) {
-            if (item_at(idx).state != ics::INVALID) break;
-        }
-        
-        pivot = idx;
-        
-        if (item_at(idx).state == ics::INVALID) {
-            NSLog(@"no valid image");
-            return;
-        }
-        
-        if (item_at(pivot).state == ics::LOADED) {
-            [viewCtl showImage:item_at(pivot).image];
-        }
-        
-        lastAction = &ImageCache_t::show_next;
-        reset_keep();
-        run();
-    }
+
     
     bool ImageCache_t::moveTo(size_t idx) {
         if (idx >= size()) return false;

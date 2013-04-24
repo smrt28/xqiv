@@ -48,6 +48,7 @@
 		5E98DCFD17245EB8000E70D5 /* imagecache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imagecache.h; sourceTree = "<group>"; };
 		5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImageUtils.h; sourceTree = "<group>"; };
 		5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CImageUtils.mm; sourceTree = "<group>"; };
+		5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-grcontext.h"; sourceTree = "<group>"; };
 		5EEC25071719F0F900445B21 /* ns-array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array.h"; sourceTree = "<group>"; };
 		5EEC25081719F1C600445B21 /* as.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = as.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -150,6 +151,7 @@
 				5EEC25081719F1C600445B21 /* as.h */,
 				5EEC25071719F0F900445B21 /* ns-array.h */,
 				5E7F3671171DC6CB00FE22E3 /* ns-dict.h */,
+				5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */,
 			);
 			name = ns;
 			sourceTree = "<group>";
