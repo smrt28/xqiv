@@ -12,13 +12,13 @@
 #import <Carbon/Carbon.h>
 
 #import "ns-grcontext.h"
+#include "as.h"
 
 @implementation QQImageView
 
 - (void)dealloc {
     [_timer release];
     [_tracking release];
-    [_rotate release];
     [super dealloc];
 }
 
@@ -34,7 +34,7 @@
         _mouseInside = NO;
         _forceBest = NO;
         
-        _rotate = [[NSAffineTransform alloc] init];
+       // _rotate = [[NSAffineTransform alloc] init];
        // [_rotate translateXBy:50 yBy:0];
        // [_rotate rotateByDegrees:-20];
     }
@@ -179,17 +179,19 @@
 
 - (void)drawRect:(NSRect)dirtyRect interpolation:(int)itp
 {
+    bool rotated = false;
     ns::grcontext_autosave_t grContextSaved;
     
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     
     NSSize imageSize = _imageSize;
-    /*
-    CGFloat tmp;
-    tmp = imageSize.width;
-    imageSize.width = imageSize.height;
-    imageSize.height = tmp;
-    */
+    
+    if (rotated) {
+        CGFloat tmp;
+        tmp =  imageSize.width;
+        imageSize.width = imageSize.height;
+        imageSize.height = tmp;
+    }
     
     if (_mouseInside || !_image) {
         [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:0.5] set];
@@ -199,7 +201,7 @@
     
     NSRectFill(dirtyRect);
     
-    [_rotate concat];
+    //[_rotate concat];
 
     // NSRectFill([self bounds]);
     if (_image) {
@@ -214,7 +216,12 @@
         
         vsize = [self bounds].size;
         isize = vsize;
-        
+        /*
+        nss::object_t<NSAffineTransform> rotate;
+        [rotate translateXBy:0 yBy:vsize.height];
+        [rotate rotateByDegrees:-90];
+        [rotate concat];
+        */
         
         if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
             NSLog(@"need resize");
@@ -244,15 +251,31 @@
         x = vsize.height - (isize.height + vsize.height) / 2;
         y = vsize.width - (isize.width + vsize.width) / 2;
         
-        [_image setSize:isize];
-        NSRect r =
-        NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
+        if (rotated) {
+            [_image setSize:s::img::swapSides(isize)];
+        } else {
+            [_image setSize:isize];
+        }
+        
+        NSRect r;
+        if (rotated) {
+            r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].width + y);
+        } else {
+            r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
+        }
         
 
          
         if (itp || _forceBest) {
             _forceBest = NO;
-            NSSize size = isize;
+            NSSize size;
+            if (rotated) {
+                size = s::img::swapSides(isize);
+            } else {
+                size = isize;
+            }
+            
+            
             toDraw = s::img::resize(_image, size);
             [toDraw size];
         } else {
