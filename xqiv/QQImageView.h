@@ -29,9 +29,11 @@
     NSTrackingArea * _tracking;
     BOOL _mouseInside;
     BOOL _forceBest;
+    int _angle;
 
 }
 
+- (void)rotate;
 - (void)setForceBest;
 - (NSSize)imegeSize;
 - (void)setImage:(NSImage *)image;

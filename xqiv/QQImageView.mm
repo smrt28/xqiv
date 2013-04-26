@@ -14,6 +14,10 @@
 #import "ns-grcontext.h"
 #include "as.h"
 
+namespace {
+    int anAngles[4] = {0, -90, 180, 90};
+}
+
 @implementation QQImageView
 
 - (void)dealloc {
@@ -33,10 +37,7 @@
         _tracking = nil;
         _mouseInside = NO;
         _forceBest = NO;
-        
-       // _rotate = [[NSAffineTransform alloc] init];
-       // [_rotate translateXBy:50 yBy:0];
-       // [_rotate rotateByDegrees:-20];
+        _angle = 0;
     }
     
     
@@ -179,7 +180,12 @@
 
 - (void)drawRect:(NSRect)dirtyRect interpolation:(int)itp
 {
+    int angle = anAngles[_angle % 4];
+    
     bool rotated = false;
+    if (angle == 90 || angle == -90)
+        rotated = true;
+    
     ns::grcontext_autosave_t grContextSaved;
     
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
@@ -216,12 +222,25 @@
         
         vsize = [self bounds].size;
         isize = vsize;
-        /*
+        
         nss::object_t<NSAffineTransform> rotate;
-        [rotate translateXBy:0 yBy:vsize.height];
-        [rotate rotateByDegrees:-90];
-        [rotate concat];
-        */
+        switch (angle) {
+            case -90:
+                [rotate translateXBy:0 yBy:vsize.height];
+                [rotate rotateByDegrees:-90];
+                [rotate concat];
+                break;
+            case 90:
+                [rotate translateXBy:vsize.width yBy:0];
+                [rotate rotateByDegrees:90];
+                [rotate concat];
+                break;
+            case -180:
+                [rotate translateXBy:vsize.width yBy:vsize.height];
+                [rotate rotateByDegrees:-180];
+                [rotate concat];
+                break;
+        }
         
         if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
             NSLog(@"need resize");
@@ -264,8 +283,9 @@
             r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
         }
         
+        NSLog(@"x=%f y=%f, w=%f, h=%f", x, y, [_image size].width, [_image size].height);
 
-         
+        
         if (itp || _forceBest) {
             _forceBest = NO;
             NSSize size;
@@ -289,6 +309,11 @@
 
 }
 
+- (void)rotate {
+    _angle++;
+   [self setNeedsDisplay:YES];
+}
+
 - (void)setForceBest {
     _forceBest = YES;
 }
@@ -305,6 +330,9 @@
             break;
         case kVK_Escape:
             [_delegate escape];
+            break;
+        case 0x21:
+            [self rotate];
             break;
     }
 }
