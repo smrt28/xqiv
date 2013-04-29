@@ -268,9 +268,6 @@ namespace {
             r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
         }
         
-        NSLog(@"x=%f y=%f, w=%f, h=%f", x, y, [_image size].width, [_image size].height);
-
-        
         if (itp || _forceBest) {
             _forceBest = NO;
             NSSize size;
@@ -311,8 +308,10 @@ namespace {
 
 }
 
-- (void)rotate {
-    _angle++;
+- (void)rotate:(int)direction {
+    _angle += direction;
+    if (_angle < 0) _angle = 3;
+    _angle %= 4;
    [self setNeedsDisplay:YES];
 }
 
@@ -333,10 +332,39 @@ namespace {
         case kVK_Escape:
             [_delegate escape];
             break;
-        case 0x21:
-            [self rotate];
+        case 0x21: // [
+            [self rotate:-1];
             break;
-    }
+        case 0x1e: // ]
+            [self rotate:+1];
+            break;
+        case 0x45: { // +
+            NSWindow *w = [self window];
+            NSRect r = [w frame];
+            r.size.width += 10;
+            r.size.height += 10;
+            r.origin.x -= 5;
+            r.origin.y -= 5;
+            [w setFrame:r display:YES];
+            break;
+        }
+
+        case 0x4e: {
+            NSWindow *w = [self window];
+            NSRect r = [w frame];
+            if (r.size.width > 50 && r.size.height > 50) {
+                r.size.width -= 10;
+                r.size.height -= 10;
+                r.origin.x += 5;
+                r.origin.y += 5;
+                [w setFrame:r display:YES];
+            }
+            break;
+        }
+            
+
+
+}
 }
 
 @end

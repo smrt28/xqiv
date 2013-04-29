@@ -33,7 +33,7 @@
 
 }
 
-- (void)rotate;
+- (void)rotate:(int)direction;
 - (void)setForceBest;
 - (NSSize)imegeSize;
 - (void)setImage:(NSImage *)image;
