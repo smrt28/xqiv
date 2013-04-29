@@ -93,6 +93,7 @@ namespace {
 
 - (void)setImage:(NSImage *)image
 {
+    _angle = 0;
     if (_image) {
         [_image release];
     }
@@ -186,6 +187,7 @@ namespace {
     if (angle == 90 || angle == -90)
         rotated = true;
     
+    
     ns::grcontext_autosave_t grContextSaved;
     
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
@@ -211,7 +213,7 @@ namespace {
 
     // NSRectFill([self bounds]);
     if (_image) {
-        
+        s::img::SizeKeeper_t sizeKeeper(_image);
         
         [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
         NSImage *toDraw = _image;
@@ -223,24 +225,7 @@ namespace {
         vsize = [self bounds].size;
         isize = vsize;
         
-        nss::object_t<NSAffineTransform> rotate;
-        switch (angle) {
-            case -90:
-                [rotate translateXBy:0 yBy:vsize.height];
-                [rotate rotateByDegrees:-90];
-                [rotate concat];
-                break;
-            case 90:
-                [rotate translateXBy:vsize.width yBy:0];
-                [rotate rotateByDegrees:90];
-                [rotate concat];
-                break;
-            case -180:
-                [rotate translateXBy:vsize.width yBy:vsize.height];
-                [rotate rotateByDegrees:-180];
-                [rotate concat];
-                break;
-        }
+
         
         if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
             NSLog(@"need resize");
@@ -278,7 +263,7 @@ namespace {
         
         NSRect r;
         if (rotated) {
-            r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].width + y);
+            r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
         } else {
             r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
         }
@@ -301,7 +286,24 @@ namespace {
         } else {
             [self scheduleDrawBest];
         }
-        
+        nss::object_t<NSAffineTransform> rotate;
+        switch (angle) {
+            case -90:
+                [rotate translateXBy:0 yBy:vsize.height];
+                [rotate rotateByDegrees:-90];
+                [rotate concat];
+                break;
+            case 90:
+                [rotate translateXBy:vsize.width yBy:0];
+                [rotate rotateByDegrees:90];
+                [rotate concat];
+                break;
+            case 180:
+                [rotate translateXBy:vsize.width yBy:vsize.height];
+                [rotate rotateByDegrees:-180];
+                [rotate concat];
+                break;
+        }
         [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
         return;
     }

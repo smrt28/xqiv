@@ -20,5 +20,21 @@ namespace img {
         rv.height = size.width;
         return rv;
     }
+    
+    class SizeKeeper_t {
+    public:
+        SizeKeeper_t(NSImage *image) :
+            image([image retain]),
+            size([image size])
+        {}
+        
+        ~SizeKeeper_t() {
+            [image setSize:size];
+            [image release];
+        }
+    private:
+        NSImage *image;
+        NSSize size;
+    };
 }
 }
