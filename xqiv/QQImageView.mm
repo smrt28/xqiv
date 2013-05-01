@@ -16,6 +16,29 @@
 
 namespace {
     int anAngles[4] = {0, -90, 180, 90};
+    
+    void setTransformation(int angle, nss::object_t<NSAffineTransform> &rotate,
+                           NSSize vsize)
+    {
+        
+        switch (angle) {
+            case -90:
+                [rotate translateXBy:0 yBy:vsize.height];
+                [rotate rotateByDegrees:-90];
+                [rotate concat];
+                break;
+            case 90:
+                [rotate translateXBy:vsize.width yBy:0];
+                [rotate rotateByDegrees:90];
+                [rotate concat];
+                break;
+            case 180:
+                [rotate translateXBy:vsize.width yBy:vsize.height];
+                [rotate rotateByDegrees:-180];
+                [rotate concat];
+                break;
+        }
+    }
 }
 
 @implementation QQImageView
@@ -32,27 +55,43 @@ namespace {
     if (self) {
         _image = 0;
         _timer = nil;
+        _bgTimer = nil;
         _best = NO;
         _delegate = nil;
         _tracking = nil;
         _mouseInside = NO;
         _forceBest = NO;
+        _bgVisible = NO;
         _angle = 0;
+        _bgAlpha = 0.5;
     }
     
     
     return self;
 }
 
-/*
-- (BOOL) isOpaque
-{
-    return YES;
-}
-*/
 
 - (void)setDelegate:(id<QQImageViewProtocol>)dlg {
     _delegate = dlg;
+}
+
+- (void)scheduleHideBg {
+    _bgVisible = YES;
+    [_bgTimer invalidate];
+    _bgTimer = nil;
+    _bgTimer = [NSTimer scheduledTimerWithTimeInterval: 0.3
+                                              target: self
+                                            selector: @selector(hideBg)
+                                            userInfo: nil
+                                             repeats: NO];
+}
+
+- (void)hideBg {
+    _bgTimer = nil;
+    if (!_bgVisible) return;
+    _bgVisible = NO;
+    _forceBest = YES;
+    [self setNeedsDisplay:YES];
 }
 
 - (void)scheduleDrawBest {
@@ -201,15 +240,16 @@ namespace {
         imageSize.height = tmp;
     }
     
-    if (_mouseInside || !_image) {
-        [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:0.5] set];
+    if (_bgVisible)
+        _forceBest = YES;
+    
+    if (_mouseInside || !_image || _bgVisible) {
+        [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:_bgAlpha] set];
     } else {
         [[NSColor clearColor] set];
     }
     
     NSRectFill(dirtyRect);
-    
-    //[_rotate concat];
 
     // NSRectFill([self bounds]);
     if (_image) {
@@ -229,19 +269,35 @@ namespace {
         
         if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
             NSLog(@"need resize");
-        } else {
-            [_image setSize:imageSize];
+        } else
+        {
+         
+            if (rotated) {
+                [_image setSize:s::img::swapSides(imageSize)];
+            } else {
+                [_image setSize:imageSize];
+            }
+            
+            
+            nss::object_t<NSAffineTransform> rotate;
+            setTransformation(angle, rotate, vsize);
+            
             isize = imageSize;
             x = vsize.height - (isize.height + vsize.height) / 2;
             y = vsize.width - (isize.width + vsize.width) / 2;
-            NSRect r =
-            NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
+            NSRect r;
+            
+            if (rotated) {
+                r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
+            } else {
+                r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
+            }
 
             [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
             NSLog(@"doesn't need resize");
             return;
         }
-        
+ 
         CGFloat hw = imageSize.height / imageSize.width;
         
         isize.height = isize.width * hw;       
@@ -283,24 +339,9 @@ namespace {
         } else {
             [self scheduleDrawBest];
         }
+
         nss::object_t<NSAffineTransform> rotate;
-        switch (angle) {
-            case -90:
-                [rotate translateXBy:0 yBy:vsize.height];
-                [rotate rotateByDegrees:-90];
-                [rotate concat];
-                break;
-            case 90:
-                [rotate translateXBy:vsize.width yBy:0];
-                [rotate rotateByDegrees:90];
-                [rotate concat];
-                break;
-            case 180:
-                [rotate translateXBy:vsize.width yBy:vsize.height];
-                [rotate rotateByDegrees:-180];
-                [rotate concat];
-                break;
-        }
+        setTransformation(angle, rotate, vsize);
         [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
         return;
     }
@@ -312,11 +353,20 @@ namespace {
     _angle += direction;
     if (_angle < 0) _angle = 3;
     _angle %= 4;
-   [self setNeedsDisplay:YES];
+    [self scheduleHideBg];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)setForceBest {
     _forceBest = YES;
+}
+
+-(void)setAngle:(int)angle {
+    if (angle < 0) return;
+    if (angle > 3) return;
+    _angle = angle;
+
+    [self setNeedsDisplay:YES];
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
@@ -334,9 +384,11 @@ namespace {
             break;
         case 0x21: // [
             [self rotate:-1];
+            [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
             break;
         case 0x1e: // ]
             [self rotate:+1];
+            [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
             break;
         case 0x45: { // +
             NSWindow *w = [self window];
@@ -346,9 +398,9 @@ namespace {
             r.origin.x -= 5;
             r.origin.y -= 5;
             [w setFrame:r display:YES];
+            [self scheduleHideBg];
             break;
         }
-
         case 0x4e: {
             NSWindow *w = [self window];
             NSRect r = [w frame];
@@ -358,13 +410,11 @@ namespace {
                 r.origin.x += 5;
                 r.origin.y += 5;
                 [w setFrame:r display:YES];
+                [self scheduleHideBg];
             }
             break;
         }
-            
-
-
-}
+    }
 }
 
 @end

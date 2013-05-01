@@ -12,6 +12,7 @@
 #import "QQImageLoader.h"
 #import "CImageUtils.h"
 #import "CHash.h"
+#import "QQStruct.h"
 
 #import "ns-dict.h"
 #import "ns-grcontext.h"
@@ -89,7 +90,9 @@
     @autoreleasepool {
     
     NSString *filename = item[@"filename"];
-        
+    ns::dict_t useredata(item[@"userdata"].as<NSMutableDictionary>());
+
+    NSSize reqSize = [useredata[@"size"].as<QQNSSize>() size];
     ns::dict_t ret([self createResponse:anItem]);
 
     NSImage *img = nil, *original = nil;
@@ -102,7 +105,7 @@
             NSData *data = [fh readDataOfLength:1024 * 1024 * 32];            
             sha1 = s::hash::hex(s::hash::sha1(data));
             original = [[[NSImage alloc] initWithData:data] autorelease];
-            img = s::img::fitScreen(original);
+            img = s::img::fitSize(original, reqSize);
         }
     }
     @catch (NSException *exception) {
@@ -151,9 +154,15 @@
     _end = YES;
 }
 
+- (void)nop {
+}
+
 - (void)join {
     [self performSelector:@selector(joinAsync) onThread:self withObject:nil waitUntilDone:YES];
+}
 
+- (void)ensureWaiting {
+    [self performSelector:@selector(nop) onThread:self withObject:nil waitUntilDone:YES];
 }
 
 - (BOOL)inProgress {

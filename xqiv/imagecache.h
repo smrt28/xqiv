@@ -9,6 +9,7 @@
 #import "QQImageLoader.h"
 #import "QQImageView.h"
 #import "ns-array.h"
+#import "ns-dict.h"
 
 #include <vector>
 #include <set>
@@ -52,7 +53,6 @@ namespace  s  {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
-
         }
         
         void loaded(NSMutableDictionary *);
@@ -110,7 +110,7 @@ namespace  s  {
             }
             
             if (item_at(pivot).state == ics::LOADED) {
-                [viewCtl showImage:item_at(pivot).image];
+                [viewCtl showImage:item_at(pivot).image attributes:attr().objc()];
             }
             
             lastAction = &ImageCache_t::show<xnext>;
@@ -133,10 +133,16 @@ namespace  s  {
             return pivot;
         }
         
+        void ensure_not_buzy();
+        
+        NSString * get_attribute(NSString *key);
+        void set_attribute(NSString *key, NSString *value);
     private:
         void unload(size_t idx);
         void load(size_t idx);
         void run();
+        
+        ns::dict_t attr();
         
         size_t next(size_t idx) {
             idx++;
@@ -145,6 +151,7 @@ namespace  s  {
         }
         
         size_t prev(size_t idx) {
+            if (size() == 0) return 0;
             if (idx == 0) {
                 return size() - 1;
             }
@@ -159,6 +166,7 @@ namespace  s  {
         Loaders_t loaders;
         id<QQImageCtl> viewCtl;
         ns::array_t images;
+        ns::dict_t attributes;
         size_t pivot;
         size_t resources;
         int BW, FW;

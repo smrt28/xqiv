@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 smrt. All rights reserved.
 //
 
+#import "QQStruct.h"
 #import "imagecache.h"
 #import "ns-dict.h"
 
@@ -61,11 +62,21 @@ namespace s {
         
         cache.sha1 = d[@"sha1"].as<NSString>();
         if (idx == pivot) {
-            [viewCtl showImage:img];
+            [viewCtl showImage:img attributes:attr().objc()];
         }
         run();
     }
     
+    
+    void ImageCache_t::ensure_not_buzy() {
+        for(Loaders_t::iterator it = loaders.begin(),
+            eit = loaders.end();
+            it != eit; ++it)
+        {
+            it->ensure_not_buzy();
+            
+        }
+    }
     
     void ImageCache_t::run() {
         for(Loaders_t::iterator it = loaders.begin(),
@@ -80,6 +91,13 @@ namespace s {
             ns::dict_t udata;
             udata.insert(@"index", [NSNumber numberWithLong:td]);
             udata.insert(@"version", [NSNumber numberWithLong:version]);
+            
+//            udata.insert(@"size", [QQNSSize sizeWithScreenSize]);
+            NSSize tmpSize;
+            tmpSize.width = 500;
+            tmpSize.height = 500;
+            udata.insert(@"size", [QQNSSize sizeWithNSSize:tmpSize]);
+           
             NSString *filename = item_at(td).filename;
             item_at(td).state = ics::LOADING;
             it->load(filename, udata.objc());
@@ -147,6 +165,7 @@ namespace s {
     
     
     size_t ImageCache_t::todo() {
+        if (size() == 0) return NOINDEX;
 
         int bw = BW, fw = FW;
         
@@ -192,4 +211,27 @@ namespace s {
         images.push_back(item);
         return item;
     }
+    
+    ns::dict_t ImageCache_t::attr() {
+        NSString *sha1 = item_at(pivot).sha1;
+        if (!sha1) return ns::dict_t();
+        
+        
+        if (!attributes[sha1]) {
+            ns::dict_t rv;
+            attributes.insert(sha1, rv);
+            return rv;
+        }
+        
+        return attributes[sha1].as<ns::dict_t>();
+    }
+    
+    NSString * ImageCache_t::get_attribute(NSString *key) {
+        return attr()[key].as<NSString>();
+    }
+    
+    void ImageCache_t::set_attribute(NSString *key, NSString *value) {
+        attr().insert(key, value);
+    }
 }
+

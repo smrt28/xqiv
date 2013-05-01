@@ -15,7 +15,7 @@
 @end
 
 @protocol QQImageCtl<NSObject>
-    - (void)showImage:(NSImage *)img;
+    - (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs;
 @end
 
 @interface QQImageLoader : NSThread {
@@ -34,6 +34,7 @@
 - (void)setDelegate:(id<QQImageLoaderProtocol>)delegate;
 - (id)delegate;
 - (BOOL)inProgress;
+- (void)ensureWaiting;
 
 @end
 
@@ -77,6 +78,10 @@ namespace s {
         bool inProgress() {
             if ([o inProgress]) return true;
             return false;
+        }
+        
+        void ensure_not_buzy() {
+            [o ensureWaiting];
         }
     };
 }

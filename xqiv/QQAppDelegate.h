@@ -22,7 +22,8 @@
 -(void)nextImage;
 -(void)prevImage;
 -(void)escape;
-- (void)showImage:(NSImage *)img;
+- (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs;
+
 
 //-(IBAction)test: sender;
 

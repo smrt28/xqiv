@@ -70,11 +70,21 @@
 
 -(void)escape {
     _cache.clear();
+    //_cache.ensure_not_buzy();
     [[NSApplication sharedApplication] hide:self];
+//    [[NSApplication sharedApplication] miniaturizeAll:self];
 }
-- (void)showImage:(NSImage *)img {
+- (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs {
+    ns::dict_t d(attrs);
     [image setForceBest];
     [image setImage:img];
+    
+    int angle = d[@"angle"].as<int>();
+    [image setAngle: angle];
+}
+
+-(void)setAttribute:(NSString *)key value:(NSString *)val {
+    _cache.set_attribute(key, val);
 }
 
 @end

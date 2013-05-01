@@ -17,6 +17,7 @@
 		5E4DB69116F8DAED003EA782 /* QQImageLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */; };
 		5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E593F2D1711FC3A00FE2481 /* CHash.mm */; };
 		5E7BB62516F63C37002BA33E /* QQImageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7BB62416F63C37002BA33E /* QQImageView.mm */; };
+		5E7EF2F81731887500926B9E /* QQStruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7EF2F71731887400926B9E /* QQStruct.m */; };
 		5E98DCFE17245EB8000E70D5 /* imagecache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E98DCFC17245EB8000E70D5 /* imagecache.mm */; };
 		5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */; };
 /* End PBXBuildFile section */
@@ -43,6 +44,8 @@
 		5E593F2E1711FC3A00FE2481 /* CHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHash.h; sourceTree = "<group>"; };
 		5E7BB62316F63C37002BA33E /* QQImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageView.h; sourceTree = "<group>"; };
 		5E7BB62416F63C37002BA33E /* QQImageView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageView.mm; sourceTree = "<group>"; };
+		5E7EF2F61731887400926B9E /* QQStruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQStruct.h; sourceTree = "<group>"; };
+		5E7EF2F71731887400926B9E /* QQStruct.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QQStruct.m; sourceTree = "<group>"; };
 		5E7F3671171DC6CB00FE22E3 /* ns-dict.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-dict.h"; sourceTree = "<group>"; };
 		5E98DCFC17245EB8000E70D5 /* imagecache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = imagecache.mm; sourceTree = "<group>"; };
 		5E98DCFD17245EB8000E70D5 /* imagecache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imagecache.h; sourceTree = "<group>"; };
@@ -135,6 +138,8 @@
 		5E1D579216FCCF50000F165E /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				5E7EF2F61731887400926B9E /* QQStruct.h */,
+				5E7EF2F71731887400926B9E /* QQStruct.m */,
 				5E593F2E1711FC3A00FE2481 /* CHash.h */,
 				5E593F2D1711FC3A00FE2481 /* CHash.mm */,
 				5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */,
@@ -229,6 +234,7 @@
 				5E422ACE170CBFC5009A62A7 /* QQQivWindow.m in Sources */,
 				5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */,
 				5E98DCFE17245EB8000E70D5 /* imagecache.mm in Sources */,
+				5E7EF2F81731887500926B9E /* QQStruct.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

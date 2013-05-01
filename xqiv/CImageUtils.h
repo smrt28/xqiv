@@ -8,11 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+
+
 namespace s {
 namespace img {
     size_t msize(NSImage *img);
     NSImage * resize(NSImage * img, NSSize size);
     NSImage * fitScreen(NSImage *img);
+    NSImage * fitSize(NSImage *img, NSSize size);
     
     inline NSSize swapSides(NSSize size) {
         NSSize rv;

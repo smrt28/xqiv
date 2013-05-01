@@ -12,6 +12,7 @@
     -(void)nextImage;
     -(void)prevImage;
     -(void)escape;
+    -(void)setAttribute:(NSString *)key value:(NSString *)val;
 @end
 
 
@@ -24,9 +25,15 @@
     NSSize _imageSize;
     NSPoint initialLocation;
     NSTimer *_timer;
+    
+    NSTimer *_bgTimer;
+    CGFloat _bgAlpha;
+    
     BOOL _best;
     id<QQImageViewProtocol> _delegate;
     NSTrackingArea * _tracking;
+    
+    BOOL _bgVisible;
     BOOL _mouseInside;
     BOOL _forceBest;
     int _angle;
@@ -38,4 +45,6 @@
 - (NSSize)imegeSize;
 - (void)setImage:(NSImage *)image;
 - (void)setDelegate:(id<QQImageViewProtocol>)dlg;
+- (void)setAngle:(int)angle;
+
 @end

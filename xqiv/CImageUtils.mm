@@ -42,24 +42,7 @@
 namespace s {
 namespace img {
     
-    size_t msize(NSImage *img) {
-        /*
-        NSArray * repArray = [img representations];
-        NSBitmapImageRep *rep = [repArray objectAtIndex:0];
-        NSSize originalSize;
-        
-        size_t h = [rep pixelsHigh];
-        size_t w = [rep pixelsWide];
-        
-        size_t bpp = [rep bitsPerPixel];
-        size_t rv = w * h;
 
-        
-
-        return rv;
-         */
-        return 0;
-    }
 
 #if 0
 
