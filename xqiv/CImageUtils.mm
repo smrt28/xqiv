@@ -110,6 +110,15 @@ namespace img {
     
 #endif
     
+    NSSize pixelSize(NSImage *img) {
+        NSSize originalSize;
+        NSArray * repArray = [img representations];
+        NSImageRep * rep = [repArray objectAtIndex:0];
+        originalSize.height = [rep pixelsHigh];
+        originalSize.width = [rep pixelsWide];
+        return originalSize;
+    }
+    
     NSImage *fitSize(NSImage *img, NSSize size) {
         if (!img) {
             return nil;

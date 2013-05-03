@@ -12,21 +12,22 @@
 #import "imagecache.h"
 
 @interface QQAppDelegate : NSObject <NSApplicationDelegate,
-    QQImageViewProtocol, QQImageCtl>
+    QQImageViewProtocol, QQImageCtl, NSWindowDelegate>
 {
     IBOutlet QQImageView * image;
     IBOutlet NSPanel *_tags;
+    IBOutlet NSWindow *_window;
     s::ImageCache_t _cache;
 }
 
 -(void)nextImage;
 -(void)prevImage;
 -(void)escape;
-- (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs;
+- (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs origSize:(NSSize)size;
 
 
 //-(IBAction)test: sender;
 
-@property (assign) IBOutlet NSWindow *window;
+//@property (assign) IBOutlet NSWindow *window;
 
 @end

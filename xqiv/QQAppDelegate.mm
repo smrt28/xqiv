@@ -47,8 +47,10 @@
         [_window orderFrontRegardless];
         [_window makeKeyAndOrderFront:_window];
         [_window makeKeyWindow];
-        
+                
         _cache.ready();
+        
+        [self needSizeCheck];
         
     } @catch (...) {}
 }
@@ -71,13 +73,19 @@
 -(void)escape {
     _cache.clear();
     //_cache.ensure_not_buzy();
+    [image setImage:nil];
     [[NSApplication sharedApplication] hide:self];
 //    [[NSApplication sharedApplication] miniaturizeAll:self];
 }
-- (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs {
+- (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs
+         origSize:(NSSize)osize
+{
     ns::dict_t d(attrs);
     [image setForceBest];
     [image setImage:img];
+//    NSSize osize = [d[@"originalsize"].as<QQNSSize>() size];
+
+    [image setOriginalSize:osize];
     
     int angle = d[@"angle"].as<int>();
     [image setAngle: angle];
@@ -87,4 +95,14 @@
     _cache.set_attribute(key, val);
 }
 
+-(void)needSizeCheck {
+    NSRect frame = [_window frame];
+    _cache.set_new_size(frame.size);
+}
+
+- (void)windowDidEndLiveResize:(NSNotification *)notification {
+    NSRect frame = [_window frame];
+    _cache.set_new_size(frame.size);
+    NSLog(@"resized %f", frame.size.width);
+}
 @end

@@ -105,7 +105,15 @@
             NSData *data = [fh readDataOfLength:1024 * 1024 * 32];            
             sha1 = s::hash::hex(s::hash::sha1(data));
             original = [[[NSImage alloc] initWithData:data] autorelease];
+            NSSize osize = s::img::pixelSize(original);
+            ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:osize]);
+            
+//            ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:[original size]]);
+//            ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:[s::img::pixelSize(original)]]);
+  
+            
             img = s::img::fitSize(original, reqSize);
+            [img setCacheMode:NSImageCacheNever];
         }
     }
     @catch (NSException *exception) {

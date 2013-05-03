@@ -13,6 +13,7 @@
     -(void)prevImage;
     -(void)escape;
     -(void)setAttribute:(NSString *)key value:(NSString *)val;
+    -(void)needSizeCheck;
 @end
 
 
@@ -37,14 +38,13 @@
     BOOL _mouseInside;
     BOOL _forceBest;
     int _angle;
-
+    NSSize _originalSize;
 }
 
 - (void)rotate:(int)direction;
 - (void)setForceBest;
-- (NSSize)imegeSize;
 - (void)setImage:(NSImage *)image;
 - (void)setDelegate:(id<QQImageViewProtocol>)dlg;
 - (void)setAngle:(int)angle;
-
+- (void)setOriginalSize:(NSSize)size;
 @end

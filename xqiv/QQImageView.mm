@@ -108,14 +108,6 @@ namespace {
                                              repeats: NO];
 }
 
-- (NSSize)imegeSize {
-    NSSize rv = _imageSize;
-    if (!_image) {
-        rv.height = rv.width = 0;
-    }
-    return rv;
-}
-
 - (BOOL)acceptsFirstResponder {
     return YES;
 }
@@ -139,7 +131,7 @@ namespace {
     [image retain];
     _image = image;
     _imageSize = [_image size];
-    
+    _originalSize = [_image size];
     [self setNeedsDisplay:YES];
 }
 
@@ -163,12 +155,13 @@ namespace {
     newOrigin.x = currentLocation.x - initialLocation.x;
     newOrigin.y = currentLocation.y - initialLocation.y;
     
-    // Don't let window get dragged up under the menu bar
-    if( (newOrigin.y+windowFrame.size.height) > (screenFrame.origin.y+screenFrame.size.height) ){
-    	newOrigin.y=screenFrame.origin.y + (screenFrame.size.height-windowFrame.size.height);
+    if ((newOrigin.y+windowFrame.size.height) >
+        (screenFrame.origin.y+screenFrame.size.height))
+    {
+    	newOrigin.y = screenFrame.origin.y +
+            (screenFrame.size.height-windowFrame.size.height);
     }
     
-    //go ahead and move the window to the new location
     [[self window] setFrameOrigin:newOrigin];
 }
 
@@ -232,12 +225,11 @@ namespace {
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
     
     NSSize imageSize = _imageSize;
+    NSSize originalSize = _originalSize;
     
     if (rotated) {
-        CGFloat tmp;
-        tmp =  imageSize.width;
-        imageSize.width = imageSize.height;
-        imageSize.height = tmp;
+        imageSize = s::img::swapSides(imageSize);
+        originalSize = s::img::swapSides(originalSize);
     }
     
     if (_bgVisible)
@@ -251,7 +243,6 @@ namespace {
     
     NSRectFill(dirtyRect);
 
-    // NSRectFill([self bounds]);
     if (_image) {
         s::img::SizeKeeper_t sizeKeeper(_image);
         
@@ -267,17 +258,16 @@ namespace {
         
 
         
-        if (imageSize.height > vsize.height || imageSize.width > vsize.width) {
-            NSLog(@"need resize");
+        if (originalSize.height > vsize.height || originalSize.width > vsize.width) {
+            
         } else
         {
-         
+            imageSize = originalSize;
             if (rotated) {
                 [_image setSize:s::img::swapSides(imageSize)];
             } else {
                 [_image setSize:imageSize];
             }
-            
             
             nss::object_t<NSAffineTransform> rotate;
             setTransformation(angle, rotate, vsize);
@@ -294,7 +284,6 @@ namespace {
             }
 
             [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
-            NSLog(@"doesn't need resize");
             return;
         }
  
@@ -333,7 +322,6 @@ namespace {
                 size = isize;
             }
             
-            
             toDraw = s::img::resize(_image, size);
             [toDraw size];
         } else {
@@ -367,6 +355,19 @@ namespace {
     _angle = angle;
 
     [self setNeedsDisplay:YES];
+}
+
+- (void)setOriginalSize:(NSSize)size {
+    _originalSize = size;
+}
+
+- (void)keyUp:(NSEvent *)theEvent {
+    switch([theEvent keyCode]) {
+        case 0x45: // +
+        case 0x4e: // -
+            [_delegate needSizeCheck];
+            break;
+    }
 }
 
 - (void)keyDown:(NSEvent *)theEvent {

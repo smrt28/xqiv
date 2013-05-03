@@ -17,6 +17,7 @@ namespace img {
     NSImage * fitScreen(NSImage *img);
     NSImage * fitSize(NSImage *img, NSSize size);
     
+    NSSize pixelSize(NSImage *img);
     inline NSSize swapSides(NSSize size) {
         NSSize rv;
         rv.width = size.height;

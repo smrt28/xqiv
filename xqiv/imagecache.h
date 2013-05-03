@@ -15,12 +15,15 @@
 #include <set>
 #include <list>
 
+#import "QQStruct.h"
+
 namespace s {
     namespace ics {
         static const int INVALID = -1;
         static const int LOADED = 1;
         static const int LOADING = 2;
         static const int NOTLOADED = 3;
+        static const int NEEDRELOAD = 4;
     }
 }
 
@@ -28,6 +31,7 @@ namespace s {
 @property (readwrite,retain) NSImage *image;
 @property (readwrite,retain) NSString *filename;
 @property (readwrite,retain) NSString *sha1;
+@property (readwrite) NSSize originalsize;
 @property (readwrite) int errorcode;
 @property (readwrite) int state;
 @property (readwrite) bool keep;
@@ -45,9 +49,10 @@ namespace  s  {
         ImageCache_t() :
             viewCtl(nil),
             pivot(0),
-            resources(13), BW(3), FW(8),
+            resources(13), BW(104857600), FW(419430400),
             version(1),
-            lastAction(&ImageCache_t::show_next)
+            lastAction(&ImageCache_t::show_next),
+            cachedImageSize([[NSScreen mainScreen] visibleFrame].size)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -110,7 +115,10 @@ namespace  s  {
             }
             
             if (item_at(pivot).state == ics::LOADED) {
-                [viewCtl showImage:item_at(pivot).image attributes:attr().objc()];
+                NSSize originalsize = item_at(pivot).originalsize;
+                
+                [viewCtl showImage:item_at(pivot).image attributes:attr().objc()
+                 origSize:originalsize];
             }
             
             lastAction = &ImageCache_t::show<xnext>;
@@ -120,10 +128,18 @@ namespace  s  {
         }
         
         void show_next() {
+            if (FW < BW) {
+                size_t tmp;
+                tmp = FW; FW = BW; BW = tmp;
+            }
             show<&ImageCache_t::goNext>();
         }
         
         void show_prev() {
+            if (FW > BW) {
+                size_t tmp;
+                tmp = FW; FW = BW; BW = tmp;
+            }
             show<&ImageCache_t::goPrev>();
         }
 
@@ -137,6 +153,10 @@ namespace  s  {
         
         NSString * get_attribute(NSString *key);
         void set_attribute(NSString *key, NSString *value);
+        
+        
+        void set_new_size(NSSize size);
+        
     private:
         void unload(size_t idx);
         void load(size_t idx);
@@ -161,6 +181,8 @@ namespace  s  {
         void reset_keep();
         
         size_t todo();
+        size_t todo_fw();
+        size_t todo_bw();
     private:
         typedef std::vector<s::ImageLoader_t> Loaders_t;
         Loaders_t loaders;
@@ -169,9 +191,10 @@ namespace  s  {
         ns::dict_t attributes;
         size_t pivot;
         size_t resources;
-        int BW, FW;
+        size_t BW, FW;
         int version;
         void (ImageCache_t::*lastAction)();
+        NSSize cachedImageSize;
     };
 }
 

@@ -15,7 +15,8 @@
 @end
 
 @protocol QQImageCtl<NSObject>
-    - (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs;
+    - (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs
+        origSize:(NSSize)size;
 @end
 
 @interface QQImageLoader : NSThread {

@@ -32,6 +32,14 @@
 @end
 
 namespace s {
+    namespace {
+        bool need_reload(int state) {
+            if (state == s::ics::NOTLOADED || state == s::ics::NEEDRELOAD)
+                return true;
+            return false;
+        }
+    }
+    
     void ImageCache_t::loaded(NSMutableDictionary *aDict) {
         ns::dict_t d(aDict);
         
@@ -42,6 +50,9 @@ namespace s {
             return;
         }
         size_t idx = udata[@"index"].as<int>();
+
+        NSSize originalsize = [d[@"originalsize"].as<QQNSSize>() size];
+        //NSLog(@"originalsize: %f %f", originalsize.height, originalsize.width);
         
         NSLog(@"loaded: %zd", idx);
         
@@ -59,10 +70,12 @@ namespace s {
         
         cache.image = img;
         cache.state = ics::LOADED;
+        cache.originalsize = originalsize;
+        
         
         cache.sha1 = d[@"sha1"].as<NSString>();
         if (idx == pivot) {
-            [viewCtl showImage:img attributes:attr().objc()];
+            [viewCtl showImage:img attributes:attr().objc() origSize:originalsize];
         }
         run();
     }
@@ -91,12 +104,7 @@ namespace s {
             ns::dict_t udata;
             udata.insert(@"index", [NSNumber numberWithLong:td]);
             udata.insert(@"version", [NSNumber numberWithLong:version]);
-            
-//            udata.insert(@"size", [QQNSSize sizeWithScreenSize]);
-            NSSize tmpSize;
-            tmpSize.width = 500;
-            tmpSize.height = 500;
-            udata.insert(@"size", [QQNSSize sizeWithNSSize:tmpSize]);
+            udata.insert(@"size", [QQNSSize sizeWithNSSize:cachedImageSize]);
            
             NSString *filename = item_at(td).filename;
             item_at(td).state = ics::LOADING;
@@ -138,22 +146,28 @@ namespace s {
             item_at(i).keep = false;
         }
         
-        int bw = FW, fw = FW;
+        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
+        
+        // 400MB forward
+        size_t fw = FW;
+        
+        // 100MB backward
+        size_t bw = BW;
         item_at(pivot).keep = true;
         
         
         for(size_t idx = next(pivot);idx != pivot;idx = next(idx)) {
             if (item_at(idx).state == ics::INVALID) continue;
             item_at(idx).keep = true;
-            fw--;
-            if (fw == 0) break;
+            if (fw < mem) break;
+            fw -= mem;
         }
         
         for(size_t idx = prev(pivot);idx != pivot;idx = prev(idx)) {
             if (item_at(idx).state == ics::INVALID) continue;
             item_at(idx).keep = true;
-            bw--;
-            if (bw == 0) break;
+            if (bw < mem) break;
+            bw -= mem;
         }
 
         for (size_t i = 0; i < size(); i++) {
@@ -163,46 +177,80 @@ namespace s {
         }
     }
     
-    
-    size_t ImageCache_t::todo() {
-        if (size() == 0) return NOINDEX;
-
-        int bw = BW, fw = FW;
-        
-        if (item_at(pivot).state == ics::NOTLOADED) {
-            return pivot;
-        }
-        
+    size_t ImageCache_t::todo_fw() {
+        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
+        size_t fw = FW;
         for(size_t idx = next(pivot);idx != pivot;idx = next(idx)) {
             int state = item_at(idx).state;
             
             if (state == ics::INVALID) continue;
             
             if (state == ics::LOADED || state == ics::LOADING) {
-                fw--; if (!fw) break;
+                if (fw < mem) break;
+                fw -= mem;
             }
             
-            if (state == ics::NOTLOADED) {
+            if (need_reload(state)) {
                 return idx;
             }
         }
-        
+        return NOINDEX;
+    }
+    
+    
+    size_t ImageCache_t::todo_bw() {
+        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
+        size_t bw = BW;
         for(size_t idx = prev(pivot);idx != pivot;idx = prev(idx)) {
-
             int state = item_at(idx).state;
             
             if (state == ics::INVALID) continue;
             
             if (state == ics::LOADED || state == ics::LOADING) {
-                bw--; if (!bw) break;
+                if (bw < mem) break;
+                bw -= mem;
             }
             
-            if (state == ics::NOTLOADED) {
+            if (need_reload(state)) {
                 return idx;
             }
         }
-        
         return NOINDEX;
+    }
+    
+    size_t ImageCache_t::todo() {
+        if (size() == 0) return NOINDEX;
+        
+        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
+        
+        NSLog(@"Image size: %ld", mem);
+
+        //int bw = BW, fw = FW;
+        
+        // 400MB forward
+        size_t fw = FW;
+        
+        // 100MB backward
+        size_t bw = BW;
+        
+        if (need_reload(item_at(pivot).state)) {
+            return pivot;
+        }
+        
+        size_t rv;
+        
+        if (FW > BW) {
+            rv = todo_fw();
+            if (rv == NOINDEX) {
+                rv = todo_bw();
+            }
+        } else {
+            rv = todo_bw();
+            if (rv == NOINDEX) {
+                rv = todo_fw();
+            }
+        }
+        return rv;
     }
     
     QQCacheItem * ImageCache_t::push_back(NSString *filename) {
@@ -232,6 +280,17 @@ namespace s {
     
     void ImageCache_t::set_attribute(NSString *key, NSString *value) {
         attr().insert(key, value);
+    }
+    
+    void ImageCache_t::set_new_size(NSSize sz) {
+        cachedImageSize = sz;
+        for (size_t i = 0; i < size(); i++) {
+            QQCacheItem *item = item_at(i);
+            if (item.state == s::ics::LOADED) {
+                item.state = s::ics::NEEDRELOAD;
+            }
+        }
+        run();
     }
 }
 
