@@ -1,4 +1,3 @@
-
 Fast commandline image viewer
 -----------------------------
 
@@ -13,7 +12,7 @@ GOALS: - sorted by priority
 
  * eliminate need of moving hands from keyboard to mouse and back
 
- * fast image tagging - recoginize same images by SHA1 checksum
+ * fast image tagging - recoginize same images by checksums
 
  * organize images
 
@@ -23,5 +22,5 @@ GOALS: - sorted by priority
 
 IMPLEMENTED:
 ------------
-   - preread images on separated thread
+   - prepare images on separated thread
 
