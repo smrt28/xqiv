@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'xqiv-cmd' target in the 'xqiv-cmd' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

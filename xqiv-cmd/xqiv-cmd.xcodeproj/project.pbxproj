@@ -1,0 +1,247 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5EC9B0A61735052200CC69F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EC9B0A51735052200CC69F9 /* Foundation.framework */; };
+		5EC9B0A91735052200CC69F9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9B0A81735052200CC69F9 /* main.m */; };
+		5EC9B0AD1735052200CC69F9 /* xqiv_cmd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5EC9B0AC1735052200CC69F9 /* xqiv_cmd.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5EC9B0A01735052200CC69F9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5EC9B0AD1735052200CC69F9 /* xqiv_cmd.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5EC9B0A21735052200CC69F9 /* xqiv-cmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "xqiv-cmd"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EC9B0A51735052200CC69F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5EC9B0A81735052200CC69F9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5EC9B0AB1735052200CC69F9 /* xqiv-cmd-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "xqiv-cmd-Prefix.pch"; sourceTree = "<group>"; };
+		5EC9B0AC1735052200CC69F9 /* xqiv_cmd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = xqiv_cmd.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5EC9B09F1735052200CC69F9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EC9B0A61735052200CC69F9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5EC9B0991735052200CC69F9 = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0A71735052200CC69F9 /* xqiv-cmd */,
+				5EC9B0A41735052200CC69F9 /* Frameworks */,
+				5EC9B0A31735052200CC69F9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5EC9B0A31735052200CC69F9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0A21735052200CC69F9 /* xqiv-cmd */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5EC9B0A41735052200CC69F9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0A51735052200CC69F9 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5EC9B0A71735052200CC69F9 /* xqiv-cmd */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0A81735052200CC69F9 /* main.m */,
+				5EC9B0AC1735052200CC69F9 /* xqiv_cmd.1 */,
+				5EC9B0AA1735052200CC69F9 /* Supporting Files */,
+			);
+			path = "xqiv-cmd";
+			sourceTree = "<group>";
+		};
+		5EC9B0AA1735052200CC69F9 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0AB1735052200CC69F9 /* xqiv-cmd-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5EC9B0A11735052200CC69F9 /* xqiv-cmd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EC9B0B01735052200CC69F9 /* Build configuration list for PBXNativeTarget "xqiv-cmd" */;
+			buildPhases = (
+				5EC9B09E1735052200CC69F9 /* Sources */,
+				5EC9B09F1735052200CC69F9 /* Frameworks */,
+				5EC9B0A01735052200CC69F9 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "xqiv-cmd";
+			productName = "xqiv-cmd";
+			productReference = 5EC9B0A21735052200CC69F9 /* xqiv-cmd */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5EC9B09A1735052200CC69F9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = smrt;
+			};
+			buildConfigurationList = 5EC9B09D1735052200CC69F9 /* Build configuration list for PBXProject "xqiv-cmd" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5EC9B0991735052200CC69F9;
+			productRefGroup = 5EC9B0A31735052200CC69F9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5EC9B0A11735052200CC69F9 /* xqiv-cmd */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5EC9B09E1735052200CC69F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EC9B0A91735052200CC69F9 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5EC9B0AE1735052200CC69F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5EC9B0AF1735052200CC69F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5EC9B0B11735052200CC69F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "xqiv-cmd/xqiv-cmd-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5EC9B0B21735052200CC69F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "xqiv-cmd/xqiv-cmd-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5EC9B09D1735052200CC69F9 /* Build configuration list for PBXProject "xqiv-cmd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EC9B0AE1735052200CC69F9 /* Debug */,
+				5EC9B0AF1735052200CC69F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5EC9B0B01735052200CC69F9 /* Build configuration list for PBXNativeTarget "xqiv-cmd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EC9B0B11735052200CC69F9 /* Debug */,
+				5EC9B0B21735052200CC69F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5EC9B09A1735052200CC69F9 /* Project object */;
+}
