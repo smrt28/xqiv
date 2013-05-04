@@ -22,6 +22,16 @@
 		5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5EC9B0B71735052300CC69F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5EC9B0A21735052200CC69F9;
+			remoteInfo = "xqiv-cmd";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		5E10D7DE16F4987300C98C58 /* xqiv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xqiv.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E10D7E116F4987300C98C58 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -51,6 +61,7 @@
 		5E98DCFD17245EB8000E70D5 /* imagecache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imagecache.h; sourceTree = "<group>"; };
 		5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImageUtils.h; sourceTree = "<group>"; };
 		5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CImageUtils.mm; sourceTree = "<group>"; };
+		5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xqiv-cmd.xcodeproj"; path = "xqiv-cmd/xqiv-cmd.xcodeproj"; sourceTree = "<group>"; };
 		5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-grcontext.h"; sourceTree = "<group>"; };
 		5EEC25071719F0F900445B21 /* ns-array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array.h"; sourceTree = "<group>"; };
 		5EEC25081719F1C600445B21 /* as.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = as.h; sourceTree = "<group>"; };
@@ -71,6 +82,7 @@
 		5E10D7D516F4987300C98C58 = {
 			isa = PBXGroup;
 			children = (
+				5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */,
 				5E10D7E716F4987300C98C58 /* xqiv */,
 				5E10D7E016F4987300C98C58 /* Frameworks */,
 				5E10D7DF16F4987300C98C58 /* Products */,
@@ -161,6 +173,14 @@
 			name = ns;
 			sourceTree = "<group>";
 		};
+		5EC9B0B41735052200CC69F9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5EC9B0B81735052300CC69F9 /* xqiv-cmd */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -201,12 +221,28 @@
 			mainGroup = 5E10D7D516F4987300C98C58;
 			productRefGroup = 5E10D7DF16F4987300C98C58 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5EC9B0B41735052200CC69F9 /* Products */;
+					ProjectRef = 5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5E10D7DD16F4987300C98C58 /* xqiv */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		5EC9B0B81735052300CC69F9 /* xqiv-cmd */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "xqiv-cmd";
+			remoteRef = 5EC9B0B71735052300CC69F9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5E10D7DC16F4987300C98C58 /* Resources */ = {

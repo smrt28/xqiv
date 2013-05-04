@@ -1299,7 +1299,7 @@
 			<object class="NSWindowTemplate" id="972006081">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{1036, 361}, {613, 501}}</string>
+				<string key="NSWindowRect">{{1036, 361}, {668, 552}}</string>
 				<int key="NSWTFlags">1954021376</int>
 				<string key="NSWindowTitle">xqiv</string>
 				<string key="NSWindowClass">QQQivWindow</string>
@@ -1314,7 +1314,7 @@
 							<reference key="NSNextResponder" ref="439893737"/>
 							<int key="NSvFlags">268</int>
 							<array class="NSMutableArray" key="NSSubviews"/>
-							<string key="NSFrameSize">{613, 501}</string>
+							<string key="NSFrameSize">{668, 552}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -1322,7 +1322,7 @@
 							<string key="NSClassName">QQImageView</string>
 						</object>
 					</array>
-					<string key="NSFrameSize">{613, 501}</string>
+					<string key="NSFrameSize">{668, 552}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="71572177"/>
@@ -1342,7 +1342,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="420570317">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSScrollView" id="217182330">
@@ -1532,7 +1532,6 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{341, 392}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="217182330"/>
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
