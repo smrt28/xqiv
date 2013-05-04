@@ -36,7 +36,6 @@
 @end
 
 
-
 @implementation QQImageLoader
 
 
@@ -107,11 +106,6 @@
             original = [[[NSImage alloc] initWithData:data] autorelease];
             NSSize osize = s::img::pixelSize(original);
             ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:osize]);
-            
-//            ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:[original size]]);
-//            ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:[s::img::pixelSize(original)]]);
-  
-            
             img = s::img::fitSize(original, reqSize);
             [img setCacheMode:NSImageCacheNever];
         }
