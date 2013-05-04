@@ -25,9 +25,4 @@
 -(void)escape;
 - (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs origSize:(NSSize)size;
 
-
-//-(IBAction)test: sender;
-
-//@property (assign) IBOutlet NSWindow *window;
-
 @end
