@@ -1,4 +1,4 @@
-Fast commandline image viewer
+Fast command-line image viewer
 -----------------------------
 
 GOALS: - sorted by priority
@@ -8,11 +8,11 @@ GOALS: - sorted by priority
    - decode images on separated thread(s)
    - cache decoded images in mem/disk
 
- * controll from command-line
+ * control from command-line
 
  * eliminate need of moving hands from keyboard to mouse and back
 
- * fast image tagging - recoginize same images by checksums
+ * fast image tagging - recognize same images by checksums
 
  * organize images
 
@@ -23,4 +23,3 @@ GOALS: - sorted by priority
 IMPLEMENTED:
 ------------
    - prepare images on separated thread
-
