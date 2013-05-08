@@ -8,41 +8,8 @@
 
 #import "CImageUtils.h"
 
-/*
- NSSize isize;
- NSSize vsize;
- CGFloat x, y;
- 
- vsize = [self bounds].size;
- isize = vsize;
- CGFloat hw = _imageSize.height / _imageSize.width;
- isize.height = isize.width * hw;
- 
- x = y = 0;
- 
- 
- if (isize.width > vsize.width || isize.height > vsize.height) {
- x = y = 0;
- isize = vsize;
- CGFloat hw = _imageSize.width / _imageSize.height;
- isize.width = isize.height * hw;
- }
- x = vsize.height - (isize.height + vsize.height) / 2;
- y = vsize.width - (isize.width + vsize.width) / 2;
- 
- 
- [_image setSize:isize];
- NSRect r =
- NSMakeRect(-y, -x, [_image size].width+y, [_image size].height + x);
- 
- [_image drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
- 
- */
-
 namespace s {
 namespace img {
-    
-
 
 #if 0
 
@@ -57,7 +24,6 @@ namespace img {
         return rv;
     }
 
-    
 #else
     NSImage * resize(NSImage * img, NSSize size) {
         NSSize originalSize = [img size];

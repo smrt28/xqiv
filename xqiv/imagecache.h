@@ -17,6 +17,7 @@
 
 #import "QQStruct.h"
 
+
 namespace s {
     namespace ics {
         static const int INVALID = -1;
@@ -24,6 +25,13 @@ namespace s {
         static const int LOADING = 2;
         static const int NOTLOADED = 3;
         static const int NEEDRELOAD = 4;
+    }
+    namespace aux {
+    inline bool need_reload(int state) {
+        if (state == s::ics::NOTLOADED || state == s::ics::NEEDRELOAD)
+            return true;
+        return false;
+    }
     }
 }
 
@@ -38,21 +46,29 @@ namespace s {
 @end
 
 namespace  s  {
+
     
     class ImageCache_t : public ImgLoaderListener_t {
         static const size_t NOINDEX = ~(size_t(0));
         
     public:
-        
-        
-        virtual ~ImageCache_t() {}
+        enum Direction_t {
+            NEXT = 1,
+            PREV = ~NEXT
+        };
+
+        virtual ~ImageCache_t() {
+            
+        }
+
         ImageCache_t() :
             viewCtl(nil),
             pivot(0),
-            resources(13), BW(104857600), FW(419430400),
+            BW(104857600), FW(419430400),
             version(1),
             lastAction(&ImageCache_t::show_next),
-            cachedImageSize([[NSScreen mainScreen] visibleFrame].size)
+            cachedImageSize([[NSScreen mainScreen] visibleFrame].size),
+            swapCnt(5)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -83,22 +99,6 @@ namespace  s  {
             if (idx >= size()) return nil;
             return images[idx].as<QQCacheItem>();
         }
-        
-        size_t goNext(size_t pvt) {
-            size_t idx;
-            for (idx = next(pvt); idx!=pvt; idx = next(idx)) {
-                if (item_at(idx).state != ics::INVALID) break;
-            }
-            return idx;
-        }
-
-        size_t goPrev(size_t pvt) {
-            size_t idx;
-            for (idx = prev(pvt); idx!=pvt; idx = prev(idx)) {
-                if (item_at(idx).state != ics::INVALID) break;
-            }
-            return idx;
-        }
 
         template<size_t (ImageCache_t::*xnext)(size_t)>
         void show() {
@@ -115,10 +115,9 @@ namespace  s  {
             }
             
             if (item_at(pivot).state == ics::LOADED) {
-                NSSize originalsize = item_at(pivot).originalsize;
-                
-                [viewCtl showImage:item_at(pivot).image attributes:attr().objc()
-                 origSize:originalsize];
+                [viewCtl showImage:item_at(pivot).image
+                        attributes:attr(false).objc()
+                 origSize:item_at(pivot).originalsize];
             }
             
             lastAction = &ImageCache_t::show<xnext>;
@@ -126,21 +125,40 @@ namespace  s  {
             run();
             
         }
-        
+
+        template<Direction_t direction>
+        size_t goToImage(size_t pvt) {
+            size_t idx;
+            for (idx = go<direction>(pvt); idx!=pvt; idx = go<direction>(idx)) {
+                if (item_at(idx).state != ics::INVALID) break;
+            }
+            return idx;
+        }
+
         void show_next() {
             if (FW < BW) {
-                size_t tmp;
-                tmp = FW; FW = BW; BW = tmp;
+                if (swapCnt == 0) {
+                    std::swap(BW,FW);
+                } else {
+                    swapCnt--;
+                }
+            } else {
+                swapCnt = 5;
             }
-            show<&ImageCache_t::goNext>();
+            show<&ImageCache_t::goToImage<NEXT> >();
         }
         
         void show_prev() {
             if (FW > BW) {
-                size_t tmp;
-                tmp = FW; FW = BW; BW = tmp;
+                if (swapCnt == 0) {
+                    std::swap(BW,FW);
+                } else {
+                    swapCnt --;
+                }
+            } else {
+                swapCnt = 5;
             }
-            show<&ImageCache_t::goPrev>();
+            show<&ImageCache_t::goToImage<PREV> >();
         }
 
         void ready();
@@ -156,33 +174,73 @@ namespace  s  {
         
         
         void set_new_size(NSSize size);
-        
+
+        void saveAttributes();
+        void loadAttributes();
+
     private:
         void unload(size_t idx);
         void load(size_t idx);
         void run();
         
-        ns::dict_t attr();
-        
-        size_t next(size_t idx) {
-            idx++;
-            if (idx >= size()) return 0;
-            return idx;
-        }
-        
-        size_t prev(size_t idx) {
-            if (size() == 0) return 0;
-            if (idx == 0) {
-                return size() - 1;
+        ns::dict_t attr(bool create = true);
+        bool hasAttr();
+
+
+        template<Direction_t direction>
+        size_t go(size_t idx) {
+            switch(direction) {
+                case NEXT:
+                    idx++;
+                    if (idx >= size()) return 0;
+                    return idx;
+
+                case PREV:
+                    if (size() == 0) return 0;
+                    if (idx == 0) {
+                        return size() - 1;
+                    }
+                    return idx - 1;
             }
-            return idx - 1;
         }
-        
+
+        template<Direction_t direction>
+        size_t go_rev(size_t idx) {
+            return go<~direction>(idx);
+        }
+
+
+        template<Direction_t direction>
+        size_t todo_() {
+            size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
+            size_t bw;
+            if (direction == NEXT) {
+                bw = FW;
+            } else {
+                bw = BW;
+            }
+            for(size_t idx = go<direction>(pivot);idx != pivot;idx = go<direction>(idx)) {
+                int state = item_at(idx).state;
+
+                if (state == ics::INVALID) continue;
+
+                if (state == ics::LOADED || state == ics::LOADING) {
+                    if (bw < mem) break;
+                    bw -= mem;
+                }
+
+                if (aux::need_reload(state)) {
+                    return idx;
+                }
+            }
+            return NOINDEX;
+        }
+
+
         void reset_keep();
         
         size_t todo();
-        size_t todo_fw();
-        size_t todo_bw();
+
     private:
         typedef std::vector<s::ImageLoader_t> Loaders_t;
         Loaders_t loaders;
@@ -190,11 +248,11 @@ namespace  s  {
         ns::array_t images;
         ns::dict_t attributes;
         size_t pivot;
-        size_t resources;
         size_t BW, FW;
         int version;
         void (ImageCache_t::*lastAction)();
         NSSize cachedImageSize;
+        int swapCnt;
     };
 }
 

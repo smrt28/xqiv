@@ -369,11 +369,19 @@
 		5E10D7FC16F4987300C98C58 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv/xqiv-Prefix.pch";
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
 				INFOPLIST_FILE = "xqiv/xqiv-Info.plist";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-lcrypto",
+					"/opt/local/lib/libboost_system-mt.a",
+					"/opt/local/lib/libboost_filesystem-mt.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -382,12 +390,20 @@
 		5E10D7FD16F4987300C98C58 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv/xqiv-Prefix.pch";
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
 				INFOPLIST_FILE = "xqiv/xqiv-Info.plist";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-lcrypto",
+					"/opt/local/lib/libboost_system-mt.a",
+					"/opt/local/lib/libboost_filesystem-mt.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

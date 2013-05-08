@@ -106,6 +106,7 @@
             original = [[[NSImage alloc] initWithData:data] autorelease];
             NSSize osize = s::img::pixelSize(original);
             ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:osize]);
+            ret.insert(@"data", data);
             img = s::img::fitSize(original, reqSize);
             [img setCacheMode:NSImageCacheNever];
         }

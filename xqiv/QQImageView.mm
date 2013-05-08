@@ -381,6 +381,7 @@ namespace {
             [_delegate prevImage];
             break;
         case kVK_Escape:
+//            [self exitFullScreenModeWithOptions:nil];
             [_delegate escape];
             break;
         case 0x21: // [
@@ -391,6 +392,11 @@ namespace {
             [self rotate:+1];
             [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
             break;
+        case 0x3: { // f
+  //          [_delegate needSizeCheck];
+  //          [self enterFullScreenMode:[NSScreen mainScreen] withOptions:nil];
+            break;
+        }
         case 0x45: { // +
             NSWindow *w = [self window];
             NSRect r = [w frame];

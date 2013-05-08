@@ -18,6 +18,7 @@
 -(id)init {
     self = [super init];
     _cache.setCtl(self);
+    _cache.loadAttributes();
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
 
     return self;
@@ -72,23 +73,22 @@
 
 -(void)escape {
     _cache.clear();
-    //_cache.ensure_not_buzy();
     [image setImage:nil];
     [[NSApplication sharedApplication] hide:self];
-//    [[NSApplication sharedApplication] miniaturizeAll:self];
+    _cache.saveAttributes();
 }
 - (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs
          origSize:(NSSize)osize
 {
-    ns::dict_t d(attrs);
     [image setForceBest];
     [image setImage:img];
-//    NSSize osize = [d[@"originalsize"].as<QQNSSize>() size];
-
     [image setOriginalSize:osize];
-    
-    int angle = d[@"angle"].as<int>();
-    [image setAngle: angle];
+
+    if (attrs) {
+        ns::dict_t d(attrs);
+        int angle = d[@"angle"].as<int>();
+        [image setAngle: angle];
+    }
 }
 
 -(void)setAttribute:(NSString *)key value:(NSString *)val {
@@ -104,5 +104,9 @@
     NSRect frame = [_window frame];
     _cache.set_new_size(frame.size);
     NSLog(@"resized %f", frame.size.width);
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification {
+    _cache.saveAttributes();
 }
 @end

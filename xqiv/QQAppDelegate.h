@@ -11,6 +11,7 @@
 #import "QQImageLoader.h"
 #import "imagecache.h"
 
+
 @interface QQAppDelegate : NSObject <NSApplicationDelegate,
     QQImageViewProtocol, QQImageCtl, NSWindowDelegate>
 {
@@ -24,5 +25,7 @@
 -(void)prevImage;
 -(void)escape;
 - (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs origSize:(NSSize)size;
+
+
 
 @end

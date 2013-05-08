@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5EC97599173AE18F00AC35D0 /* flock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97591173AE18F00AC35D0 /* flock.cpp */; };
+		5EC9759A173AE18F00AC35D0 /* objc_helper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97594173AE18F00AC35D0 /* objc_helper.mm */; };
+		5EC9759B173AE18F00AC35D0 /* repo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97595173AE18F00AC35D0 /* repo.cpp */; };
+		5EC9759C173AE18F00AC35D0 /* sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97597173AE18F00AC35D0 /* sha1.cpp */; };
+		5EC9759F173AE28000AC35D0 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9759D173AE28000AC35D0 /* error.cpp */; };
 		5EC9B0A61735052200CC69F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EC9B0A51735052200CC69F9 /* Foundation.framework */; };
 		5EC9B0A91735052200CC69F9 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EC9B0A81735052200CC69F9 /* main.mm */; };
 /* End PBXBuildFile section */
@@ -24,6 +29,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5EC97591173AE18F00AC35D0 /* flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flock.cpp; sourceTree = "<group>"; };
+		5EC97592173AE18F00AC35D0 /* flock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flock.h; sourceTree = "<group>"; };
+		5EC97593173AE18F00AC35D0 /* objc_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc_helper.h; sourceTree = "<group>"; };
+		5EC97594173AE18F00AC35D0 /* objc_helper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = objc_helper.mm; sourceTree = "<group>"; };
+		5EC97595173AE18F00AC35D0 /* repo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = repo.cpp; sourceTree = "<group>"; };
+		5EC97596173AE18F00AC35D0 /* repo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = repo.h; sourceTree = "<group>"; };
+		5EC97597173AE18F00AC35D0 /* sha1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sha1.cpp; sourceTree = "<group>"; };
+		5EC97598173AE18F00AC35D0 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		5EC9759D173AE28000AC35D0 /* error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error.cpp; sourceTree = "<group>"; };
+		5EC9759E173AE28000AC35D0 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		5EC9B0A21735052200CC69F9 /* xqiv-cmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "xqiv-cmd"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EC9B0A51735052200CC69F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5EC9B0A81735052200CC69F9 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -42,6 +57,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5EC97590173AE18F00AC35D0 /* repo */ = {
+			isa = PBXGroup;
+			children = (
+				5EC97591173AE18F00AC35D0 /* flock.cpp */,
+				5EC97592173AE18F00AC35D0 /* flock.h */,
+				5EC97593173AE18F00AC35D0 /* objc_helper.h */,
+				5EC97594173AE18F00AC35D0 /* objc_helper.mm */,
+				5EC97595173AE18F00AC35D0 /* repo.cpp */,
+				5EC97596173AE18F00AC35D0 /* repo.h */,
+				5EC97597173AE18F00AC35D0 /* sha1.cpp */,
+				5EC97598173AE18F00AC35D0 /* sha1.h */,
+				5EC9759D173AE28000AC35D0 /* error.cpp */,
+				5EC9759E173AE28000AC35D0 /* error.h */,
+			);
+			name = repo;
+			path = ../../xqiv/repo;
+			sourceTree = "<group>";
+		};
 		5EC9B0991735052200CC69F9 = {
 			isa = PBXGroup;
 			children = (
@@ -70,6 +103,7 @@
 		5EC9B0A71735052200CC69F9 /* xqiv-cmd */ = {
 			isa = PBXGroup;
 			children = (
+				5EC97590173AE18F00AC35D0 /* repo */,
 				5EC9B0A81735052200CC69F9 /* main.mm */,
 				5EC9B0AA1735052200CC69F9 /* Supporting Files */,
 			);
@@ -136,6 +170,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5EC9B0A91735052200CC69F9 /* main.mm in Sources */,
+				5EC97599173AE18F00AC35D0 /* flock.cpp in Sources */,
+				5EC9759A173AE18F00AC35D0 /* objc_helper.mm in Sources */,
+				5EC9759B173AE18F00AC35D0 /* repo.cpp in Sources */,
+				5EC9759C173AE18F00AC35D0 /* sha1.cpp in Sources */,
+				5EC9759F173AE28000AC35D0 /* error.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,8 +241,14 @@
 		5EC9B0B11735052200CC69F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv-cmd/xqiv-cmd-Prefix.pch";
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"/opt/local/lib/libboost_system-mt.a",
+					"/opt/local/lib/libboost_filesystem-mt.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -211,8 +256,14 @@
 		5EC9B0B21735052200CC69F9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv-cmd/xqiv-cmd-Prefix.pch";
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/local/include;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"/opt/local/lib/libboost_system-mt.a",
+					"/opt/local/lib/libboost_filesystem-mt.a",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -236,6 +287,7 @@
 				5EC9B0B21735052200CC69F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

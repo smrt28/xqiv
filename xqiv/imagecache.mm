@@ -32,14 +32,6 @@
 @end
 
 namespace s {
-    namespace {
-        bool need_reload(int state) {
-            if (state == s::ics::NOTLOADED || state == s::ics::NEEDRELOAD)
-                return true;
-            return false;
-        }
-    } // namespace
-
 
     void ImageCache_t::loaded(NSMutableDictionary *aDict) {
         ns::dict_t d(aDict);
@@ -66,7 +58,6 @@ namespace s {
             return;
         }
 
-
         cache.image = img;
         cache.state = ics::LOADED;
         cache.originalsize = originalsize;
@@ -74,7 +65,7 @@ namespace s {
 
         cache.sha1 = d[@"sha1"].as<NSString>();
         if (idx == pivot) {
-            [viewCtl showImage:img attributes:attr().objc() origSize:originalsize];
+            [viewCtl showImage:img attributes:attr(false).objc() origSize:originalsize];
         }
         run();
     }
@@ -153,14 +144,14 @@ namespace s {
         item_at(pivot).keep = true;
 
 
-        for(size_t idx = next(pivot);idx != pivot;idx = next(idx)) {
+        for(size_t idx = go<NEXT>(pivot);idx != pivot;idx = go<NEXT>(idx)) {
             if (item_at(idx).state == ics::INVALID) continue;
             item_at(idx).keep = true;
             if (fw < mem) break;
             fw -= mem;
         }
 
-        for(size_t idx = prev(pivot);idx != pivot;idx = prev(idx)) {
+        for(size_t idx = go<PREV>(pivot);idx != pivot;idx = go<PREV>(idx)) {
             if (item_at(idx).state == ics::INVALID) continue;
             item_at(idx).keep = true;
             if (bw < mem) break;
@@ -174,46 +165,6 @@ namespace s {
         }
     }
 
-    size_t ImageCache_t::todo_fw() {
-        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
-        size_t fw = FW;
-        for(size_t idx = next(pivot);idx != pivot;idx = next(idx)) {
-            int state = item_at(idx).state;
-
-            if (state == ics::INVALID) continue;
-
-            if (state == ics::LOADED || state == ics::LOADING) {
-                if (fw < mem) break;
-                fw -= mem;
-            }
-
-            if (need_reload(state)) {
-                return idx;
-            }
-        }
-        return NOINDEX;
-    }
-
-
-    size_t ImageCache_t::todo_bw() {
-        size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
-        size_t bw = BW;
-        for(size_t idx = prev(pivot);idx != pivot;idx = prev(idx)) {
-            int state = item_at(idx).state;
-
-            if (state == ics::INVALID) continue;
-
-            if (state == ics::LOADED || state == ics::LOADING) {
-                if (bw < mem) break;
-                bw -= mem;
-            }
-
-            if (need_reload(state)) {
-                return idx;
-            }
-        }
-        return NOINDEX;
-    }
 
     size_t ImageCache_t::todo() {
         if (size() == 0) return NOINDEX;
@@ -230,21 +181,21 @@ namespace s {
         // 100MB backward
         size_t bw = BW;
 
-        if (need_reload(item_at(pivot).state)) {
+        if (aux::need_reload(item_at(pivot).state)) {
             return pivot;
         }
 
         size_t rv;
 
         if (FW > BW) {
-            rv = todo_fw();
+            rv = todo_<NEXT>();
             if (rv == NOINDEX) {
-                rv = todo_bw();
+                rv = todo_<PREV>();
             }
         } else {
-            rv = todo_bw();
+            rv = todo_<PREV>();
             if (rv == NOINDEX) {
-                rv = todo_fw();
+                rv = todo_<NEXT>();
             }
         }
         return rv;
@@ -257,18 +208,28 @@ namespace s {
         return item;
     }
 
-    ns::dict_t ImageCache_t::attr() {
+    ns::dict_t ImageCache_t::attr(bool create) {
         NSString *sha1 = item_at(pivot).sha1;
         if (!sha1) return ns::dict_t();
 
 
         if (!attributes[sha1]) {
+            if (!create) {
+                return ns::dict_t(nil);
+            }
             ns::dict_t rv;
             attributes.insert(sha1, rv);
             return rv;
         }
 
         return attributes[sha1].as<ns::dict_t>();
+    }
+
+    bool ImageCache_t::hasAttr() {
+        NSString *sha1 = item_at(pivot).sha1;
+        if (!sha1) return false;
+        if (!attributes[sha1]) return false;
+        return true;
     }
 
     NSString * ImageCache_t::get_attribute(NSString *key) {
@@ -288,6 +249,21 @@ namespace s {
             }
         }
         run();
+    }
+
+
+    void ImageCache_t::saveAttributes() {
+        NSString *xqivAttrs = [@"~/.xqivattrs" stringByExpandingTildeInPath];
+        NSMutableDictionary *md = attributes.objc();
+        BOOL ok = [md writeToFile:xqivAttrs atomically:YES];
+        ok = NO;
+    }
+
+    void ImageCache_t::loadAttributes() {
+        NSString *xqivAttrs = [@"~/.xqivattrs" stringByExpandingTildeInPath];
+        NSMutableDictionary * at =
+            [NSMutableDictionary dictionaryWithContentsOfFile:xqivAttrs];
+        if (at) attributes = at;
     }
 }
 

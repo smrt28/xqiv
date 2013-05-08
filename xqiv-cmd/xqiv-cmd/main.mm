@@ -14,8 +14,17 @@
 #include <stdlib.h>
 #include <sys/syslimits.h>
 
+#include "repo.h"
+
+
+
 int main(int argc, const char * argv[])
 {
+    rep::Repository_t rep("~");
+    rep.insertFile("/etc/passwd");
+
+
+
     @autoreleasepool {
         NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity:1];
         NSMutableDictionary* argsInfo = [NSMutableDictionary dictionaryWithCapacity:1];
