@@ -102,6 +102,7 @@ namespace  s  {
 
         template<size_t (ImageCache_t::*xnext)(size_t)>
         void show() {
+            if (pivot >= size()) pivot = 0;
             if (item_at(pivot).state == ics::NOTLOADED) {
                 NSLog(@"skip next, image is loading!");
                 return;
@@ -110,6 +111,10 @@ namespace  s  {
             pivot = (this->*xnext)(pivot);
             
             if (item_at(pivot).state == ics::INVALID) {
+                [viewCtl showImage:nil
+                        attributes:nil
+                          origSize:NSSize()];
+
                 NSLog(@"no valid image");
                 return;
             }
@@ -129,6 +134,7 @@ namespace  s  {
         template<Direction_t direction>
         size_t goToImage(size_t pvt) {
             size_t idx;
+            if (pvt >= size()) return 0;
             for (idx = go<direction>(pvt); idx!=pvt; idx = go<direction>(idx)) {
                 if (item_at(idx).state != ics::INVALID) break;
             }

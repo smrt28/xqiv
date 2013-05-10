@@ -29,20 +29,20 @@ namespace rep {
     };
 
     Repository_t::Repository_t(const std::string &path) :
-        repoPtah(makeRepoPath(path))
+        path(makeRepoPath(path))
     {
-        try {
-            flf.open(makeLockPath());
-        } catch(const rep::Error_t &) {}
+        init();
     }
 
     void Repository_t::init() {
-        boost::filesystem::create_directory(repoPtah);
-        std::ofstream lf(makeLockPath().c_str());
+        boost::filesystem::create_directory(path.repo());
+        boost::filesystem::create_directory(path.tagsDir());
+        std::ofstream lf(path.lockFile().c_str());
         if (!lf) {
             throw Error_t(Error_t::OPEN, "can't create lock file");
         }
         lf.close();
+        flf.open(path.lockFile());
     }
 
     std::string Repository_t::makeRepoPath(const std::string &path) {
@@ -50,17 +50,15 @@ namespace rep {
     }
 
     void Repository_t::insert(const char * data, size_t length, sha1_t checksum) {
-        std::string hex = checksum.hex();
-        std::string p1 = hex.substr(0, 2);
-        std::string p2 = hex.substr(2, 2);
-        std::string p3 = hex.substr(4);
-        std::string dir = repoPtah + "/" + p1 + "/" + p2;
-        std::string repoFile = dir + "/" + p3;
+        FLock_t lock(flf);
 
-        if (boost::filesystem::exists(repoFile)) return;
+        if (boost::filesystem::exists(path.dataFile(checksum))) {
+            return;
+        }
 
-        boost::filesystem::create_directories(dir);
-        std::ofstream outfile (repoFile.c_str(), std::ofstream::binary);
+        boost::filesystem::create_directories(path.dataFileDir(checksum));
+        std::ofstream outfile (path.dataFile(checksum).c_str(),
+                               std::ofstream::binary);
         outfile.write(data, length);
     }
 
@@ -82,11 +80,6 @@ namespace rep {
 
         sha1_t sha = sha1(buffer.data, length);
         insert(buffer.data, buffer.size, sha);
-
-    }
-
-    std::string Repository_t::makeLockPath() {
-        return repoPtah + "lock";
     }
 
 }

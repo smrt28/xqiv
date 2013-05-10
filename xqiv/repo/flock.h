@@ -23,19 +23,29 @@ public:
     void unlock();
 private:
     int fd;
+    bool locked;
 
 };
 
 template<typename XLock_t>
 class Lock_t {
 public:
-    Lock_t(XLock_t &lock) : lock(lock)
-    { lock.lock(); }
+    Lock_t(XLock_t &l) : lock(&l)
+    { lock->lock(); }
 
-    ~Lock_t() { lock.unlock(); }
+    void unlock() {
+        if (!lock) return;
+        lock->unlock();
+        lock = 0;
+    }
+
+    ~Lock_t() {
+        if (lock)
+            lock->unlock();
+    }
 
 private:
-    XLock_t &lock;
+    XLock_t *lock;
 };
 
 typedef Lock_t<FLockFile_t> FLock_t;

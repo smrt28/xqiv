@@ -80,6 +80,11 @@
 - (void)showImage:(NSImage *)img attributes:(NSMutableDictionary *)attrs
          origSize:(NSSize)osize
 {
+    if (!img) {
+        [image setImage:nil];
+        return;
+    }
+
     [image setForceBest];
     [image setImage:img];
     [image setOriginalSize:osize];

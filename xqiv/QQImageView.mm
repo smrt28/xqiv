@@ -65,8 +65,7 @@ namespace {
         _angle = 0;
         _bgAlpha = 0.5;
     }
-    
-    
+
     return self;
 }
 
@@ -121,9 +120,16 @@ namespace {
 }
 
 
-
 - (void)setImage:(NSImage *)image
 {
+    if (!image) {
+        if (!_image) return;
+        [_image release];
+        _image = nil;
+        [self setNeedsDisplay:YES];
+        return;
+    }
+
     _angle = 0;
     if (_image) {
         [_image release];
@@ -214,127 +220,123 @@ namespace {
 - (void)drawRect:(NSRect)dirtyRect interpolation:(int)itp
 {
     int angle = anAngles[_angle % 4];
-    
+
     bool rotated = false;
     if (angle == 90 || angle == -90)
         rotated = true;
-    
-    
+
+
     ns::grcontext_autosave_t grContextSaved;
-    
+
     NSGraphicsContext *context = [NSGraphicsContext currentContext];
-    
+
     NSSize imageSize = _imageSize;
     NSSize originalSize = _originalSize;
-    
+
     if (rotated) {
         imageSize = s::img::swapSides(imageSize);
         originalSize = s::img::swapSides(originalSize);
     }
-    
+
     if (_bgVisible)
         _forceBest = YES;
-    
+
     if (_mouseInside || !_image || _bgVisible) {
         [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:_bgAlpha] set];
     } else {
         [[NSColor clearColor] set];
     }
-    
+
     NSRectFill(dirtyRect);
 
-    if (_image) {
-        s::img::SizeKeeper_t sizeKeeper(_image);
-        
-        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
-        NSImage *toDraw = _image;
+    if (!_image) return;
 
-        NSSize isize;
-        NSSize vsize;
-        CGFloat x, y;
-        
-        vsize = [self bounds].size;
-        isize = vsize;
-        
 
-        
-        if (originalSize.height > vsize.height || originalSize.width > vsize.width) {
-            
-        } else
-        {
-            imageSize = originalSize;
-            if (rotated) {
-                [_image setSize:s::img::swapSides(imageSize)];
-            } else {
-                [_image setSize:imageSize];
-            }
-            
-            nss::object_t<NSAffineTransform> rotate;
-            setTransformation(angle, rotate, vsize);
-            
-            isize = imageSize;
-            x = vsize.height - (isize.height + vsize.height) / 2;
-            y = vsize.width - (isize.width + vsize.width) / 2;
-            NSRect r;
-            
-            if (rotated) {
-                r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
-            } else {
-                r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
-            }
+    s::img::SizeKeeper_t sizeKeeper(_image);
 
-            [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
-            return;
+    [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+    NSImage *toDraw = _image;
+
+    NSSize isize;
+    NSSize vsize;
+    CGFloat x, y;
+
+    vsize = [self bounds].size;
+    isize = vsize;
+
+    if (originalSize.height > vsize.height || originalSize.width > vsize.width) {
+
+    } else
+    {
+        imageSize = originalSize;
+        if (rotated) {
+            [_image setSize:s::img::swapSides(imageSize)];
+        } else {
+            [_image setSize:imageSize];
         }
- 
-        CGFloat hw = imageSize.height / imageSize.width;
-        
-        isize.height = isize.width * hw;       
-        
-        if (isize.width > vsize.width || isize.height > vsize.height) {
-            isize = vsize;
-            CGFloat hw = imageSize.width / imageSize.height;
-            isize.width = isize.height * hw;
-        }
-        
+
+        nss::object_t<NSAffineTransform> rotate;
+        setTransformation(angle, rotate, vsize);
+
+        isize = imageSize;
         x = vsize.height - (isize.height + vsize.height) / 2;
         y = vsize.width - (isize.width + vsize.width) / 2;
-        
-        if (rotated) {
-            [_image setSize:s::img::swapSides(isize)];
-        } else {
-            [_image setSize:isize];
-        }
-        
         NSRect r;
+
         if (rotated) {
             r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
         } else {
             r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
         }
-        
-        if (itp || _forceBest) {
-            _forceBest = NO;
-            NSSize size;
-            if (rotated) {
-                size = s::img::swapSides(isize);
-            } else {
-                size = isize;
-            }
-            
-            toDraw = s::img::resize(_image, size);
-            [toDraw size];
-        } else {
-            [self scheduleDrawBest];
-        }
 
-        nss::object_t<NSAffineTransform> rotate;
-        setTransformation(angle, rotate, vsize);
         [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
         return;
     }
-    
 
+    CGFloat hw = imageSize.height / imageSize.width;
+
+    isize.height = isize.width * hw;
+
+    if (isize.width > vsize.width || isize.height > vsize.height) {
+        isize = vsize;
+        CGFloat hw = imageSize.width / imageSize.height;
+        isize.width = isize.height * hw;
+    }
+
+    x = vsize.height - (isize.height + vsize.height) / 2;
+    y = vsize.width - (isize.width + vsize.width) / 2;
+
+    if (rotated) {
+        [_image setSize:s::img::swapSides(isize)];
+    } else {
+        [_image setSize:isize];
+    }
+
+    NSRect r;
+    if (rotated) {
+        r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
+    } else {
+        r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
+    }
+
+    if (itp || _forceBest) {
+        _forceBest = NO;
+        NSSize size;
+        if (rotated) {
+            size = s::img::swapSides(isize);
+        } else {
+            size = isize;
+        }
+
+        toDraw = s::img::resize(_image, size);
+        [toDraw size];
+    } else {
+        [self scheduleDrawBest];
+    }
+
+    nss::object_t<NSAffineTransform> rotate;
+    setTransformation(angle, rotate, vsize);
+    [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
 }
 
 - (void)rotate:(int)direction {
@@ -381,7 +383,6 @@ namespace {
             [_delegate prevImage];
             break;
         case kVK_Escape:
-//            [self exitFullScreenModeWithOptions:nil];
             [_delegate escape];
             break;
         case 0x21: // [
@@ -393,8 +394,6 @@ namespace {
             [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
             break;
         case 0x3: { // f
-  //          [_delegate needSizeCheck];
-  //          [self enterFullScreenMode:[NSScreen mainScreen] withOptions:nil];
             break;
         }
         case 0x45: { // +

@@ -248,6 +248,7 @@
 				"OTHER_LDFLAGS[arch=*]" = (
 					"/opt/local/lib/libboost_system-mt.a",
 					"/opt/local/lib/libboost_filesystem-mt.a",
+					"/opt/local/lib/libboost_program_options-mt.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -263,6 +264,7 @@
 				"OTHER_LDFLAGS[arch=*]" = (
 					"/opt/local/lib/libboost_system-mt.a",
 					"/opt/local/lib/libboost_filesystem-mt.a",
+					"/opt/local/lib/libboost_program_options-mt.a",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

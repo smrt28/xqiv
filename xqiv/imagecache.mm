@@ -202,6 +202,10 @@ namespace s {
     }
 
     QQCacheItem * ImageCache_t::push_back(NSString *filename) {
+        if (!filename) {
+            NSLog(@"pushing nil to cache");
+            return nil;
+        }
         QQCacheItem * item = [[[QQCacheItem alloc] init] autorelease];
         item.filename = filename;
         images.push_back(item);

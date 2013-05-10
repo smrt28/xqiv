@@ -10,7 +10,8 @@
 #define __xqiv_cmd__error__
 #include <string>
 namespace rep {
-    class Error_t {
+    class Error_t //: std::exception
+    {
     public:
         enum Code_t {
             UNKNOWN = 0,
