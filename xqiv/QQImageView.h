@@ -37,6 +37,8 @@
     BOOL _bgVisible;
     BOOL _mouseInside;
     BOOL _forceBest;
+    BOOL _calmBorders;
+    BOOL _blink;
     int _angle;
     NSSize _originalSize;
 }

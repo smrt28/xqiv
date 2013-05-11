@@ -64,6 +64,8 @@ namespace {
         _bgVisible = NO;
         _angle = 0;
         _bgAlpha = 0.5;
+        _calmBorders = NO;
+        _blink = NO;
     }
 
     return self;
@@ -138,6 +140,10 @@ namespace {
     _image = image;
     _imageSize = [_image size];
     _originalSize = [_image size];
+    if (_mouseInside) {
+        _calmBorders = YES;
+        [NSCursor setHiddenUntilMouseMoves:YES];
+    }
     [self setNeedsDisplay:YES];
 }
 
@@ -186,22 +192,27 @@ namespace {
     [self setNeedsDisplay:YES];
 }
 
+
 - (void)mouseEntered:(NSEvent *)theEvent {
     if (_mouseInside) return;
-    [[self window] setStyleMask: NSBorderlessWindowMask | NSResizableWindowMask];
-    [[self window] setHasShadow:YES];
     _forceBest = YES;
     _mouseInside = YES;
     [self setNeedsDisplay:YES];
 }
 - (void)mouseExited:(NSEvent *)theEvent {
     if (!_mouseInside) return;
-    [[self window] setStyleMask: NSBorderlessWindowMask];
-    [[self window] setHasShadow:NO];
     _forceBest = YES;
     _mouseInside = NO;
     [self setNeedsDisplay:YES];
 }
+
+- (void)mouseMoved:(NSEvent *)theEvent {
+    if (_calmBorders) {
+        _calmBorders = NO;
+        [self setNeedsDisplay:YES];
+    }
+}
+
 
 - (void)updateTrackingAreas {
     NSRect eyeBox = [self frame];
@@ -241,9 +252,11 @@ namespace {
     if (_bgVisible)
         _forceBest = YES;
 
-    if (_mouseInside || !_image || _bgVisible) {
+    if (!_calmBorders && (_mouseInside || _bgVisible)) {
+        [[self window] setHasShadow:YES];
         [[NSColor colorWithSRGBRed:0.5 green:0.5 blue:0.5 alpha:_bgAlpha] set];
     } else {
+        [[self window] setHasShadow:NO];
         [[NSColor clearColor] set];
     }
 
@@ -264,8 +277,51 @@ namespace {
     vsize = [self bounds].size;
     isize = vsize;
 
+    nss::object_t<NSAffineTransform> rotate;
+    NSRect r;
+    
     if (originalSize.height > vsize.height || originalSize.width > vsize.width) {
+        CGFloat hw = imageSize.height / imageSize.width;
 
+        isize.height = isize.width * hw;
+
+        if (isize.width > vsize.width || isize.height > vsize.height) {
+            isize = vsize;
+            CGFloat hw = imageSize.width / imageSize.height;
+            isize.width = isize.height * hw;
+        }
+
+        x = vsize.height - (isize.height + vsize.height) / 2;
+        y = vsize.width - (isize.width + vsize.width) / 2;
+
+        if (rotated) {
+            [_image setSize:s::img::swapSides(isize)];
+        } else {
+            [_image setSize:isize];
+        }
+
+        
+        if (rotated) {
+            r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
+        } else {
+            r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
+        }
+
+        if (itp || _forceBest) {
+            _forceBest = NO;
+            NSSize size;
+            if (rotated) {
+                size = s::img::swapSides(isize);
+            } else {
+                size = isize;
+            }
+
+            toDraw = s::img::resize(_image, size);
+            [toDraw size];
+        } else {
+            [self scheduleDrawBest];
+        }
+        setTransformation(angle, rotate, vsize);
     } else
     {
         imageSize = originalSize;
@@ -281,61 +337,16 @@ namespace {
         isize = imageSize;
         x = vsize.height - (isize.height + vsize.height) / 2;
         y = vsize.width - (isize.width + vsize.width) / 2;
-        NSRect r;
 
         if (rotated) {
             r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
         } else {
             r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
         }
-
-        [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
-        return;
     }
 
-    CGFloat hw = imageSize.height / imageSize.width;
-
-    isize.height = isize.width * hw;
-
-    if (isize.width > vsize.width || isize.height > vsize.height) {
-        isize = vsize;
-        CGFloat hw = imageSize.width / imageSize.height;
-        isize.width = isize.height * hw;
-    }
-
-    x = vsize.height - (isize.height + vsize.height) / 2;
-    y = vsize.width - (isize.width + vsize.width) / 2;
-
-    if (rotated) {
-        [_image setSize:s::img::swapSides(isize)];
-    } else {
-        [_image setSize:isize];
-    }
-
-    NSRect r;
-    if (rotated) {
-        r = NSMakeRect(-x, -y, [_image size].width + x, [_image size].height + y);
-    } else {
-        r = NSMakeRect(-y, -x, [_image size].width + y, [_image size].height + x);
-    }
-
-    if (itp || _forceBest) {
-        _forceBest = NO;
-        NSSize size;
-        if (rotated) {
-            size = s::img::swapSides(isize);
-        } else {
-            size = isize;
-        }
-
-        toDraw = s::img::resize(_image, size);
-        [toDraw size];
-    } else {
-        [self scheduleDrawBest];
-    }
-
-    nss::object_t<NSAffineTransform> rotate;
-    setTransformation(angle, rotate, vsize);
+   // [[NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1] set];
+    //NSRectFill(r);
     [toDraw drawAtPoint:NSMakePoint(0, 0) fromRect:r operation:NSCompositeCopy fraction:1];
 }
 
@@ -383,6 +394,7 @@ namespace {
             [_delegate prevImage];
             break;
         case kVK_Escape:
+        case 0xc: // q
             [_delegate escape];
             break;
         case 0x21: // [
