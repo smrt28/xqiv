@@ -48,6 +48,7 @@
 		5E10D7F716F4987300C98C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5E422ACC170CBFC5009A62A7 /* QQQivWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQQivWindow.h; sourceTree = "<group>"; };
 		5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QQQivWindow.m; sourceTree = "<group>"; };
+		5E4CB3E9173EB1D80077E778 /* ns-array-of.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array-of.h"; sourceTree = "<group>"; };
 		5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageLoader.h; sourceTree = "<group>"; };
 		5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageLoader.mm; sourceTree = "<group>"; };
 		5E593F2D1711FC3A00FE2481 /* CHash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CHash.mm; sourceTree = "<group>"; };
@@ -169,6 +170,7 @@
 				5EEC25071719F0F900445B21 /* ns-array.h */,
 				5E7F3671171DC6CB00FE22E3 /* ns-dict.h */,
 				5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */,
+				5E4CB3E9173EB1D80077E778 /* ns-array-of.h */,
 			);
 			name = ns;
 			sourceTree = "<group>";

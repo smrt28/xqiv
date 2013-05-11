@@ -33,6 +33,12 @@
 
 namespace s {
 
+    void ImageCache_t::update_view() {
+        [viewCtl showImage:item_at(pivot).image
+                attributes:attr(false).objc()
+                  origSize:item_at(pivot).originalsize];
+    }
+
     void ImageCache_t::loaded(NSMutableDictionary *aDict) {
         ns::dict_t d(aDict);
 
@@ -65,7 +71,7 @@ namespace s {
 
         cache.sha1 = d[@"sha1"].as<NSString>();
         if (idx == pivot) {
-            [viewCtl showImage:img attributes:attr(false).objc() origSize:originalsize];
+            update_view();
         }
         run();
     }

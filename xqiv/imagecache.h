@@ -16,7 +16,7 @@
 #include <list>
 
 #import "QQStruct.h"
-
+#import "ns-array-of.h"
 
 namespace s {
     namespace ics {
@@ -46,8 +46,9 @@ namespace s {
 @end
 
 namespace  s  {
-
     
+
+
     class ImageCache_t : public ImgLoaderListener_t {
         static const size_t NOINDEX = ~(size_t(0));
         
@@ -97,7 +98,7 @@ namespace  s  {
         
         QQCacheItem * item_at(size_t idx) {
             if (idx >= size()) return nil;
-            return images[idx].as<QQCacheItem>();
+            return images[idx];
         }
 
         template<size_t (ImageCache_t::*xnext)(size_t)>
@@ -188,6 +189,8 @@ namespace  s  {
         void unload(size_t idx);
         void load(size_t idx);
         void run();
+
+        void update_view();
         
         ns::dict_t attr(bool create = true);
         bool hasAttr();
@@ -251,7 +254,7 @@ namespace  s  {
         typedef std::vector<s::ImageLoader_t> Loaders_t;
         Loaders_t loaders;
         id<QQImageCtl> viewCtl;
-        ns::array_t images;
+        ns::array_of_t<QQCacheItem> images;
         ns::dict_t attributes;
         size_t pivot;
         size_t BW, FW;

@@ -67,7 +67,6 @@
 
 -(void)awakeFromNib {
     [_window setLevel:NSScreenSaverWindowLevel + 1];
-    [_window orderFront:nil];
     [image setDelegate:self];
 }
 
@@ -81,7 +80,7 @@
          origSize:(NSSize)osize
 {
     if (!img) {
-        [image setImage:nil];
+        [self escape];
         return;
     }
 

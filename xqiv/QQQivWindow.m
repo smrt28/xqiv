@@ -17,7 +17,7 @@
                     defer:(BOOL)flag {
  
     self = [super initWithContentRect:contentRect
-                            styleMask:NSBorderlessWindowMask  /*| NSResizableWindowMask */ backing:NSBackingStoreBuffered defer:NO];
+                            styleMask:NSBorderlessWindowMask | NSResizableWindowMask  backing:NSBackingStoreBuffered defer:NO];
     
     if (self != nil) {
         [self setAlphaValue:1];
