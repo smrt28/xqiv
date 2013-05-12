@@ -53,6 +53,7 @@ namespace  s  {
         static const size_t NOINDEX = ~(size_t(0));
         
     public:
+        static const int SWITCH_TO_SWAP_FW_BW = 5;
         enum Direction_t {
             NEXT = 1,
             PREV = ~NEXT
@@ -69,7 +70,7 @@ namespace  s  {
             version(1),
             lastAction(&ImageCache_t::show_next),
             cachedImageSize([[NSScreen mainScreen] visibleFrame].size),
-            swapCnt(5)
+            swapCnt(SWITCH_TO_SWAP_FW_BW)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -90,6 +91,8 @@ namespace  s  {
         
         void clear() {
             images.clear();
+            swapCnt = SWITCH_TO_SWAP_FW_BW;
+            pivot = 0;
         }
         
         size_t size() { return images.size(); }
@@ -135,7 +138,10 @@ namespace  s  {
         template<Direction_t direction>
         size_t goToImage(size_t pvt) {
             size_t idx;
-            if (pvt >= size()) return 0;
+            if (pvt >= size()) {
+                NSLog(@"invalid pivot value!");
+                pvt = 0;
+            }
             for (idx = go<direction>(pvt); idx!=pvt; idx = go<direction>(idx)) {
                 if (item_at(idx).state != ics::INVALID) break;
             }
@@ -150,7 +156,7 @@ namespace  s  {
                     swapCnt--;
                 }
             } else {
-                swapCnt = 5;
+                swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
             show<&ImageCache_t::goToImage<NEXT> >();
         }
@@ -163,7 +169,7 @@ namespace  s  {
                     swapCnt --;
                 }
             } else {
-                swapCnt = 5;
+                swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
             show<&ImageCache_t::goToImage<PREV> >();
         }
