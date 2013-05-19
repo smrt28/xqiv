@@ -17,33 +17,9 @@
 
 #import "QQStruct.h"
 #import "ns-array-of.h"
+#import "CTime.h"
+#import "QQCacheBridge.h"
 
-namespace s {
-    namespace ics {
-        static const int INVALID = -1;
-        static const int LOADED = 1;
-        static const int LOADING = 2;
-        static const int NOTLOADED = 3;
-        static const int NEEDRELOAD = 4;
-    }
-    namespace aux {
-    inline bool need_reload(int state) {
-        if (state == s::ics::NOTLOADED || state == s::ics::NEEDRELOAD)
-            return true;
-        return false;
-    }
-    }
-}
-
-@interface QQCacheItem : NSObject
-@property (readwrite,retain) NSImage *image;
-@property (readwrite,retain) NSString *filename;
-@property (readwrite,retain) NSString *sha1;
-@property (readwrite) NSSize originalsize;
-@property (readwrite) int errorcode;
-@property (readwrite) int state;
-@property (readwrite) bool keep;
-@end
 
 namespace  s  {
     
@@ -51,8 +27,73 @@ namespace  s  {
 
     class ImageCache_t : public ImgLoaderListener_t {
         static const size_t NOINDEX = ~(size_t(0));
-        
+
     public:
+
+        class images_t : public ns::array_of_t<QQCacheItem> {
+        public:
+
+            QQCacheItem * at(size_t idx) {
+                if (size() == 0) return nil;
+                return ns::array_of_t<QQCacheItem>::operator[](idx % size());
+            }
+
+            QQCacheItem * operator [](size_t idx) {
+                return at(idx);
+            }
+
+            void for_each(void (images_t::*fn)(size_t)) {
+                for (size_t i = 0; i < size(); i++) {
+                    (this->*fn)(i);
+                }
+            }
+
+            void unload(size_t idx) {
+                if (!at(idx)) return;
+                if (at(idx).state == ics::LOADING ||
+                    at(idx).state == ics::NEEDRELOAD)
+                {
+                    at(idx).state = ics::NOTLOADED;
+                    return;
+                }
+
+                if (at(idx).state != ics::LOADED) {
+                    return;
+                }
+                at(idx).image = nil;
+                at(idx).state = ics::NOTLOADED;
+            }
+
+            void reload(size_t idx) {
+                if (at(idx).state == s::ics::LOADED) {
+                    at(idx).state = s::ics::NEEDRELOAD;
+                }
+            }
+
+            void reload() {
+                for_each(&images_t::reload);
+            }
+            void unload() {
+                for_each(&images_t::unload);
+            }
+        };
+
+
+        class history_t : public ns::array_of_t<NSMutableArray> {
+            typedef ns::array_of_t<NSMutableArray> parent_t;
+        public:
+            void push_back(images_t &images) {
+                if (images.size() == 0) return;
+                NSMutableArray * rep = [NSMutableArray array];
+                NSMutableArray * old = images.release(rep);
+                parent_t::push_back(old);
+            }
+        };
+
+
+
+
+
         static const int SWITCH_TO_SWAP_FW_BW = 5;
         enum Direction_t {
             NEXT = 1,
@@ -70,7 +111,8 @@ namespace  s  {
             version(1),
             lastAction(&ImageCache_t::show_next),
             cachedImageSize([[NSScreen mainScreen] visibleFrame].size),
-            swapCnt(SWITCH_TO_SWAP_FW_BW)
+            swapCnt(SWITCH_TO_SWAP_FW_BW),
+            slowDown(0)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -90,49 +132,53 @@ namespace  s  {
         QQCacheItem * push_back(NSString *filename);
         
         void clear() {
-            images.clear();
+            im.clear();
+            version++;
             swapCnt = SWITCH_TO_SWAP_FW_BW;
             pivot = 0;
         }
         
-        size_t size() { return images.size(); }
+        size_t size() { return im.size(); }
         
         void set_keep(size_t idx, bool b);
-        
-        QQCacheItem * item_at(size_t idx) {
-            if (idx >= size()) return nil;
-            return images[idx];
-        }
 
         template<size_t (ImageCache_t::*xnext)(size_t)>
-        void show() {
+        BOOL show() {
+            BOOL rv = NO;
+
+            [NSThread sleepForTimeInterval:slowDown];
+
             if (pivot >= size()) pivot = 0;
-            if (item_at(pivot).state == ics::NOTLOADED) {
-                NSLog(@"skip next, image is loading!");
-                return;
+            if (im[pivot].state == ics::NOTLOADED ||
+                im[pivot].state == ics::LOADING)
+            {
+                if (!lastNotLoaded) {
+                    lastNotLoaded = s::time::now();
+                }
+                return rv;
             }
             
             pivot = (this->*xnext)(pivot);
             
-            if (item_at(pivot).state == ics::INVALID) {
+            if (im[pivot].state == ics::INVALID) {
                 [viewCtl showImage:nil
                         attributes:nil
                           origSize:NSSize()];
 
                 NSLog(@"no valid image");
-                return;
+                return rv;
             }
             
-            if (item_at(pivot).state == ics::LOADED) {
-                [viewCtl showImage:item_at(pivot).image
-                        attributes:attr(false).objc()
-                 origSize:item_at(pivot).originalsize];
+            if (im[pivot].state == ics::LOADED) {
+                update_view();
+                rv = YES;
+                slowDown /= 2;
             }
             
             lastAction = &ImageCache_t::show<xnext>;
             reset_keep();
             run();
-            
+            return rv;
         }
 
         template<Direction_t direction>
@@ -143,12 +189,14 @@ namespace  s  {
                 pvt = 0;
             }
             for (idx = go<direction>(pvt); idx!=pvt; idx = go<direction>(idx)) {
-                if (item_at(idx).state != ics::INVALID) break;
+                if (im[idx].state != ics::INVALID) break;
             }
             return idx;
         }
 
-        void show_next() {
+
+
+        BOOL show_next() {
             if (FW < BW) {
                 if (swapCnt == 0) {
                     std::swap(BW,FW);
@@ -158,20 +206,20 @@ namespace  s  {
             } else {
                 swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
-            show<&ImageCache_t::goToImage<NEXT> >();
+            return show<&ImageCache_t::goToImage<NEXT> >();
         }
         
-        void show_prev() {
+        BOOL show_prev() {
             if (FW > BW) {
                 if (swapCnt == 0) {
                     std::swap(BW,FW);
                 } else {
-                    swapCnt --;
+                    swapCnt--;
                 }
             } else {
                 swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
-            show<&ImageCache_t::goToImage<PREV> >();
+            return show<&ImageCache_t::goToImage<PREV> >();
         }
 
         void ready();
@@ -192,8 +240,6 @@ namespace  s  {
         void loadAttributes();
 
     private:
-        void unload(size_t idx);
-        void load(size_t idx);
         void run();
 
         void update_view();
@@ -235,7 +281,7 @@ namespace  s  {
                 bw = BW;
             }
             for(size_t idx = go<direction>(pivot);idx != pivot;idx = go<direction>(idx)) {
-                int state = item_at(idx).state;
+                int state = im[idx].state;
 
                 if (state == ics::INVALID) continue;
 
@@ -260,14 +306,18 @@ namespace  s  {
         typedef std::vector<s::ImageLoader_t> Loaders_t;
         Loaders_t loaders;
         id<QQImageCtl> viewCtl;
-        ns::array_of_t<QQCacheItem> images;
+        images_t im;
         ns::dict_t attributes;
         size_t pivot;
         size_t BW, FW;
         int version;
-        void (ImageCache_t::*lastAction)();
+        BOOL (ImageCache_t::*lastAction)();
         NSSize cachedImageSize;
         int swapCnt;
+        NSTimeInterval slowDown;
+
+        int64_t lastNotLoaded;
+        int64_t lastLoaded;
     };
 }
 

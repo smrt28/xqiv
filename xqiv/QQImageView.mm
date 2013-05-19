@@ -384,7 +384,8 @@ namespace {
 }
 
 - (void)keyDown:(NSEvent *)theEvent {
-    NSLog(@"key:0x%x", [theEvent keyCode]);
+    if (![theEvent isARepeat])
+        NSLog(@"key:0x%x", [theEvent keyCode]);
     
     switch([theEvent keyCode]) {
         case kVK_Space:
@@ -393,10 +394,7 @@ namespace {
         case kVK_Delete:
             [_delegate prevImage];
             break;
-        case kVK_Escape:
-        case 0xc: // q
-            [_delegate escape];
-            break;
+
         case 0x21: // [
             [self rotate:-1];
             [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
@@ -432,6 +430,9 @@ namespace {
             }
             break;
         }
+        default:
+            [_delegate keyDown:theEvent];
+            break;
     }
 }
 

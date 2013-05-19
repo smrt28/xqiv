@@ -13,13 +13,17 @@
 		5E10D7F216F4987300C98C58 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7F016F4987300C98C58 /* Credits.rtf */; };
 		5E10D7F516F4987300C98C58 /* QQAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7F416F4987300C98C58 /* QQAppDelegate.mm */; };
 		5E10D7F816F4987300C98C58 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7F616F4987300C98C58 /* MainMenu.xib */; };
-		5E422ACE170CBFC5009A62A7 /* QQQivWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */; };
+		5E422ACE170CBFC5009A62A7 /* QQQivWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E422ACD170CBFC5009A62A7 /* QQQivWindow.mm */; };
+		5E48B78417481D8200BD2C39 /* QQInfoWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E48B78217481D8200BD2C39 /* QQInfoWindowController.mm */; };
+		5E48B78517481D8200BD2C39 /* QQInfoWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E48B78317481D8200BD2C39 /* QQInfoWindowController.xib */; };
+		5E4C59DA1742C7AB00791B76 /* CTime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4C59D81742C7AB00791B76 /* CTime.mm */; };
 		5E4DB69116F8DAED003EA782 /* QQImageLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */; };
 		5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E593F2D1711FC3A00FE2481 /* CHash.mm */; };
 		5E7BB62516F63C37002BA33E /* QQImageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E7BB62416F63C37002BA33E /* QQImageView.mm */; };
 		5E7EF2F81731887500926B9E /* QQStruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7EF2F71731887400926B9E /* QQStruct.m */; };
 		5E98DCFE17245EB8000E70D5 /* imagecache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E98DCFC17245EB8000E70D5 /* imagecache.mm */; };
 		5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */; };
+		5ED4851C174950BC00F5443E /* QQCacheBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5ED4851B174950BC00F5443E /* QQCacheBridge.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +51,12 @@
 		5E10D7F416F4987300C98C58 /* QQAppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = QQAppDelegate.mm; sourceTree = "<group>"; };
 		5E10D7F716F4987300C98C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5E422ACC170CBFC5009A62A7 /* QQQivWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQQivWindow.h; sourceTree = "<group>"; };
-		5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QQQivWindow.m; sourceTree = "<group>"; };
+		5E422ACD170CBFC5009A62A7 /* QQQivWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQQivWindow.mm; sourceTree = "<group>"; };
+		5E48B78117481D8200BD2C39 /* QQInfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQInfoWindowController.h; sourceTree = "<group>"; };
+		5E48B78217481D8200BD2C39 /* QQInfoWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQInfoWindowController.mm; sourceTree = "<group>"; };
+		5E48B78317481D8200BD2C39 /* QQInfoWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QQInfoWindowController.xib; sourceTree = "<group>"; };
+		5E4C59D81742C7AB00791B76 /* CTime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CTime.mm; sourceTree = "<group>"; };
+		5E4C59D91742C7AB00791B76 /* CTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTime.h; sourceTree = "<group>"; };
 		5E4CB3E9173EB1D80077E778 /* ns-array-of.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array-of.h"; sourceTree = "<group>"; };
 		5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQImageLoader.h; sourceTree = "<group>"; };
 		5E4DB69016F8DAED003EA782 /* QQImageLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQImageLoader.mm; sourceTree = "<group>"; };
@@ -64,6 +73,9 @@
 		5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CImageUtils.mm; sourceTree = "<group>"; };
 		5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xqiv-cmd.xcodeproj"; path = "xqiv-cmd/xqiv-cmd.xcodeproj"; sourceTree = "<group>"; };
 		5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-grcontext.h"; sourceTree = "<group>"; };
+		5ED4851817494B3B00F5443E /* ns-log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-log.h"; sourceTree = "<group>"; };
+		5ED4851A174950BC00F5443E /* QQCacheBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQCacheBridge.h; sourceTree = "<group>"; };
+		5ED4851B174950BC00F5443E /* QQCacheBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQCacheBridge.mm; sourceTree = "<group>"; };
 		5EEC25071719F0F900445B21 /* ns-array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-array.h"; sourceTree = "<group>"; };
 		5EEC25081719F1C600445B21 /* as.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = as.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -120,6 +132,7 @@
 		5E10D7E716F4987300C98C58 /* xqiv */ = {
 			isa = PBXGroup;
 			children = (
+				5E48B78617481D8B00BD2C39 /* info */,
 				5E9CEEF517133F2E00EAD71E /* ns */,
 				5E1D579216FCCF50000F165E /* utils */,
 				5E4DB68F16F8DAED003EA782 /* QQImageLoader.h */,
@@ -129,7 +142,7 @@
 				5E10D7F316F4987300C98C58 /* QQAppDelegate.h */,
 				5E10D7F416F4987300C98C58 /* QQAppDelegate.mm */,
 				5E422ACC170CBFC5009A62A7 /* QQQivWindow.h */,
-				5E422ACD170CBFC5009A62A7 /* QQQivWindow.m */,
+				5E422ACD170CBFC5009A62A7 /* QQQivWindow.mm */,
 				5E10D7F616F4987300C98C58 /* MainMenu.xib */,
 				5E10D7E816F4987300C98C58 /* Supporting Files */,
 			);
@@ -153,14 +166,28 @@
 			children = (
 				5E7EF2F61731887400926B9E /* QQStruct.h */,
 				5E7EF2F71731887400926B9E /* QQStruct.m */,
+				5E4C59D81742C7AB00791B76 /* CTime.mm */,
+				5E4C59D91742C7AB00791B76 /* CTime.h */,
 				5E593F2E1711FC3A00FE2481 /* CHash.h */,
 				5E593F2D1711FC3A00FE2481 /* CHash.mm */,
 				5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */,
 				5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */,
+				5ED4851A174950BC00F5443E /* QQCacheBridge.h */,
+				5ED4851B174950BC00F5443E /* QQCacheBridge.mm */,
 				5E98DCFD17245EB8000E70D5 /* imagecache.h */,
 				5E98DCFC17245EB8000E70D5 /* imagecache.mm */,
 			);
 			name = utils;
+			sourceTree = "<group>";
+		};
+		5E48B78617481D8B00BD2C39 /* info */ = {
+			isa = PBXGroup;
+			children = (
+				5E48B78117481D8200BD2C39 /* QQInfoWindowController.h */,
+				5E48B78217481D8200BD2C39 /* QQInfoWindowController.mm */,
+				5E48B78317481D8200BD2C39 /* QQInfoWindowController.xib */,
+			);
+			name = info;
 			sourceTree = "<group>";
 		};
 		5E9CEEF517133F2E00EAD71E /* ns */ = {
@@ -171,6 +198,7 @@
 				5E7F3671171DC6CB00FE22E3 /* ns-dict.h */,
 				5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */,
 				5E4CB3E9173EB1D80077E778 /* ns-array-of.h */,
+				5ED4851817494B3B00F5443E /* ns-log.h */,
 			);
 			name = ns;
 			sourceTree = "<group>";
@@ -254,6 +282,7 @@
 				5E10D7EC16F4987300C98C58 /* InfoPlist.strings in Resources */,
 				5E10D7F216F4987300C98C58 /* Credits.rtf in Resources */,
 				5E10D7F816F4987300C98C58 /* MainMenu.xib in Resources */,
+				5E48B78517481D8200BD2C39 /* QQInfoWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,10 +298,13 @@
 				5E7BB62516F63C37002BA33E /* QQImageView.mm in Sources */,
 				5E4DB69116F8DAED003EA782 /* QQImageLoader.mm in Sources */,
 				5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */,
-				5E422ACE170CBFC5009A62A7 /* QQQivWindow.m in Sources */,
+				5E422ACE170CBFC5009A62A7 /* QQQivWindow.mm in Sources */,
 				5E593F2F1711FC3A00FE2481 /* CHash.mm in Sources */,
 				5E98DCFE17245EB8000E70D5 /* imagecache.mm in Sources */,
 				5E7EF2F81731887500926B9E /* QQStruct.m in Sources */,
+				5E4C59DA1742C7AB00791B76 /* CTime.mm in Sources */,
+				5E48B78417481D8200BD2C39 /* QQInfoWindowController.mm in Sources */,
+				5ED4851C174950BC00F5443E /* QQCacheBridge.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,31 +12,14 @@
 
 #include <set>
 
-@implementation QQCacheItem
--(id)init {
-    self = [super init];
-    [self setFilename: nil];
-    [self setImage: nil];
-    [self setErrorcode: 0];
-    self.state = s::ics::NOTLOADED;
-    return self;
-}
 
-- (void)dealloc {
-    [self setImage:nil];
-    [self setSha1:nil];
-    [self setFilename:nil];
-
-    [super dealloc];
-}
-@end
 
 namespace s {
 
     void ImageCache_t::update_view() {
-        [viewCtl showImage:item_at(pivot).image
+        [viewCtl showImage:im[pivot]
                 attributes:attr(false).objc()
-                  origSize:item_at(pivot).originalsize];
+                  origSize:im[pivot].originalsize];
     }
 
     void ImageCache_t::loaded(NSMutableDictionary *aDict) {
@@ -53,7 +36,7 @@ namespace s {
         NSSize originalsize = [d[@"originalsize"].as<QQNSSize>() size];
         NSLog(@"loaded: %zd", idx);
 
-        QQCacheItem * cache = item_at(idx);
+        QQCacheItem * cache = im[idx];
 
         if (d[@"errorcode"].as<int>() != 0) {
             cache.image = nil;
@@ -102,8 +85,8 @@ namespace s {
             udata.insert(@"version", [NSNumber numberWithLong:version]);
             udata.insert(@"size", [QQNSSize sizeWithNSSize:cachedImageSize]);
 
-            NSString *filename = item_at(td).filename;
-            item_at(td).state = ics::LOADING;
+            NSString *filename = im[td].filename;
+            im[td].state = ics::LOADING;
             it->load(filename, udata.objc());
         }
     }
@@ -121,23 +104,10 @@ namespace s {
         return false;
     }
 
-    void ImageCache_t::unload(size_t idx) {
-        if (item_at(idx).state == ics::LOADING) {
-            item_at(idx).state = ics::NOTLOADED;
-            return;
-        }
-
-        if (item_at(idx).state != ics::LOADED) {
-            return;
-        }
-
-        item_at(idx).image = nil;
-        item_at(idx).state = ics::NOTLOADED;
-    }
 
     void ImageCache_t::reset_keep() {
         for (size_t i = 0; i < size(); i++) {
-            item_at(i).keep = false;
+            im[i].keep = false;
         }
 
         size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
@@ -147,26 +117,26 @@ namespace s {
 
         // 100MB backward
         size_t bw = BW;
-        item_at(pivot).keep = true;
+        im[pivot].keep = true;
 
 
         for(size_t idx = go<NEXT>(pivot);idx != pivot;idx = go<NEXT>(idx)) {
-            if (item_at(idx).state == ics::INVALID) continue;
-            item_at(idx).keep = true;
+            if (im[idx].state == ics::INVALID) continue;
+            im[idx].keep = true;
             if (fw < mem) break;
             fw -= mem;
         }
 
         for(size_t idx = go<PREV>(pivot);idx != pivot;idx = go<PREV>(idx)) {
-            if (item_at(idx).state == ics::INVALID) continue;
-            item_at(idx).keep = true;
+            if (im[idx].state == ics::INVALID) continue;
+            im[idx].keep = true;
             if (bw < mem) break;
             bw -= mem;
         }
 
         for (size_t i = 0; i < size(); i++) {
-            if (!item_at(i).keep) {
-                unload(i);
+            if (!im[i].keep) {
+                im.unload(i);
             }
         }
     }
@@ -177,7 +147,7 @@ namespace s {
 
         size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
 
-        NSLog(@"Image size: %ld", mem);
+        //NSLog(@"Image size: %ld", mem);
 
         //int bw = BW, fw = FW;
 
@@ -187,7 +157,7 @@ namespace s {
         // 100MB backward
         size_t bw = BW;
 
-        if (aux::need_reload(item_at(pivot).state)) {
+        if (aux::need_reload(im[pivot].state)) {
             return pivot;
         }
 
@@ -214,12 +184,12 @@ namespace s {
         }
         QQCacheItem * item = [[[QQCacheItem alloc] init] autorelease];
         item.filename = filename;
-        images.push_back(item);
+        im.push_back(item);
         return item;
     }
 
     ns::dict_t ImageCache_t::attr(bool create) {
-        NSString *sha1 = item_at(pivot).sha1;
+        NSString *sha1 = im[pivot].sha1;
         if (!sha1) return ns::dict_t();
 
 
@@ -236,7 +206,7 @@ namespace s {
     }
 
     bool ImageCache_t::hasAttr() {
-        NSString *sha1 = item_at(pivot).sha1;
+        NSString *sha1 = im[pivot].sha1;
         if (!sha1) return false;
         if (!attributes[sha1]) return false;
         return true;
@@ -252,12 +222,7 @@ namespace s {
 
     void ImageCache_t::set_new_size(NSSize sz) {
         cachedImageSize = sz;
-        for (size_t i = 0; i < size(); i++) {
-            QQCacheItem *item = item_at(i);
-            if (item.state == s::ics::LOADED) {
-                item.state = s::ics::NEEDRELOAD;
-            }
-        }
+        im.reload();
         run();
     }
 

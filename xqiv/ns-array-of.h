@@ -15,6 +15,9 @@ namespace ns {
     template<typename Object_t>
     class array_of_t {
     public:
+        typedef Object_t * value_t;
+        typedef ns::array_t::objc_type_t objc_type_t;
+
         array_of_t() {}
         explicit array_of_t(NSMutableArray *anArray) : a(anArray)
         {}
@@ -31,6 +34,11 @@ namespace ns {
             return a[idx];
         }
 
+        Object_t * at(size_t idx) {
+            if (size() == 0) return nil;
+            return a[idx % size()];
+        }
+
         size_t size() {
             return a.size();
         }
@@ -43,7 +51,14 @@ namespace ns {
         void remove(size_t idx) {
             a.remove(idx);
         }
+
+        objc_type_t * release() {
+            return a.release();
+        }
         
+        objc_type_t * release(objc_type_t *ob) {
+            return a.release(ob);
+        }
 
     private:
         ns::array_t a;

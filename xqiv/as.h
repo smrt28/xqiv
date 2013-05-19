@@ -60,12 +60,7 @@ namespace nss {
     
     inline NSNumber * objc(int n) { return [NSNumber numberWithInt:n];  }
     inline NSNumber * objc(long n) { return [NSNumber numberWithLong:n];  }
-    
-//    template<typename T_t>
-//    inline x_make_objc_type_t<T_t>::type_t::objc_type_t;
-
-
-    
+       
     
     class id_t {
     public:
@@ -98,10 +93,16 @@ namespace nss {
     }
     
     
-    template <typename T_t>
+    template <typename T_t, bool create = true>
     class object_t {
     public:
-        object_t() : o([[T_t alloc] init]) {}
+        object_t() {
+            if (!create) {
+                o = nil;
+                return;
+            }
+            o = [[T_t alloc] init];
+        }
         object_t(const object_t &p) {
             o = p.o;
             [o retain];
@@ -114,12 +115,17 @@ namespace nss {
         ~object_t() {
             [o release];
         }
-        
-        object_t & operator=(T_t *t) {
+
+
+        object_t & reset(T_t *t) {
             [t retain];
             [o release];
             o = t;
             return *this;
+        }
+
+        object_t & operator=(T_t *t) {
+            reset(t);
         }
         
         object_t & operator=(const object_t &h) {
@@ -134,6 +140,14 @@ namespace nss {
             o = nil;
             return [tmp autorelease];
         }
+
+        T_t * release(T_t *no) {
+            T_t * tmp = o;
+            o = no;
+            [o retain];
+            return [tmp autorelease];
+        }
+
         
         operator T_t *() {
             return o;
@@ -146,19 +160,36 @@ namespace nss {
 }
 
 namespace ns {
-    template<typename T_t>
+    template<typename T_t, bool create = true>
     class base_t {
     public:
         base_t() {}
-        base_t(T_t *t) : o(t) {}
+        explicit base_t(T_t *t) : o(t) {}
         T_t * objc() { return o; }
+
+        operator T_t*() {
+            return  objc();
+        }
         
         T_t * release() {
             return o.release();
         }
-        
+
+        T_t * release(T_t *no) {
+            return o.release(no);
+        }
+
+        void reset(T_t *no) {
+            o.reset(no);
+        }
+
+        operator bool() {
+            if (objc()) return true;
+            return false;
+        }
+
     protected:
-        nss::object_t<T_t> o;
+        nss::object_t<T_t, create> o;
     };
 }
 

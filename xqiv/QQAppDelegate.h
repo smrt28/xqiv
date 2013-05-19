@@ -10,19 +10,24 @@
 #import "QQImageView.h"
 #import "QQImageLoader.h"
 #import "imagecache.h"
-
-
+#import "QQInfoWindowController.h"
+#import "as.h"
 @interface QQAppDelegate : NSObject <NSApplicationDelegate,
     QQImageViewProtocol, QQImageCtl, NSWindowDelegate>
 {
     IBOutlet QQImageView * image;
     IBOutlet NSPanel *_tags;
     IBOutlet NSWindow *_window;
+
+    QQInfoWindowController *_infoCtl;
+
     s::ImageCache_t _cache;
+
+    ns::base_t<QQCacheItem, false> _currentItem;
 }
 
--(void)nextImage;
--(void)prevImage;
+-(BOOL)nextImage;
+-(BOOL)prevImage;
 -(void)escape;
 - (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs origSize:(NSSize)size;
 

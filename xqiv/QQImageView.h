@@ -9,11 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol QQImageViewProtocol<NSObject>
-    -(void)nextImage;
-    -(void)prevImage;
+    -(BOOL)nextImage;
+    -(BOOL)prevImage;
     -(void)escape;
     -(void)setAttribute:(NSString *)key value:(NSString *)val;
     -(void)needSizeCheck;
+    -(void)keyDown:(NSEvent *)theEvent;
 @end
 
 

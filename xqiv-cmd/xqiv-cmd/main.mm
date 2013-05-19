@@ -14,8 +14,10 @@
 #include <stdlib.h>
 #include <sys/syslimits.h>
 #include <vector>
-#include <boost/program_options.hpp>
+#include <sys/stat.h>
 
+#include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 #include "repo.h"
 
 typedef std::vector<std::string> svector_t;
@@ -50,54 +52,96 @@ void send_notification(NSDictionary *dict) {
             deliverImmediately:YES];
 }
 
+
+class expander_t {
+public:
+    expander_t(std::vector<std::string> *v) : v(v) {}
+    void operator()(const std::string &file) {
+        struct stat st;
+        if (::stat(file.c_str(), &st) == -1) return;
+        if (st.st_mode & S_IFREG) {
+            v->push_back(file);
+        }
+    }
+
+    std::vector<std::string> *v;
+};
+
+
+
+std::vector<std::string> expand_dirs(const std::string &aDir) {
+    namespace fs = boost::filesystem;
+    std::vector<std::string>  rv;
+    fs::path dir(aDir);
+    if (!fs::exists(dir) || !fs::is_directory(dir)) {
+        rv.push_back(aDir);
+        return rv;
+    }
+    fs::directory_iterator eit;
+    for (fs::directory_iterator it(dir);
+         it != eit; ++it)
+    {
+        std::string s = it->path().string();
+        rv.push_back(s);
+    }
+    return rv;
+
+}
+
+std::vector<std::string> expand_dirs(const std::vector<std::string> &files) {
+    std::vector<std::string> rv;
+    expander_t e(&rv);
+    std::for_each(files.begin(), files.end(), e);
+    return rv;
+}
+
 int main(int argc, const char * argv[])
 {
-   // rep::Repository_t rep("~");
-   // rep.insertFile("/etc/passwd");
     @autoreleasepool {
+        namespace po = boost::program_options;
+        po::options_description desc("Allowed options");
+        desc.add_options()
+        ("help", "produce help message")
+        //("mem", po::value<int>(), "memory limit = (100 * arg) MB")
+        ("input-file", po::value< std::vector<std::string> >(), "images to show")
+        ;
 
-    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+        po::positional_options_description p;
+        p.add("input-file", -1);
+        po::variables_map vm;
 
-    namespace po = boost::program_options;
-    po::options_description desc("Allowed options");
-    desc.add_options()
-    ("help", "produce help message")
-    ("mem", po::value<int>(), "memory limit = (100 * arg) MB")
-    ("input-file", po::value< std::vector<std::string> >(), "images to show")
-    ;
+        po::store(po::command_line_parser(argc, argv).
+                  options(desc).positional(p).run(), vm);
 
-    po::positional_options_description p;
-    p.add("input-file", -1);
-    po::variables_map vm;
+        po::notify(vm);
 
-    po::store(po::command_line_parser(argc, argv).
-              options(desc).positional(p).run(), vm);
+        std::vector<std::string> files;
 
-    po::notify(vm);
+        if (vm.count("input-file")) {
+            files = vm["input-file"].as<std::vector<std::string> >();
+        }
 
-    std::vector<std::string> files = vm["input-file"].as<std::vector<std::string> >();
+        if (files.size() == 1) {
+            files = expand_dirs(files[0]);
+        }
 
-    if (vm.count("help")) {
-        std::cout << desc << "\n";
-        return 1;
-    }
-
-    if (vm.count("mem")) {
-
-        return 0;
-    }
-    
-
-
-
+        if (vm.count("help")) {
+            std::cout << desc << "\n";
+            return 1;
+        }
+/*
+        if (vm.count("mem")) {
+            return 0;
+        }
+*/
         NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity:1];
         NSDictionary* argsInfo = make_file_list(files);
 
-        [userInfo setObject:[NSString stringWithFormat:@"%d", argc] forKey:@"argc"];
+        [userInfo setObject:[NSString stringWithFormat:@"%zd", files.size()] forKey:@"argc"];
         [userInfo setObject:argsInfo forKey:@"args"];
-
+        
         send_notification(userInfo);
     }
-
+    
     return 0;
 }
