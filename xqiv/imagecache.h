@@ -79,20 +79,6 @@ namespace  s  {
         };
 
 
-        class history_t : public ns::array_of_t<NSMutableArray> {
-            typedef ns::array_of_t<NSMutableArray> parent_t;
-        public:
-            void push_back(images_t &images) {
-                if (images.size() == 0) return;
-                NSMutableArray * rep = [NSMutableArray array];
-                NSMutableArray * old = images.release(rep);
-                parent_t::push_back(old);
-            }
-        };
-
-
-
-
 
         static const int SWITCH_TO_SWAP_FW_BW = 5;
         enum Direction_t {
@@ -109,10 +95,9 @@ namespace  s  {
             pivot(0),
             BW(104857600), FW(419430400),
             version(1),
-            lastAction(&ImageCache_t::show_next),
             cachedImageSize([[NSScreen mainScreen] visibleFrame].size),
             swapCnt(SWITCH_TO_SWAP_FW_BW),
-            slowDown(0)
+            lastDirection(NEXT)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -142,11 +127,11 @@ namespace  s  {
         
         void set_keep(size_t idx, bool b);
 
-        template<size_t (ImageCache_t::*xnext)(size_t)>
-        BOOL show() {
+
+        BOOL show(Direction_t xnext) {
             BOOL rv = NO;
 
-            [NSThread sleepForTimeInterval:slowDown];
+            lastDirection = xnext;
 
             if (pivot >= size()) pivot = 0;
             if (im[pivot].state == ics::NOTLOADED ||
@@ -158,7 +143,7 @@ namespace  s  {
                 return rv;
             }
             
-            pivot = (this->*xnext)(pivot);
+            pivot = go_to_next_valid(xnext, pivot);
             
             if (im[pivot].state == ics::INVALID) {
                 [viewCtl showImage:nil
@@ -172,10 +157,9 @@ namespace  s  {
             if (im[pivot].state == ics::LOADED) {
                 update_view();
                 rv = YES;
-                slowDown /= 2;
             }
             
-            lastAction = &ImageCache_t::show<xnext>;
+            
             reset_keep();
             run();
             return rv;
@@ -188,7 +172,7 @@ namespace  s  {
                 NSLog(@"invalid pivot value!");
                 pvt = 0;
             }
-            for (idx = go<direction>(pvt); idx!=pvt; idx = go<direction>(idx)) {
+            for (idx = go(direction, pvt); idx!=pvt; idx = go(direction, idx)) {
                 if (im[idx].state != ics::INVALID) break;
             }
             return idx;
@@ -197,6 +181,7 @@ namespace  s  {
 
 
         BOOL show_next() {
+            lastDirection = NEXT;
             if (FW < BW) {
                 if (swapCnt == 0) {
                     std::swap(BW,FW);
@@ -206,10 +191,11 @@ namespace  s  {
             } else {
                 swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
-            return show<&ImageCache_t::goToImage<NEXT> >();
+            return show(NEXT);
         }
         
         BOOL show_prev() {
+            lastDirection = PREV;
             if (FW > BW) {
                 if (swapCnt == 0) {
                     std::swap(BW,FW);
@@ -219,7 +205,7 @@ namespace  s  {
             } else {
                 swapCnt = SWITCH_TO_SWAP_FW_BW;
             }
-            return show<&ImageCache_t::goToImage<PREV> >();
+            return show(PREV);
         }
 
         void ready();
@@ -247,9 +233,14 @@ namespace  s  {
         ns::dict_t attr(bool create = true);
         bool hasAttr();
 
+        size_t go_to_next_valid(Direction_t direction, size_t idx) {
+            for (size_t i = go(direction, idx);i!=idx; i = go(direction, i)) {
+                if (im[i].state != ics::INVALID) return i;
+            }
+            return idx;
+        }
 
-        template<Direction_t direction>
-        size_t go(size_t idx) {
+        size_t go(Direction_t direction, size_t idx) {
             switch(direction) {
                 case NEXT:
                     idx++;
@@ -265,14 +256,13 @@ namespace  s  {
             }
         }
 
-        template<Direction_t direction>
-        size_t go_rev(size_t idx) {
-            return go<~direction>(idx);
-        }
 
+        /*
+        size_t go_rev(Direction_t direction, size_t idx) {
+            return go(~direction,idx);
+        }*/
 
-        template<Direction_t direction>
-        size_t todo_() {
+        size_t todo_(Direction_t direction) {
             size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
             size_t bw;
             if (direction == NEXT) {
@@ -280,7 +270,9 @@ namespace  s  {
             } else {
                 bw = BW;
             }
-            for(size_t idx = go<direction>(pivot);idx != pivot;idx = go<direction>(idx)) {
+            for(size_t idx = go(direction, pivot);
+                idx != pivot;idx = go(direction, idx))
+            {
                 int state = im[idx].state;
 
                 if (state == ics::INVALID) continue;
@@ -302,6 +294,9 @@ namespace  s  {
         
         size_t todo();
 
+        QQCacheInfo * get_cache_info();
+        void notify_delegate();
+
     private:
         typedef std::vector<s::ImageLoader_t> Loaders_t;
         Loaders_t loaders;
@@ -311,10 +306,9 @@ namespace  s  {
         size_t pivot;
         size_t BW, FW;
         int version;
-        BOOL (ImageCache_t::*lastAction)();
+        Direction_t lastDirection;
         NSSize cachedImageSize;
         int swapCnt;
-        NSTimeInterval slowDown;
 
         int64_t lastNotLoaded;
         int64_t lastLoaded;

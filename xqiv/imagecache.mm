@@ -1,4 +1,4 @@
-//
+    //
 //  imagecache.cpp
 //  xqiv
 //
@@ -41,9 +41,10 @@ namespace s {
         if (d[@"errorcode"].as<int>() != 0) {
             cache.image = nil;
             cache.state = ics::INVALID;
-            if (lastAction && pivot == idx) {
-                (this->*lastAction)();
+            if (pivot == idx) {
+                show(lastDirection);
             }
+            notify_delegate();
             return;
         }
 
@@ -56,6 +57,7 @@ namespace s {
         if (idx == pivot) {
             update_view();
         }
+        notify_delegate();
         run();
     }
 
@@ -120,14 +122,14 @@ namespace s {
         im[pivot].keep = true;
 
 
-        for(size_t idx = go<NEXT>(pivot);idx != pivot;idx = go<NEXT>(idx)) {
+        for(size_t idx = go(NEXT, pivot);idx != pivot;idx = go(NEXT, idx)) {
             if (im[idx].state == ics::INVALID) continue;
             im[idx].keep = true;
             if (fw < mem) break;
             fw -= mem;
         }
 
-        for(size_t idx = go<PREV>(pivot);idx != pivot;idx = go<PREV>(idx)) {
+        for(size_t idx = go(PREV, pivot);idx != pivot;idx = go(PREV, idx)) {
             if (im[idx].state == ics::INVALID) continue;
             im[idx].keep = true;
             if (bw < mem) break;
@@ -139,6 +141,7 @@ namespace s {
                 im.unload(i);
             }
         }
+        notify_delegate();
     }
 
 
@@ -164,14 +167,14 @@ namespace s {
         size_t rv;
 
         if (FW > BW) {
-            rv = todo_<NEXT>();
+            rv = todo_(NEXT);
             if (rv == NOINDEX) {
-                rv = todo_<PREV>();
+                rv = todo_(PREV);
             }
         } else {
-            rv = todo_<PREV>();
+            rv = todo_(PREV);
             if (rv == NOINDEX) {
-                rv = todo_<NEXT>();
+                rv = todo_(NEXT);
             }
         }
         return rv;
@@ -239,6 +242,32 @@ namespace s {
         NSMutableDictionary * at =
             [NSMutableDictionary dictionaryWithContentsOfFile:xqivAttrs];
         if (at) attributes = at;
+    }
+
+    QQCacheInfo * ImageCache_t::get_cache_info() {
+        QQCacheInfo * rv = [[[QQCacheInfo alloc] init] autorelease];
+        rv.loaded = 0;
+        rv.total = 0;
+        for(size_t i = 0; i < size(); i++) {
+            if (im[i].state == ics::LOADED) rv.loaded = rv.loaded + 1;
+            if (im[i].state != ics::INVALID) rv.total = rv.total + 1;
+        }
+
+        size_t cnt = 0;
+        for(size_t idx = go_to_next_valid(lastDirection, pivot);
+            idx != pivot;idx = go_to_next_valid(lastDirection, idx))
+        {
+            if (im[idx].state == ics::NOTLOADED) break;
+            if (im[idx].state == ics::LOADED) cnt++;
+        }
+        rv.loadedFw = cnt;
+
+        return rv;
+    }
+
+    void ImageCache_t::notify_delegate() {
+        QQCacheInfo * rv = get_cache_info();
+        [viewCtl cacheStateChanged:rv];
     }
 }
 

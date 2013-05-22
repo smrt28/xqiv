@@ -23,6 +23,8 @@
 		5E7EF2F81731887500926B9E /* QQStruct.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7EF2F71731887400926B9E /* QQStruct.m */; };
 		5E98DCFE17245EB8000E70D5 /* imagecache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E98DCFC17245EB8000E70D5 /* imagecache.mm */; };
 		5EB0D1E51700CC7B00C7BE2A /* CImageUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */; };
+		5EC8D770174D361A009C8D3A /* QQInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EC8D76F174D361A009C8D3A /* QQInfoWindow.mm */; };
+		5EC8D774174D3EF7009C8D3A /* QQAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EC8D773174D3EF7009C8D3A /* QQAttributes.mm */; };
 		5ED4851C174950BC00F5443E /* QQCacheBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5ED4851B174950BC00F5443E /* QQCacheBridge.mm */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +73,10 @@
 		5E98DCFD17245EB8000E70D5 /* imagecache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imagecache.h; sourceTree = "<group>"; };
 		5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImageUtils.h; sourceTree = "<group>"; };
 		5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CImageUtils.mm; sourceTree = "<group>"; };
+		5EC8D76E174D361A009C8D3A /* QQInfoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQInfoWindow.h; sourceTree = "<group>"; };
+		5EC8D76F174D361A009C8D3A /* QQInfoWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQInfoWindow.mm; sourceTree = "<group>"; };
+		5EC8D772174D3EF7009C8D3A /* QQAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QQAttributes.h; sourceTree = "<group>"; };
+		5EC8D773174D3EF7009C8D3A /* QQAttributes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QQAttributes.mm; sourceTree = "<group>"; };
 		5EC9B0B31735052200CC69F9 /* xqiv-cmd.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xqiv-cmd.xcodeproj"; path = "xqiv-cmd/xqiv-cmd.xcodeproj"; sourceTree = "<group>"; };
 		5ECEAEFD1728612A00FF1405 /* ns-grcontext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-grcontext.h"; sourceTree = "<group>"; };
 		5ED4851817494B3B00F5443E /* ns-log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ns-log.h"; sourceTree = "<group>"; };
@@ -132,6 +138,7 @@
 		5E10D7E716F4987300C98C58 /* xqiv */ = {
 			isa = PBXGroup;
 			children = (
+				5EC8D775174D3F7E009C8D3A /* cache */,
 				5E48B78617481D8B00BD2C39 /* info */,
 				5E9CEEF517133F2E00EAD71E /* ns */,
 				5E1D579216FCCF50000F165E /* utils */,
@@ -172,10 +179,6 @@
 				5E593F2D1711FC3A00FE2481 /* CHash.mm */,
 				5EB0D1E31700CC7B00C7BE2A /* CImageUtils.h */,
 				5EB0D1E41700CC7B00C7BE2A /* CImageUtils.mm */,
-				5ED4851A174950BC00F5443E /* QQCacheBridge.h */,
-				5ED4851B174950BC00F5443E /* QQCacheBridge.mm */,
-				5E98DCFD17245EB8000E70D5 /* imagecache.h */,
-				5E98DCFC17245EB8000E70D5 /* imagecache.mm */,
 			);
 			name = utils;
 			sourceTree = "<group>";
@@ -186,6 +189,8 @@
 				5E48B78117481D8200BD2C39 /* QQInfoWindowController.h */,
 				5E48B78217481D8200BD2C39 /* QQInfoWindowController.mm */,
 				5E48B78317481D8200BD2C39 /* QQInfoWindowController.xib */,
+				5EC8D76E174D361A009C8D3A /* QQInfoWindow.h */,
+				5EC8D76F174D361A009C8D3A /* QQInfoWindow.mm */,
 			);
 			name = info;
 			sourceTree = "<group>";
@@ -201,6 +206,19 @@
 				5ED4851817494B3B00F5443E /* ns-log.h */,
 			);
 			name = ns;
+			sourceTree = "<group>";
+		};
+		5EC8D775174D3F7E009C8D3A /* cache */ = {
+			isa = PBXGroup;
+			children = (
+				5ED4851A174950BC00F5443E /* QQCacheBridge.h */,
+				5ED4851B174950BC00F5443E /* QQCacheBridge.mm */,
+				5EC8D772174D3EF7009C8D3A /* QQAttributes.h */,
+				5EC8D773174D3EF7009C8D3A /* QQAttributes.mm */,
+				5E98DCFD17245EB8000E70D5 /* imagecache.h */,
+				5E98DCFC17245EB8000E70D5 /* imagecache.mm */,
+			);
+			name = cache;
 			sourceTree = "<group>";
 		};
 		5EC9B0B41735052200CC69F9 /* Products */ = {
@@ -305,6 +323,8 @@
 				5E4C59DA1742C7AB00791B76 /* CTime.mm in Sources */,
 				5E48B78417481D8200BD2C39 /* QQInfoWindowController.mm in Sources */,
 				5ED4851C174950BC00F5443E /* QQCacheBridge.mm in Sources */,
+				5EC8D770174D361A009C8D3A /* QQInfoWindow.mm in Sources */,
+				5EC8D774174D3EF7009C8D3A /* QQAttributes.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@
 
 namespace s {
     namespace ics {
-        static const int INVALID = -1;
+        static const int INVALID = 0;
         static const int LOADED = 1;
         static const int LOADING = 2;
         static const int NOTLOADED = 3;
@@ -37,11 +37,19 @@ namespace s {
 @property (readwrite) bool keep;
 @end
 
+@interface QQCacheInfo : NSObject
+@property (readwrite) int loaded;
+@property (readwrite) int total;
+@property (readwrite) int loadedFw;
+@end
+
+
 @protocol QQImageCtl<NSObject>
 - (void)showImage:(QQCacheItem *)img
        attributes:(NSMutableDictionary *)attrs
          origSize:(NSSize)size;
-//- (void)cacheStateChanged;
+
+- (void)cacheStateChanged:(QQCacheInfo *)cacheInfo;
 @end
 
 @interface QQCacheBridge : NSObject

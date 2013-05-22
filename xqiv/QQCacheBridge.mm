@@ -28,6 +28,19 @@
 }
 @end
 
+@implementation QQCacheInfo
+
+-(id)init {
+    self = [super init];
+    return self;
+}
+
+- (void)dealloc {
+    [super dealloc];
+}
+
+@end
+
 
 @implementation QQCacheBridge
 

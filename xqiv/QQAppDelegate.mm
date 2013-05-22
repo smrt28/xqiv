@@ -101,7 +101,11 @@
         [image setAngle: angle];
     }
     _currentItem.reset(item);
-    [_infoCtl update:item];
+    [_infoCtl update:item cacheInfo:nil];
+}
+
+- (void)cacheStateChanged:(QQCacheInfo *)cacheInfo {
+    [_infoCtl update:nil cacheInfo:cacheInfo];
 }
 
 -(void)setAttribute:(NSString *)key value:(NSString *)val {
@@ -132,7 +136,7 @@
                 [w close];
             } else {
                 [w orderFront:self];
-                [_infoCtl update:_currentItem];
+                [_infoCtl update:_currentItem cacheInfo:nil];
             }
             break;
         }

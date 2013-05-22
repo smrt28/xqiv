@@ -41,9 +41,13 @@
 
 -(id)init {
     self = [super init];
+
+  //  [self setThreadPriority:<#(double)#>]
     _end = NO;
     _inProgress = NO;
     _thread = [NSThread currentThread];
+    double p = [_thread threadPriority];
+    [self setThreadPriority: p+0.1];
     _delegate = nil;
 
     return self;

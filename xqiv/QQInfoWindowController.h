@@ -8,11 +8,17 @@
 
 #import <Cocoa/Cocoa.h>
 #import "QQCacheBridge.h"
-
+#import "as.h"
 @interface QQInfoWindowController : NSWindowController {
-IBOutlet NSTextField *_sha1;
-IBOutlet NSTextField *_filename;
+    IBOutlet NSTextField *_sha1;
+    IBOutlet NSBox *_filename;
+    IBOutlet NSTextField *_loaded;
+    IBOutlet NSTextField *_loadedFw;
+    ns::base_t<QQCacheItem, false> _item;
+    ns::base_t<QQCacheInfo, false> _info;
 }
+-(IBAction)copyButton:(id)sender;
+-(IBAction)showInFinder:(id)sender;
 
--(void) update:(QQCacheItem *)item;
+-(void) update:(QQCacheItem *)item cacheInfo:(QQCacheInfo *)info;
 @end

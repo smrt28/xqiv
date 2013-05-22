@@ -16,7 +16,6 @@
     QQImageViewProtocol, QQImageCtl, NSWindowDelegate>
 {
     IBOutlet QQImageView * image;
-    IBOutlet NSPanel *_tags;
     IBOutlet NSWindow *_window;
 
     QQInfoWindowController *_infoCtl;
