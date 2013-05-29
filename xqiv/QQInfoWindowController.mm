@@ -37,7 +37,7 @@
     if (item) {
         _item.reset(item);
         [_sha1 setStringValue:item.sha1];
-        [_filename setTitle:item.filename];
+        [_filename setStringValue:item.filename];
     }
     if (info) {
         _info.reset(info);
@@ -57,21 +57,17 @@
     [[NSWorkspace sharedWorkspace] selectFile:[_item.objc() filename] inFileViewerRootedAtPath:nil];
 }
 
+/*
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     NSString *identifier = [tableColumn identifier];
     NSTableCellView *cellView = [tableView makeViewWithIdentifier:identifier owner:self];
     cellView.textField.stringValue = @"aaax";
     return cellView;
-    /*
-    NSTextField *textField = [tableView makeViewWithIdentifier:identifier owner:self];
-    textField.objectValue = @"aaa";
-    return textField;
-    */
-    return nil;
 }
 
 // The only essential/required tableview dataSource method
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return 1;
 }
+ */
 @end

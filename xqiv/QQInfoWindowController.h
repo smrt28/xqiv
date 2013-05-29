@@ -9,12 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "QQCacheBridge.h"
 #import "as.h"
-@interface QQInfoWindowController : NSWindowController<NSTableViewDelegate, NSTableViewDataSource> {
+@interface QQInfoWindowController : NSWindowController {
     IBOutlet NSTextField *_sha1;
-    IBOutlet NSBox *_filename;
+    IBOutlet NSTextField *_filename;
     IBOutlet NSTextField *_loaded;
     IBOutlet NSTextField *_loadedFw;
-    IBOutlet NSTableView *_labels;
+    //IBOutlet NSTableView *_labels;
     ns::base_t<QQCacheItem, false> _item;
     ns::base_t<QQCacheInfo, false> _info;
 }
