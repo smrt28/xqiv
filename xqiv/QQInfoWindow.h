@@ -8,6 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface QQInfoWindow : NSWindow
+@interface QQInfoWindow : NSPanel
 
 @end

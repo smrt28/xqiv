@@ -34,6 +34,7 @@ namespace rep {
     }
 
     void FLockFile_t::open(const std::string &file) {
+        if (fd >= 0) return;
         fd = ::open(file.c_str(), O_RDONLY);
         if (fd == -1) {
             throw Error_t(Error_t::OPEN, "can't open lock file");

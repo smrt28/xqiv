@@ -31,18 +31,23 @@ namespace rep {
     Repository_t::Repository_t(const std::string &path) :
         path(makeRepoPath(path))
     {
-        init();
     }
 
-    void Repository_t::init() {
+    void Repository_t::create() {
         boost::filesystem::create_directory(path.repo());
-        boost::filesystem::create_directory(path.tagsDir());
-        std::ofstream lf(path.lockFile().c_str());
+        boost::filesystem::create_directory(path.tags_dir());
+        boost::filesystem::create_directory(path.temp_dir());
+
+        std::ofstream lf(path.lock_file().c_str());
         if (!lf) {
             throw Error_t(Error_t::OPEN, "can't create lock file");
         }
         lf.close();
-        flf.open(path.lockFile());
+        init();
+    }
+
+    void Repository_t::init() {
+        flf.open(path.lock_file());
     }
 
     std::string Repository_t::makeRepoPath(const std::string &path) {
@@ -52,17 +57,17 @@ namespace rep {
     void Repository_t::insert(const char * data, size_t length, sha1_t checksum) {
         FLock_t lock(flf);
 
-        if (boost::filesystem::exists(path.dataFile(checksum))) {
+        if (boost::filesystem::exists(path.data_file(checksum))) {
             return;
         }
 
-        boost::filesystem::create_directories(path.dataFileDir(checksum));
-        std::ofstream outfile (path.dataFile(checksum).c_str(),
+        boost::filesystem::create_directories(path.data_file_dir(checksum));
+        std::ofstream outfile (path.data_file(checksum).c_str(),
                                std::ofstream::binary);
         outfile.write(data, length);
     }
 
-    void Repository_t::insertFile(std::string filename) {
+    void Repository_t::insert_file(std::string filename) {
         std::ifstream is(filename.c_str(), std::ifstream::binary);
         if (!is) return;
 

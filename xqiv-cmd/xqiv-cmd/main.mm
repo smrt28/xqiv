@@ -95,8 +95,22 @@ std::vector<std::string> expand_dirs(const std::vector<std::string> &files) {
     return rv;
 }
 
-int main(int argc, const char * argv[])
+
+
+int main_repo(int argc, const char **argv) {
+    rep::Repository_t r("~");
+    r.create();
+    r.init();
+    r.insert_file("/tmp/sb.txt");
+    
+    ///tmp/sb.txt
+    return 0;
+}
+
+
+int main(int argc, const char **argv)
 {
+    return main_repo(argc, argv);
     @autoreleasepool {
         namespace po = boost::program_options;
         po::options_description desc("Allowed options");
@@ -129,11 +143,7 @@ int main(int argc, const char * argv[])
             std::cout << desc << "\n";
             return 1;
         }
-/*
-        if (vm.count("mem")) {
-            return 0;
-        }
-*/
+
         NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity:1];
         NSDictionary* argsInfo = make_file_list(files);
 

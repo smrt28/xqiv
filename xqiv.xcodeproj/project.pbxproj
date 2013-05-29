@@ -425,6 +425,10 @@
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv/xqiv-Prefix.pch";
 				GCC_WARN_UNUSED_VARIABLE = NO;
@@ -446,6 +450,10 @@
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "xqiv/xqiv-Prefix.pch";
 				GCC_WARN_UNUSED_VALUE = NO;

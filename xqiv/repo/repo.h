@@ -12,48 +12,26 @@
 #include "sha1.h"
 #include "flock.h"
 
+#include "repo_path.h"
+
 namespace rep {
-    class Metadata_t {
-    public:
-        std::string filename;
-    };
+
+
 
     class Repository_t {
-        class Path_t {
-        public:
-            Path_t(const std::string &repoPath) :
-                repoPath(repoPath)
-            {}
-            std::string lockFile() { return repoPath + "/lock"; }
-            std::string dataDir() { return repoPath + "/data"; }
-            std::string tagsDir() { return repoPath + "/tags"; }
-            std::string repo() { return repoPath; }
-            std::string dataFileDir(sha1_t checksum) {
-                std::string hex = checksum.hex();
-                std::string p1 = hex.substr(0, 2);
-                std::string p2 = hex.substr(2, 2);
-                return dataDir() + "/" + p1 + "/" + p2;
-            }
-
-            std::string dataFile(sha1_t checksum) {
-                std::string hex = checksum.hex();
-                std::string p3 = hex.substr(4);
-                return dataFileDir(checksum) + "/" + p3;
-            }
-
-        private:
-            const std::string repoPath;
-        };
 
     public:
         Repository_t(const std::string &path);
         void init();
+        void create();
         void insert(const char * data, size_t length, sha1_t checksum);
-        void insertFile(std::string filename);
+        void insert(const char * data, size_t length);
+        void insert_file(std::string filename);
+        const path_t & get_path() { return path; }
     private:
 
         std::string makeRepoPath(const std::string &path);
-        Path_t path;
+        path_t path;
 
         FLockFile_t flf;
     };

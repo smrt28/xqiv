@@ -23,6 +23,9 @@
     
     return self;
 }
+-(void)awakeFromNib {
+   // [_labels ]
+}
 
 - (void)windowDidLoad
 {
@@ -40,9 +43,7 @@
         _info.reset(info);
 
         [_loaded setStringValue:[NSString stringWithFormat:@"%d/%d",
-                                 info.loaded, info.total]];
-        [_loadedFw setStringValue:[NSString stringWithFormat:@"%d",
-                                   info.loadedFw]];
+                                 info.loadedFw, info.total]];
     }
 }
 
@@ -56,4 +57,21 @@
     [[NSWorkspace sharedWorkspace] selectFile:[_item.objc() filename] inFileViewerRootedAtPath:nil];
 }
 
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSString *identifier = [tableColumn identifier];
+    NSTableCellView *cellView = [tableView makeViewWithIdentifier:identifier owner:self];
+    cellView.textField.stringValue = @"aaax";
+    return cellView;
+    /*
+    NSTextField *textField = [tableView makeViewWithIdentifier:identifier owner:self];
+    textField.objectValue = @"aaa";
+    return textField;
+    */
+    return nil;
+}
+
+// The only essential/required tableview dataSource method
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return 1;
+}
 @end

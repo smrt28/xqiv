@@ -11,7 +11,7 @@
 @implementation QQInfoWindow
 
 - (BOOL)canBecomeKeyWindow {
-    return NO;
+    return YES;
 }
 
 @end

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E7F12DE174FFA65007790D4 /* repo_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E7F12DC174FFA65007790D4 /* repo_file.cpp */; };
+		5E85C1111752773200E1BD78 /* tagdb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E85C10F1752773200E1BD78 /* tagdb.cpp */; };
 		5EC97599173AE18F00AC35D0 /* flock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97591173AE18F00AC35D0 /* flock.cpp */; };
 		5EC9759A173AE18F00AC35D0 /* objc_helper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97594173AE18F00AC35D0 /* objc_helper.mm */; };
 		5EC9759B173AE18F00AC35D0 /* repo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EC97595173AE18F00AC35D0 /* repo.cpp */; };
@@ -29,6 +31,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5E7F12DC174FFA65007790D4 /* repo_file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = repo_file.cpp; sourceTree = "<group>"; };
+		5E7F12DD174FFA65007790D4 /* repo_file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = repo_file.h; sourceTree = "<group>"; };
+		5E7F12DF174FFAAB007790D4 /* repo_path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = repo_path.h; sourceTree = "<group>"; };
+		5E85C10F1752773200E1BD78 /* tagdb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tagdb.cpp; sourceTree = "<group>"; };
+		5E85C1101752773200E1BD78 /* tagdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tagdb.h; sourceTree = "<group>"; };
 		5EC97591173AE18F00AC35D0 /* flock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flock.cpp; sourceTree = "<group>"; };
 		5EC97592173AE18F00AC35D0 /* flock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flock.h; sourceTree = "<group>"; };
 		5EC97593173AE18F00AC35D0 /* objc_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc_helper.h; sourceTree = "<group>"; };
@@ -60,6 +67,7 @@
 		5EC97590173AE18F00AC35D0 /* repo */ = {
 			isa = PBXGroup;
 			children = (
+				5E7F12DF174FFAAB007790D4 /* repo_path.h */,
 				5EC97591173AE18F00AC35D0 /* flock.cpp */,
 				5EC97592173AE18F00AC35D0 /* flock.h */,
 				5EC97593173AE18F00AC35D0 /* objc_helper.h */,
@@ -70,6 +78,10 @@
 				5EC97598173AE18F00AC35D0 /* sha1.h */,
 				5EC9759D173AE28000AC35D0 /* error.cpp */,
 				5EC9759E173AE28000AC35D0 /* error.h */,
+				5E7F12DC174FFA65007790D4 /* repo_file.cpp */,
+				5E7F12DD174FFA65007790D4 /* repo_file.h */,
+				5E85C10F1752773200E1BD78 /* tagdb.cpp */,
+				5E85C1101752773200E1BD78 /* tagdb.h */,
 			);
 			name = repo;
 			path = ../../xqiv/repo;
@@ -175,6 +187,8 @@
 				5EC9759B173AE18F00AC35D0 /* repo.cpp in Sources */,
 				5EC9759C173AE18F00AC35D0 /* sha1.cpp in Sources */,
 				5EC9759F173AE28000AC35D0 /* error.cpp in Sources */,
+				5E7F12DE174FFA65007790D4 /* repo_file.cpp in Sources */,
+				5E85C1111752773200E1BD78 /* tagdb.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
