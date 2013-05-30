@@ -7,6 +7,7 @@
 //
 
 #import "QQInfoWindowController.h"
+#import "QQAttributes.h"
 
 @interface QQInfoWindowController ()
 
@@ -23,8 +24,21 @@
     
     return self;
 }
+
+- (void)dealloc {
+    [_star64 release];
+    [_star64rb release];
+    [super dealloc];
+}
+
 -(void)awakeFromNib {
-   // [_labels ]
+    NSString* imageName = [[NSBundle mainBundle]
+                           pathForResource:@"star64" ofType:@"png"];
+    _star64 = [[NSImage alloc] initWithContentsOfFile:imageName];
+
+    imageName = [[NSBundle mainBundle]
+                           pathForResource:@"star64rb" ofType:@"png"];
+    _star64rb = [[NSImage alloc] initWithContentsOfFile:imageName];
 }
 
 - (void)windowDidLoad
@@ -41,9 +55,23 @@
     }
     if (info) {
         _info.reset(info);
-
         [_loaded setStringValue:[NSString stringWithFormat:@"%d/%d",
                                  info.loadedFw, info.total]];
+    }
+
+    if (!_item) return;
+
+    [_attributes select:_item];
+    int star = [_attributes.objc() getIntValueForKey:@"star"];
+    if (star) {
+        [_star setState:NSOnState];
+        [self updateStar:1];
+
+    } else {
+
+        [_star setState:NSOffState];
+        [self updateStar:0];
+
     }
 }
 
@@ -57,6 +85,30 @@
     [[NSWorkspace sharedWorkspace] selectFile:[_item.objc() filename] inFileViewerRootedAtPath:nil];
 }
 
+-(void)setAttributes:(QQAttributes *)attributes {
+    _attributes.reset(attributes);
+}
+
+-(void)updateStar:(int)val {
+    if (val)
+        [_starImage setImage:_star64];
+    else
+        [_starImage setImage:_star64rb];
+}
+
+-(IBAction)starButton:(id)sender {
+    
+    NSInteger star = [_star state];
+    [_attributes.objc() select:_item];
+
+    if (star == NSOnState) {
+        [self updateStar:1];
+        [_attributes.objc() setValue:@"1" forKey:@"star"];
+    } else if (star == NSOffState) {
+        [self updateStar:0];
+        [_attributes.objc() setValue:@"0" forKey:@"star"];
+    }
+}
 /*
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     NSString *identifier = [tableColumn identifier];

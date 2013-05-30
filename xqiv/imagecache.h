@@ -19,7 +19,7 @@
 #import "ns-array-of.h"
 #import "CTime.h"
 #import "QQCacheBridge.h"
-
+#import "QQAttributes.h"
 
 namespace  s  {
     
@@ -147,7 +147,6 @@ namespace  s  {
             
             if (im[pivot].state == ics::INVALID) {
                 [viewCtl showImage:nil
-                        attributes:nil
                           origSize:NSSize()];
 
                 NSLog(@"no valid image");
@@ -215,23 +214,17 @@ namespace  s  {
         }
         
         void ensure_not_buzy();
-        
-        NSString * get_attribute(NSString *key);
-        void set_attribute(NSString *key, NSString *value);
-        
-        
+                
         void set_new_size(NSSize size);
 
-        void saveAttributes();
-        void loadAttributes();
+        QQAttributes * get_attributes() { return attributes; }
 
     private:
+
         void run();
 
         void update_view();
         
-        ns::dict_t attr(bool create = true);
-        bool hasAttr();
 
         size_t go_to_next_valid(Direction_t direction, size_t idx) {
             for (size_t i = go(direction, idx);i!=idx; i = go(direction, i)) {
@@ -302,7 +295,7 @@ namespace  s  {
         Loaders_t loaders;
         id<QQImageCtl> viewCtl;
         images_t im;
-        ns::dict_t attributes;
+        ns::base_t<QQAttributes> attributes;
         size_t pivot;
         size_t BW, FW;
         int version;

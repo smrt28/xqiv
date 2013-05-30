@@ -9,9 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #import "QQImageView.h"
 #import "QQImageLoader.h"
+#import "QQAttributes.h"
 #import "imagecache.h"
 #import "QQInfoWindowController.h"
 #import "as.h"
+
 @interface QQAppDelegate : NSObject <NSApplicationDelegate,
     QQImageViewProtocol, QQImageCtl, NSWindowDelegate>
 {
@@ -23,12 +25,14 @@
     s::ImageCache_t _cache;
 
     ns::base_t<QQCacheItem, false> _currentItem;
+
+    QQAttributes *_attributes;
 }
 
 -(BOOL)nextImage;
 -(BOOL)prevImage;
 -(void)escape;
-- (void)showImage:(NSImage *)img attributes:(NSDictionary *)attrs origSize:(NSSize)size;
+- (void)showImage:(NSImage *)img  origSize:(NSSize)size;
 
 
 

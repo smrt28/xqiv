@@ -7,13 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "QQCacheBridge.h"
 
 @interface QQAttributes : NSObject {
     NSMutableDictionary *_dict;
     NSMutableDictionary *_forFile;
-    BOOL _inDict;
     BOOL _modified;
     NSString *_sha1;
 }
--(id)init;
+
+- (NSString *)getValueForKey:(NSString *)key;
+- (int)getIntValueForKey:(NSString *)key;
+
+- (void)select:(QQCacheItem *)item;
+- (void)setValue:(NSString *)value forKey:(NSString *)key;
+- (void)setIntValue:(int)value forKey:(NSString *)key;
+- (void)save;
+- (void)load;
+- (id)init;
+
 @end

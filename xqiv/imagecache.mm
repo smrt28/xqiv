@@ -18,7 +18,6 @@ namespace s {
 
     void ImageCache_t::update_view() {
         [viewCtl showImage:im[pivot]
-                attributes:attr(false).objc()
                   origSize:im[pivot].originalsize];
     }
 
@@ -165,7 +164,11 @@ namespace s {
         }
 
         size_t rv;
-
+        rv = todo_(lastDirection);
+        if (rv == NOINDEX) {
+            rv = todo_(lastDirection == NEXT ? PREV : NEXT);
+        }
+/*
         if (FW > BW) {
             rv = todo_(NEXT);
             if (rv == NOINDEX) {
@@ -177,6 +180,7 @@ namespace s {
                 rv = todo_(NEXT);
             }
         }
+ */
         return rv;
     }
 
@@ -191,37 +195,7 @@ namespace s {
         return item;
     }
 
-    ns::dict_t ImageCache_t::attr(bool create) {
-        NSString *sha1 = im[pivot].sha1;
-        if (!sha1) return ns::dict_t();
 
-
-        if (!attributes[sha1]) {
-            if (!create) {
-                return ns::dict_t(nil);
-            }
-            ns::dict_t rv;
-            attributes.insert(sha1, rv);
-            return rv;
-        }
-
-        return attributes[sha1].as<ns::dict_t>();
-    }
-
-    bool ImageCache_t::hasAttr() {
-        NSString *sha1 = im[pivot].sha1;
-        if (!sha1) return false;
-        if (!attributes[sha1]) return false;
-        return true;
-    }
-
-    NSString * ImageCache_t::get_attribute(NSString *key) {
-        return attr()[key].as<NSString>();
-    }
-
-    void ImageCache_t::set_attribute(NSString *key, NSString *value) {
-        attr().insert(key, value);
-    }
 
     void ImageCache_t::set_new_size(NSSize sz) {
         cachedImageSize = sz;
@@ -229,20 +203,6 @@ namespace s {
         run();
     }
 
-
-    void ImageCache_t::saveAttributes() {
-        NSString *xqivAttrs = [@"~/.xqivattrs" stringByExpandingTildeInPath];
-        NSMutableDictionary *md = attributes.objc();
-        BOOL ok = [md writeToFile:xqivAttrs atomically:YES];
-        ok = NO;
-    }
-
-    void ImageCache_t::loadAttributes() {
-        NSString *xqivAttrs = [@"~/.xqivattrs" stringByExpandingTildeInPath];
-        NSMutableDictionary * at =
-            [NSMutableDictionary dictionaryWithContentsOfFile:xqivAttrs];
-        if (at) attributes = at;
-    }
 
     QQCacheInfo * ImageCache_t::get_cache_info() {
         QQCacheInfo * rv = [[[QQCacheInfo alloc] init] autorelease];

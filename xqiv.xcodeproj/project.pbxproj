@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E02D71717568FE6001414A8 /* star_orange_256.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E02D71617568FE6001414A8 /* star_orange_256.png */; };
+		5E02D71B175694D5001414A8 /* star64.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E02D71A175694D5001414A8 /* star64.png */; };
+		5E02D71D1756962C001414A8 /* star64rb.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E02D71C1756962C001414A8 /* star64rb.png */; };
 		5E10D7E216F4987300C98C58 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E10D7E116F4987300C98C58 /* Cocoa.framework */; };
 		5E10D7EC16F4987300C98C58 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5E10D7EA16F4987300C98C58 /* InfoPlist.strings */; };
 		5E10D7EE16F4987300C98C58 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E10D7ED16F4987300C98C58 /* main.mm */; };
@@ -39,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E02D71617568FE6001414A8 /* star_orange_256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star_orange_256.png; sourceTree = "<group>"; };
+		5E02D71A175694D5001414A8 /* star64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star64.png; sourceTree = "<group>"; };
+		5E02D71C1756962C001414A8 /* star64rb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star64rb.png; sourceTree = "<group>"; };
 		5E10D7DE16F4987300C98C58 /* xqiv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xqiv.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E10D7E116F4987300C98C58 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		5E10D7E416F4987300C98C58 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -98,6 +104,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E02D71917568FF4001414A8 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				5E02D71A175694D5001414A8 /* star64.png */,
+				5E02D71C1756962C001414A8 /* star64rb.png */,
+				5E02D71617568FE6001414A8 /* star_orange_256.png */,
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
 		5E10D7D516F4987300C98C58 = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +202,7 @@
 		5E48B78617481D8B00BD2C39 /* info */ = {
 			isa = PBXGroup;
 			children = (
+				5E02D71917568FF4001414A8 /* resources */,
 				5E48B78117481D8200BD2C39 /* QQInfoWindowController.h */,
 				5E48B78217481D8200BD2C39 /* QQInfoWindowController.mm */,
 				5E48B78317481D8200BD2C39 /* QQInfoWindowController.xib */,
@@ -301,6 +318,9 @@
 				5E10D7F216F4987300C98C58 /* Credits.rtf in Resources */,
 				5E10D7F816F4987300C98C58 /* MainMenu.xib in Resources */,
 				5E48B78517481D8200BD2C39 /* QQInfoWindowController.xib in Resources */,
+				5E02D71717568FE6001414A8 /* star_orange_256.png in Resources */,
+				5E02D71B175694D5001414A8 /* star64.png in Resources */,
+				5E02D71D1756962C001414A8 /* star64rb.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

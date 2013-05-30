@@ -46,7 +46,6 @@ namespace s {
 
 @protocol QQImageCtl<NSObject>
 - (void)showImage:(QQCacheItem *)img
-       attributes:(NSMutableDictionary *)attrs
          origSize:(NSSize)size;
 
 - (void)cacheStateChanged:(QQCacheInfo *)cacheInfo;

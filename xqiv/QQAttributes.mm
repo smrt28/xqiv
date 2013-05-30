@@ -12,7 +12,6 @@
 -(id)init {
     self = [super init];
     _dict = _forFile = nil;
-    _inDict = NO;
     _sha1 = nil;
     _modified = NO;
     return self;
@@ -29,6 +28,7 @@
 }
 
 - (void)save:(NSString *)filename {
+    [self flush];
     NSString *xqivAttrs = [filename stringByExpandingTildeInPath];
     [_dict writeToFile:xqivAttrs atomically:YES];
 }
@@ -48,40 +48,48 @@
 }
 
 - (void)flush {
-    if (!_inDict) {
-        if (_modified) {
-            [_dict setObject:_forFile forKey:_sha1];
-        }
-        [_forFile release];
+    if (_modified) {
+        [_dict setObject:_forFile forKey:_sha1];
     }
 
+    [_forFile release];
     [_sha1 release];
     _forFile = nil;
     _sha1 = nil;
     _modified = NO;
 }
 
-- (void)select:(NSString *)sha1 {
+- (void)select:(QQCacheItem *)item {
     [self flush];
+
+    NSString *sha1 = item.sha1;
+    _sha1 = [sha1 retain];
     NSMutableDictionary *val = [_dict valueForKey:sha1];
     if (val) {
-        _inDict = YES;
-        _forFile = val;
+        _forFile = [val retain];
     } else {
-        _inDict = NO;
         _forFile = [[NSMutableDictionary alloc] init];
     }
 }
 
 - (void)setValue:(NSString *)value forKey:(NSString *)key {
     NSString * orig = [_forFile objectForKey:key];
-    if ([orig compare:value]) return;
+    if (orig && [orig compare:value] == NSOrderedSame) return;
     [_forFile setObject:value forKey:key];
     _modified = YES;
 }
 
+- (void)setIntValue:(int)value forKey:(NSString *)key {
+    [self setValue:[NSString stringWithFormat:@"%d", value] forKey:key];
+}
+
 - (NSString *)getValueForKey:(NSString *)key {
     return [_forFile objectForKey:key];
+}
+
+- (int)getIntValueForKey:(NSString *)key {
+    NSString *rv = [_forFile objectForKey:key];
+    return [rv intValue];
 }
 
 @end

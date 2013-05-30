@@ -12,16 +12,21 @@
 
 - (void)dealloc
 {
+    [_attributes release];
     [super dealloc];
 }
 
 -(id)init {
     self = [super init];
     _cache.setCtl(self);
-    _cache.loadAttributes();
+    _attributes = _cache.get_attributes();
+    [_attributes retain];
+    [_attributes load];
+
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(cmdLine:) name:@"xqiv-cmd" object:nil];
 
     _infoCtl = [[QQInfoWindowController alloc] initWithWindowNibName:@"QQInfoWindowController"];
+    [_infoCtl setAttributes:_attributes];
     [[_infoCtl window] close];
 
     return self;
@@ -79,9 +84,9 @@
     [_infoCtl close];
     [image setImage:nil];
     [[NSApplication sharedApplication] hide:self];
-    _cache.saveAttributes();
+    [_attributes save];
 }
-- (void)showImage:(QQCacheItem *)item attributes:(NSMutableDictionary *)attrs
+- (void)showImage:(QQCacheItem *)item
          origSize:(NSSize)osize
 {
     if (!item) {
@@ -95,11 +100,11 @@
     [image setImage:img];
     [image setOriginalSize:osize];
 
-    if (attrs) {
-        ns::dict_t d(attrs);
-        int angle = d[@"angle"].as<int>();
-        [image setAngle: angle];
-    }
+    [_attributes select: item];
+    int angle = [_attributes getIntValueForKey:@"angle"];
+    [image setAngle: angle];
+
+
     _currentItem.reset(item);
     [_infoCtl update:item cacheInfo:nil];
 }
@@ -109,7 +114,7 @@
 }
 
 -(void)setAttribute:(NSString *)key value:(NSString *)val {
-    _cache.set_attribute(key, val);
+    [_attributes setValue:val forKey:key];
 }
 
 -(void)needSizeCheck {
@@ -124,7 +129,7 @@
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    _cache.saveAttributes();
+    [_attributes save];
 }
 
 
@@ -140,6 +145,15 @@
             }
             break;
         }
+        case 0x7: // x
+            [_attributes select:_currentItem];
+            if ([_attributes getIntValueForKey:@"star"]) {
+                [_attributes setValue:@"0" forKey:@"star"];
+            } else {
+                [_attributes setValue:@"1" forKey:@"star"];
+            }
+            [_infoCtl update:nil cacheInfo:nil];
+            break;
         case kVK_Escape:
         case 0xc: // q
             [self escape];
