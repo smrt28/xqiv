@@ -16,6 +16,8 @@
     NSString *_sha1;
 }
 
+@property (readwrite) bool showDuplicate;
+
 - (NSString *)getValueForKey:(NSString *)key;
 - (int)getIntValueForKey:(NSString *)key;
 

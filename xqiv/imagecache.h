@@ -48,6 +48,7 @@ namespace  s  {
                 }
             }
 
+
             void unload(size_t idx) {
                 if (!at(idx)) return;
                 if (at(idx).state == ics::LOADING ||
@@ -73,8 +74,36 @@ namespace  s  {
             void reload() {
                 for_each(&images_t::reload);
             }
+
             void unload() {
                 for_each(&images_t::unload);
+            }
+
+            size_t find_sha1(NSString *sha1) {
+                for (size_t i = 0; i < size(); i++) {
+                    if (!at(i).sha1) continue;
+                    if ([at(i).sha1 isEqualToString:sha1]) {
+                        return i;
+                    }
+                }
+                return size();
+            }
+
+            void load_duplicates(void) {
+                for (size_t i = 0; i < size(); i++) {
+                    if (at(i).duplicate && at(i).state == s::ics::INVALID) {
+                        at(i).state = s::ics::NOTLOADED;
+                    }
+                }
+            }
+
+            void clear_duplicates(void) {
+                for (size_t i = 0; i < size(); i++) {
+                    if (at(i).duplicate) {
+                        at(i).state = s::ics::INVALID;
+                        at(i).image = nil;
+                    }
+                }
             }
         };
 
@@ -97,7 +126,9 @@ namespace  s  {
             version(1),
             cachedImageSize([[NSScreen mainScreen] visibleFrame].size),
             swapCnt(SWITCH_TO_SWAP_FW_BW),
-            lastDirection(NEXT)
+            lastDirection(NEXT),
+            mustLoad(false),
+            showDuplicates(false)
         {
             loaders.push_back(ImageLoader_t(this));
             loaders.push_back(ImageLoader_t(this));
@@ -121,6 +152,7 @@ namespace  s  {
             version++;
             swapCnt = SWITCH_TO_SWAP_FW_BW;
             pivot = 0;
+            mustLoad = false;
         }
         
         size_t size() { return im.size(); }
@@ -131,18 +163,24 @@ namespace  s  {
         BOOL show(Direction_t xnext) {
             BOOL rv = NO;
 
+            if (mustLoad) return rv;
+
             lastDirection = xnext;
 
             if (pivot >= size()) pivot = 0;
-            if (im[pivot].state == ics::NOTLOADED ||
-                im[pivot].state == ics::LOADING)
+
+
+            if (im[pivot].state == ics::NOTLOADED)
             {
-                if (!lastNotLoaded) {
-                    lastNotLoaded = s::time::now();
-                }
+                mustLoad = true;
                 return rv;
             }
-            
+            if (im[pivot].state == ics::LOADING)
+            {
+                //mustLoad = true;
+                return rv;
+            }
+
             pivot = go_to_next_valid(xnext, pivot);
             
             if (im[pivot].state == ics::INVALID) {
@@ -250,11 +288,6 @@ namespace  s  {
         }
 
 
-        /*
-        size_t go_rev(Direction_t direction, size_t idx) {
-            return go(~direction,idx);
-        }*/
-
         size_t todo_(Direction_t direction) {
             size_t mem = 4 * cachedImageSize.width * cachedImageSize.height;
             size_t bw;
@@ -286,6 +319,7 @@ namespace  s  {
         void reset_keep();
         
         size_t todo();
+        size_t todo_sha1();
 
         QQCacheInfo * get_cache_info();
         void notify_delegate();
@@ -302,9 +336,8 @@ namespace  s  {
         Direction_t lastDirection;
         NSSize cachedImageSize;
         int swapCnt;
-
-        int64_t lastNotLoaded;
-        int64_t lastLoaded;
+        bool mustLoad;
+        bool showDuplicates;
     };
 }
 

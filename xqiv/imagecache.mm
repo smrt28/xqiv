@@ -32,10 +32,29 @@ namespace s {
         }
 
         size_t idx = udata[@"index"].as<int>();
+        if (idx == pivot) mustLoad = false;
         NSSize originalsize = [d[@"originalsize"].as<QQNSSize>() size];
         NSLog(@"loaded: %zd", idx);
 
         QQCacheItem * cache = im[idx];
+        if (cache.state == ics::INVALID) {
+            run();
+            return;
+        }
+
+        size_t dupl = im.find_sha1(d[@"sha1"].as<NSString>());
+
+        if (!showDuplicates && dupl != im.size() && dupl != idx) {
+            cache.state = ics::INVALID;
+            cache.image = nil;
+            cache.duplicate = true;
+            NSLog(@"duplicate detected!");
+            if (pivot == idx) {
+                show(lastDirection);
+            }
+            run();
+            return;
+        }
 
         if (d[@"errorcode"].as<int>() != 0) {
             cache.image = nil;
@@ -47,16 +66,20 @@ namespace s {
             return;
         }
 
-        cache.image = img;
-        cache.state = ics::LOADED;
-        cache.originalsize = originalsize;
-
-
-        cache.sha1 = d[@"sha1"].as<NSString>();
-        if (idx == pivot) {
-            update_view();
+        if (img) {
+            cache.image = img;
+            cache.state = ics::LOADED;
+            cache.originalsize = originalsize;
+            cache.sha1 = d[@"sha1"].as<NSString>();
+            if (idx == pivot) {
+                update_view();
+            }
+            notify_delegate();
+        } else {
+            NSLog(@"got sha1 only...");
+            cache.sha1 = d[@"sha1"].as<NSString>();
         }
-        notify_delegate();
+
         run();
     }
 
@@ -71,6 +94,7 @@ namespace s {
         }
     }
 
+
     void ImageCache_t::run() {
         for(Loaders_t::iterator it = loaders.begin(),
             eit = loaders.end();
@@ -79,15 +103,22 @@ namespace s {
             if (it->inProgress()) continue;
 
             size_t td = todo();
-            if (td == NOINDEX) return;
+            
 
             ns::dict_t udata;
+            if (td != NOINDEX) {
+                udata.insert(@"size", [QQNSSize sizeWithNSSize:cachedImageSize]);
+                im[td].state = ics::LOADING;
+            } else {
+                td = todo_sha1();
+                if (td == NOINDEX) return;
+            }
+
             udata.insert(@"index", [NSNumber numberWithLong:td]);
             udata.insert(@"version", [NSNumber numberWithLong:version]);
-            udata.insert(@"size", [QQNSSize sizeWithNSSize:cachedImageSize]);
 
             NSString *filename = im[td].filename;
-            im[td].state = ics::LOADING;
+            
             it->load(filename, udata.objc());
         }
     }
@@ -144,6 +175,16 @@ namespace s {
     }
 
 
+    size_t ImageCache_t::todo_sha1() {
+        for(size_t idx = 0; idx < im.size(); idx++) {
+            if (im[idx].sha1) continue;
+            if (im[idx].state == ics::INVALID) continue;
+            return idx;
+        }
+
+        return NOINDEX;
+    }
+
     size_t ImageCache_t::todo() {
         if (size() == 0) return NOINDEX;
 
@@ -168,19 +209,6 @@ namespace s {
         if (rv == NOINDEX) {
             rv = todo_(lastDirection == NEXT ? PREV : NEXT);
         }
-/*
-        if (FW > BW) {
-            rv = todo_(NEXT);
-            if (rv == NOINDEX) {
-                rv = todo_(PREV);
-            }
-        } else {
-            rv = todo_(PREV);
-            if (rv == NOINDEX) {
-                rv = todo_(NEXT);
-            }
-        }
- */
         return rv;
     }
 

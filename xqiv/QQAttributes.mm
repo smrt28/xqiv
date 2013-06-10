@@ -14,6 +14,7 @@
     _dict = _forFile = nil;
     _sha1 = nil;
     _modified = NO;
+    _showDuplicate = false;
     return self;
 }
 

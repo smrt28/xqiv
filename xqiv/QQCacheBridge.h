@@ -35,6 +35,7 @@ namespace s {
 @property (readwrite) int errorcode;
 @property (readwrite) int state;
 @property (readwrite) bool keep;
+@property (readwrite) bool duplicate;
 @end
 
 @interface QQCacheInfo : NSObject

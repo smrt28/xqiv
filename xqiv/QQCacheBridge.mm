@@ -15,6 +15,7 @@
     [self setFilename: nil];
     [self setImage: nil];
     [self setErrorcode: 0];
+    [self setDuplicate:false];
     self.state = s::ics::NOTLOADED;
     return self;
 }

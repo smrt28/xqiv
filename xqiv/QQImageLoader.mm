@@ -89,13 +89,13 @@
 - (void)loadImageAsync:(NSMutableDictionary *)anItem {
     
     ns::dict_t item(anItem);
-    
+
+    bool sha1_only = false;
+
     @autoreleasepool {
     
     NSString *filename = item[@"filename"];
     ns::dict_t useredata(item[@"userdata"].as<NSMutableDictionary>());
-
-    NSSize reqSize = [useredata[@"size"].as<QQNSSize>() size];
     ns::dict_t ret([self createResponse:anItem]);
 
     NSImage *img = nil, *original = nil;
@@ -111,18 +111,30 @@
             NSSize osize = s::img::pixelSize(original);
             ret.insert(@"originalsize", [QQNSSize sizeWithNSSize:osize]);
             ret.insert(@"data", data);
-            img = s::img::fitSize(original, reqSize);
-            [img setCacheMode:NSImageCacheNever];
+
+
+
+            QQNSSize *tmpSize = useredata[@"size"].as<QQNSSize>();
+            if (tmpSize) {
+                NSSize reqSize = [tmpSize size];
+                img = s::img::fitSize(original, reqSize);
+                [img setCacheMode:NSImageCacheNever];
+            } else {
+                sha1_only = true;
+            }
         }
     }
     @catch (NSException *exception) {
         img = nil;
+        sha1_only = false;
     }
     
     if (img) {
         ret.insert(@"image", img);
     } else {
-        ret.insert(@"errorcode", 1);
+        if (!sha1_only) {
+            ret.insert(@"errorcode", 1);
+        }
     }
         
     if (sha1)
