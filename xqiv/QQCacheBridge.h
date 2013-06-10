@@ -36,12 +36,15 @@ namespace s {
 @property (readwrite) int state;
 @property (readwrite) bool keep;
 @property (readwrite) bool duplicate;
+
 @end
 
 @interface QQCacheInfo : NSObject
 @property (readwrite) int loaded;
 @property (readwrite) int total;
 @property (readwrite) int loadedFw;
+@property (readwrite) size_t pivot;
+@property (readwrite) size_t cnt;
 @end
 
 

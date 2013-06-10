@@ -249,6 +249,8 @@ namespace s {
             if (im[idx].state == ics::LOADED) cnt++;
         }
         rv.loadedFw = cnt;
+        rv.pivot = pivot;
+        rv.cnt = im.size();
 
         return rv;
     }

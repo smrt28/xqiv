@@ -55,8 +55,8 @@
     }
     if (info) {
         _info.reset(info);
-        [_loaded setStringValue:[NSString stringWithFormat:@"%d/%d",
-                                 info.loadedFw, info.total]];
+        [_loaded setStringValue:[NSString stringWithFormat:@"(%d) %d/%d",
+                                 int(info.pivot), info.loadedFw, info.total]];
     }
 
     if (!_item) return;
