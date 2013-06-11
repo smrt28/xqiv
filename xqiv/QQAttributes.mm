@@ -42,7 +42,10 @@
     NSString *xqivAttrs = [filename stringByExpandingTildeInPath];
     NSMutableDictionary * at =
     [NSMutableDictionary dictionaryWithContentsOfFile:xqivAttrs];
-    if (!at) return;
+    if (!at) {
+        _dict = [[NSMutableDictionary alloc] init];
+        return;
+    }
     [_dict release];
     _dict = at;
     [_dict retain];
