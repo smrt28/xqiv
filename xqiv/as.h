@@ -179,7 +179,7 @@ namespace ns {
             return o.release(no);
         }
 
-        void reset(T_t *no) {
+        void reset(T_t *no = nil) {
             o.reset(no);
         }
 
