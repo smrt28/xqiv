@@ -403,9 +403,6 @@ namespace {
             [self rotate:+1];
             [_delegate setAttribute:@"angle" value:[NSString stringWithFormat:@"%d", _angle]];
             break;
-        case 0x3: { // f
-            break;
-        }
         case 0x45: { // +
             NSWindow *w = [self window];
             NSRect r = [w frame];

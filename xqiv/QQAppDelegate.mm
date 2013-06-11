@@ -81,6 +81,7 @@
 
 -(void)escape {
     _cache.clear();
+    _currentItem.reset();
     [_infoCtl close];
     [image setImage:nil];
     [[NSApplication sharedApplication] hide:self];
@@ -157,6 +158,11 @@
         case kVK_Escape:
         case 0xc: // q
             [self escape];
+            break;
+        case 0x3: // f
+            if (!_currentItem) break;
+            [[NSWorkspace sharedWorkspace]
+             selectFile:[_currentItem.objc() filename] inFileViewerRootedAtPath:nil];
             break;
     }
 }
