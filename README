@@ -1,10 +1,12 @@
 Fast command-line image viewer
 -----------------------------
 
+This app is an alternative for qiv on linux.
+
 GOALS: - sorted by priority
 ------
 
- * display image as fast as possible
+* display image as fast as possible
    - decode images on separated thread(s)
    - cache decoded images in mem/disk
 
@@ -18,8 +20,12 @@ GOALS: - sorted by priority
 
  * view/download images on www page
 
- * open images from menu
+ * open images from menu (but who want's this? :-))
 
 IMPLEMENTED:
 ------------
+   - cache decoded images in mem
    - prepare images on separated thread
+   - control from command-line
+   - rotate image
+   - index image by its sha1 sum
